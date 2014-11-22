@@ -53,7 +53,7 @@ struct GraphFramePose
 
 
 
-/** Addition to LiveSLAMWrapper for ROS interoperability. */
+/// Addition to LiveSLAMWrapper for ROS interoperability.
 class ROSOutput3DWrapper : public Output3DWrapper
 {
 public:

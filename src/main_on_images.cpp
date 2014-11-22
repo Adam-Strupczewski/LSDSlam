@@ -127,27 +127,27 @@ int getFile (std::string source, std::vector<std::string> &files)
 using namespace lsd_slam;
 int main( int argc, char** argv )
 {
-	ros::init(argc, argv, "LSD_SLAM");
+//	ros::init(argc, argv, "LSD_SLAM");
 
-	dynamic_reconfigure::Server<lsd_slam_core::LSDParamsConfig> srv(ros::NodeHandle("~"));
-	srv.setCallback(dynConfCb);
+//	dynamic_reconfigure::Server<lsd_slam_core::LSDParamsConfig> srv(ros::NodeHandle("~"));
+//	srv.setCallback(dynConfCb);
 
-	dynamic_reconfigure::Server<lsd_slam_core::LSDDebugParamsConfig> srvDebug(ros::NodeHandle("~Debug"));
-	srvDebug.setCallback(dynConfCbDebug);
+//	dynamic_reconfigure::Server<lsd_slam_core::LSDDebugParamsConfig> srvDebug(ros::NodeHandle("~Debug"));
+//	srvDebug.setCallback(dynConfCbDebug);
 
-	packagePath = ros::package::getPath("lsd_slam_core")+"/";
+//	packagePath = ros::package::getPath("lsd_slam_core")+"/";
 
 
 
-	// get camera calibration in form of an undistorter object.
-	// if no undistortion is required, the undistorter will just pass images through.
-	std::string calibFile;
-	Undistorter* undistorter = 0;
-	if(ros::param::get("~calib", calibFile))
-	{
-		 undistorter = Undistorter::getUndistorterForFile(calibFile.c_str());
-		 ros::param::del("~calib");
-	}
+//	// get camera calibration in form of an undistorter object.
+//	// if no undistortion is required, the undistorter will just pass images through.
+    std::string calibFile;
+    Undistorter* undistorter = 0;
+//	if(ros::param::get("~calib", calibFile))
+//	{
+//		 undistorter = Undistorter::getUndistorterForFile(calibFile.c_str());
+//		 ros::param::del("~calib");
+//	}
 
 	if(undistorter == 0)
 	{
@@ -170,7 +170,7 @@ int main( int argc, char** argv )
 
 
 	// make output wrapper. just set to zero if no output is required.
-	Output3DWrapper* outputWrapper = new ROSOutput3DWrapper(w,h);
+    Output3DWrapper* outputWrapper;// = new ROSOutput3DWrapper(w,h);
 
 
 	// make slam system
@@ -182,12 +182,12 @@ int main( int argc, char** argv )
 	// open image files: first try to open as file.
 	std::string source;
 	std::vector<std::string> files;
-	if(!ros::param::get("~files", source))
-	{
-		printf("need source files! (set using _files:=FOLDER)\n");
-		exit(0);
-	}
-	ros::param::del("~files");
+//	if(!ros::param::get("~files", source))
+//	{
+//		printf("need source files! (set using _files:=FOLDER)\n");
+//		exit(0);
+//	}
+//	ros::param::del("~files");
 
 
 	if(getdir(source, files) >= 0)
@@ -205,19 +205,19 @@ int main( int argc, char** argv )
 
 
 
-	// get HZ
-	double hz = 0;
-	if(!ros::param::get("~hz", hz))
-		hz = 0;
-	ros::param::del("~hz");
+    // get HZ
+    double hz = 0;
+//	if(!ros::param::get("~hz", hz))
+//		hz = 0;
+//	ros::param::del("~hz");
 
 
 
-	cv::Mat image = cv::Mat(h,w,CV_8U);
-	int runningIDX=0;
-	float fakeTimeStamp = 0;
+    cv::Mat image = cv::Mat(h,w,CV_8U);
+    int runningIDX=0;
+    float fakeTimeStamp = 0;
 
-	ros::Rate r(hz);
+//	ros::Rate r(hz);
 
 	for(unsigned int i=0;i<files.size();i++)
 	{
@@ -245,8 +245,8 @@ int main( int argc, char** argv )
 		runningIDX++;
 		fakeTimeStamp+=0.03;
 
-		if(hz != 0)
-			r.sleep();
+//		if(hz != 0)
+//			r.sleep();
 
 		if(fullResetRequested)
 		{
@@ -261,10 +261,10 @@ int main( int argc, char** argv )
 			runningIDX = 0;
 		}
 
-		ros::spinOnce();
+//		ros::spinOnce();
 
-		if(!ros::ok())
-			break;
+//		if(!ros::ok())
+//			break;
 	}
 
 
