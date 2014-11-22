@@ -137,17 +137,17 @@ int main( int argc, char** argv )
 
 //	packagePath = ros::package::getPath("lsd_slam_core")+"/";
 
-
-
-//	// get camera calibration in form of an undistorter object.
-//	// if no undistortion is required, the undistorter will just pass images through.
+    // get camera calibration in form of an undistorter object.
+    // if no undistortion is required, the undistorter will just pass images through.
     std::string calibFile;
     Undistorter* undistorter = 0;
+
 //	if(ros::param::get("~calib", calibFile))
 //	{
 //		 undistorter = Undistorter::getUndistorterForFile(calibFile.c_str());
 //		 ros::param::del("~calib");
 //	}
+    undistorter = Undistorter::getUndistorterForFile("/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg");
 
 	if(undistorter == 0)
 	{
@@ -170,7 +170,7 @@ int main( int argc, char** argv )
 
 
 	// make output wrapper. just set to zero if no output is required.
-    Output3DWrapper* outputWrapper;// = new ROSOutput3DWrapper(w,h);
+    Output3DWrapper* outputWrapper = NULL;// = new ROSOutput3DWrapper(w,h);
 
 
 	// make slam system
@@ -182,13 +182,14 @@ int main( int argc, char** argv )
 	// open image files: first try to open as file.
 	std::string source;
 	std::vector<std::string> files;
+
 //	if(!ros::param::get("~files", source))
 //	{
 //		printf("need source files! (set using _files:=FOLDER)\n");
 //		exit(0);
 //	}
 //	ros::param::del("~files");
-
+    source = "/home/adam/dokt_ws/LSD_machine_small/images";
 
 	if(getdir(source, files) >= 0)
 	{
@@ -221,6 +222,8 @@ int main( int argc, char** argv )
 
 	for(unsigned int i=0;i<files.size();i++)
 	{
+        printf("Processing image %s!\n", files[i].c_str());
+
 		cv::Mat imageDist = cv::imread(files[i], CV_LOAD_IMAGE_GRAYSCALE);
 
 		if(imageDist.rows != h_inp || imageDist.cols != w_inp)
@@ -261,6 +264,8 @@ int main( int argc, char** argv )
 			runningIDX = 0;
 		}
 
+//      boost::this_thread::sleep( boost::posix_time::milliseconds(50) );
+
 //		ros::spinOnce();
 
 //		if(!ros::ok())
@@ -269,8 +274,6 @@ int main( int argc, char** argv )
 
 
 	system->finalize();
-
-
 
 	delete system;
 	delete undistorter;

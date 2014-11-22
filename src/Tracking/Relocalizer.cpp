@@ -88,7 +88,7 @@ void Relocalizer::updateCurrentFrame(std::shared_ptr<Frame> currentFrame)
 	if (displayDepthMap)
 		Util::displayImage( "DebugWindow DEPTH", cv::Mat(currentFrame->height(), currentFrame->width(), CV_32F, currentFrame->image())*(1/255.0f), false );
 
-	int pressedKey = Util::waitKey(1);
+    int pressedKey = -1;//Util::waitKey(1);
 	handleKey(pressedKey);
 }
 void Relocalizer::start(std::vector<Frame*, Eigen::aligned_allocator<lsd_slam::Frame*> > &allKeyframesList)
