@@ -26,7 +26,7 @@
 #include "lsd_slam_core/LSDDebugParamsConfig.h"
 #include "util/settings.h"
 
-
+// Test comment
 
 namespace lsd_slam
 {
