@@ -694,8 +694,8 @@ void SlamSystem::debugDisplayDepthMap()
 	if (displayDepthMap)
 		Util::displayImage( "DebugWindow DEPTH", map->debugImageDepth, false );
 
-	int pressedKey = Util::waitKey(1);
-	handleKey(pressedKey);
+    //int pressedKey = Util::waitKey(1);
+    //handleKey(pressedKey);
 }
 
 
@@ -804,14 +804,17 @@ bool SlamSystem::doMappingIteration()
             printf("AS - Doing mapping iteration - Updating keyframe\n");
 			bool didSomething = updateKeyframe();
 
-			if (displayDepthMap || depthMapScreenshotFlag)
+            if (displayDepthMap || depthMapScreenshotFlag){
+                printf("AS - Doing mapping iteration - Debug display\n");
 				debugDisplayDepthMap();
+                printf("AS - Doing mapping iteration - Debug display finished\n");
+            }
             if(!didSomething){
                 printf("AS - Doing mapping iteration - Updating keyframe - Did nothing!\n");
                 return false;
             }
 		}
-
+        printf("AS - Doing mapping iteration - Returning true\n");
 		return true;
 	}
 	else
