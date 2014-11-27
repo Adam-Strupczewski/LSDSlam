@@ -248,6 +248,7 @@ int main( int argc, char** argv )
 		runningIDX++;
 		fakeTimeStamp+=0.03;
 
+        // Is supposed to make the loop run at the desired frequency, sleep occurs for leftover time from cycle
 //		if(hz != 0)
 //			r.sleep();
 
@@ -264,8 +265,10 @@ int main( int argc, char** argv )
 			runningIDX = 0;
 		}
 
+        // Added by AS
 //      boost::this_thread::sleep( boost::posix_time::milliseconds(50) );
 
+        // Process callbacks here
 //		ros::spinOnce();
 
 //		if(!ros::ok())

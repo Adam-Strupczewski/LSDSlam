@@ -208,16 +208,23 @@ void SlamSystem::mappingThreadLoop()
 	printf("Started mapping thread!\n");
 	while(keepRunning)
 	{
+
 		if (!doMappingIteration())
 		{
+            printf("AS - No mapping iteration \n");
 			boost::unique_lock<boost::mutex> lock(unmappedTrackedFramesMutex);
-			unmappedTrackedFramesSignal.timed_wait(lock,boost::posix_time::milliseconds(200));	// slight chance of deadlock otherwise
+            unmappedTrackedFramesSignal.timed_wait(lock,boost::posix_time::milliseconds(200));	// slight chance of deadlock otherwise
 			lock.unlock();
 		}
 
-		newFrameMappedMutex.lock();
+
+        printf("AS - Before lock 1 \n");
+        newFrameMappedMutex.lock();
+        printf("AS - In lock 1 \n");
 		newFrameMappedSignal.notify_all();
-		newFrameMappedMutex.unlock();
+        printf("AS - Notified newFrameMapped \n");
+        newFrameMappedMutex.unlock();
+
 	}
 	printf("Exited mapping thread \n");
 }
@@ -763,10 +770,12 @@ bool SlamSystem::doMappingIteration()
 		dumpMap = false;
 	}
 
+    printf("AS - Doing mapping iteration 1 \n");
 
 	// set mappingFrame
 	if(trackingIsGood)
 	{
+        printf("AS - Doing mapping iteration - Tracking good\n");
 		if(!doMapping)
 		{
 			//printf("tryToChange refframe, lastScore %f!\n", lastTrackingClosenessScore);
@@ -782,6 +791,7 @@ bool SlamSystem::doMappingIteration()
 
 		if (createNewKeyFrame)
 		{
+            printf("AS - Doing mapping iteration - Creating new keyframe\n");
 			finishCurrentKeyframe();
 			changeKeyframe(false, true, 1.0f);
 
@@ -791,18 +801,22 @@ bool SlamSystem::doMappingIteration()
 		}
 		else
 		{
+            printf("AS - Doing mapping iteration - Updating keyframe\n");
 			bool didSomething = updateKeyframe();
 
 			if (displayDepthMap || depthMapScreenshotFlag)
 				debugDisplayDepthMap();
-			if(!didSomething)
-				return false;
+            if(!didSomething){
+                printf("AS - Doing mapping iteration - Updating keyframe - Did nothing!\n");
+                return false;
+            }
 		}
 
 		return true;
 	}
 	else
 	{
+        printf("AS - Doing mapping iteration - Tracking bad\n");
 		// invalidate map if it was valid.
 		if(map->isValid())
 		{
@@ -1029,11 +1043,14 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 	// implement blocking
 	if(blockUntilMapped && trackingIsGood)
 	{
+        printf("AS - Before lock 2 \n");
 		boost::unique_lock<boost::mutex> lock(newFrameMappedMutex);
+        printf("AS - In lock 2 \n");
 		while(unmappedTrackedFrames.size() > 0)
 		{
             printf("TRACKING IS BLOCKING, waiting for %d frames to finish mapping.\n", (int)unmappedTrackedFrames.size());
             newFrameMappedSignal.wait(lock);    // AS: HERE PROGRAM HANGS
+            printf("AS - After wait 2 \n");
 		}
 		lock.unlock();
 	}
