@@ -694,6 +694,7 @@ void SlamSystem::debugDisplayDepthMap()
 	if (displayDepthMap)
 		Util::displayImage( "DebugWindow DEPTH", map->debugImageDepth, false );
 
+    // AS - here program hangs
     //int pressedKey = Util::waitKey(1);
     //handleKey(pressedKey);
 }
@@ -770,12 +771,12 @@ bool SlamSystem::doMappingIteration()
 		dumpMap = false;
 	}
 
-    printf("AS - Doing mapping iteration 1 \n");
+    //printf("AS - Doing mapping iteration 1 \n");
 
 	// set mappingFrame
 	if(trackingIsGood)
 	{
-        printf("AS - Doing mapping iteration - Tracking good\n");
+        //printf("AS - Doing mapping iteration - Tracking good\n");
 		if(!doMapping)
 		{
 			//printf("tryToChange refframe, lastScore %f!\n", lastTrackingClosenessScore);
@@ -791,7 +792,7 @@ bool SlamSystem::doMappingIteration()
 
 		if (createNewKeyFrame)
 		{
-            printf("AS - Doing mapping iteration - Creating new keyframe\n");
+            //printf("AS - Doing mapping iteration - Creating new keyframe\n");
 			finishCurrentKeyframe();
 			changeKeyframe(false, true, 1.0f);
 
@@ -801,20 +802,20 @@ bool SlamSystem::doMappingIteration()
 		}
 		else
 		{
-            printf("AS - Doing mapping iteration - Updating keyframe\n");
+            //printf("AS - Doing mapping iteration - Updating keyframe\n");
 			bool didSomething = updateKeyframe();
 
             if (displayDepthMap || depthMapScreenshotFlag){
-                printf("AS - Doing mapping iteration - Debug display\n");
+                //printf("AS - Doing mapping iteration - Debug display\n");
 				debugDisplayDepthMap();
-                printf("AS - Doing mapping iteration - Debug display finished\n");
+                //printf("AS - Doing mapping iteration - Debug display finished\n");
             }
             if(!didSomething){
-                printf("AS - Doing mapping iteration - Updating keyframe - Did nothing!\n");
+                //printf("AS - Doing mapping iteration - Updating keyframe - Did nothing!\n");
                 return false;
             }
 		}
-        printf("AS - Doing mapping iteration - Returning true\n");
+        //printf("AS - Doing mapping iteration - Returning true\n");
 		return true;
 	}
 	else
