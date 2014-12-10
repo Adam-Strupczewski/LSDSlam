@@ -64,12 +64,13 @@ void displayThreadLoop()
 			{
 				if(openWindows.find(displayQueue.back().name) == openWindows.end())
 				{
-                    cv::namedWindow(displayQueue.back().name, CV_WINDOW_AUTOSIZE /*cv::WINDOW_NORMAL*/);
+                    cv::namedWindow(displayQueue.back().name, cv::WINDOW_NORMAL);
 					cv::resizeWindow(displayQueue.back().name, displayQueue.back().img.cols, displayQueue.back().img.rows);
 					openWindows.insert(displayQueue.back().name);
 				}
 			}
             cv::imshow(displayQueue.back().name, displayQueue.back().img);
+            // AS - added bellow
             cv::waitKey(5);
 
 			displayQueue.pop_back();
@@ -106,15 +107,16 @@ void displayImage(const char* windowName, const cv::Mat& image, bool autoSize)
 		{
 			if(openWindows.find(windowName) == openWindows.end())
 			{
-                cv::namedWindow(windowName, CV_WINDOW_AUTOSIZE/*cv::WINDOW_NORMAL*/);
+                cv::namedWindow(windowName, cv::WINDOW_NORMAL);
 				cv::resizeWindow(windowName, image.cols, image.rows);
 				openWindows.insert(windowName);
 			}
 		}
-        //cv::imshow(windowName, image);
-        cv::namedWindow("Lalala", CV_WINDOW_AUTOSIZE);
-        cv::imshow("Lalala", image);
+        cv::imshow(windowName, image);
+        // AS - added 3 lines below
         cv::waitKey(5);
+        //cv::namedWindow("Lalala", CV_WINDOW_AUTOSIZE);
+        //cv::imshow("Lalala", image);
 	}
     //cv::waitKey(1);
 }
