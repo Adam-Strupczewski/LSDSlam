@@ -114,7 +114,7 @@ void displayImage(const char* windowName, const cv::Mat& image, bool autoSize)
 		}
         cv::imshow(windowName, image);
         // AS - added 3 lines below
-        cv::waitKey(5);
+        //cv::waitKey(5);
         //cv::namedWindow("Lalala", CV_WINDOW_AUTOSIZE);
         //cv::imshow("Lalala", image);
 	}

@@ -1067,8 +1067,8 @@ void DepthMap::resetCounters()
 	runningStats.num_observe_blacklisted=0;
 }
 
-
-
+// This functions assumes a list of reference frames to the keyframe and updates depthmap of a keyframne
+// This function can also plot stereo images...
 void DepthMap::updateKeyframe(std::deque< std::shared_ptr<Frame> > referenceFrames)
 {
 	assert(isValid());
@@ -1124,6 +1124,9 @@ void DepthMap::updateKeyframe(std::deque< std::shared_ptr<Frame> > referenceFram
 
 
 	gettimeofday(&tv_start, NULL);
+
+    // This actually does the dense image-image matching by searching in epipolar lines !!!!!
+    // Eventually funtion DepthMap::doLineStereo(...) is called
 	observeDepth();
 	gettimeofday(&tv_end, NULL);
 	msObserve = 0.9*msObserve + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);

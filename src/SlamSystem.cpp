@@ -108,8 +108,12 @@ SlamSystem::SlamSystem(int w, int h, Eigen::Matrix3f K, bool enableSLAM)
 	depthMapScreenshotFlag = false;
 	lastTrackingClosenessScore = 0;
 
+    // Main thread - thi thread - does tracking (?)
+
+    // Mapping thread
 	thread_mapping = boost::thread(&SlamSystem::mappingThreadLoop, this);
 
+    // SLAM threads
 	if(SLAMEnabled)
 	{
 		thread_constraint_search = boost::thread(&SlamSystem::constraintSearchThreadLoop, this);
@@ -211,18 +215,18 @@ void SlamSystem::mappingThreadLoop()
 
 		if (!doMappingIteration())
 		{
-            printf("AS - No mapping iteration \n");
+            //printf("AS - No mapping iteration \n");
 			boost::unique_lock<boost::mutex> lock(unmappedTrackedFramesMutex);
             unmappedTrackedFramesSignal.timed_wait(lock,boost::posix_time::milliseconds(200));	// slight chance of deadlock otherwise
 			lock.unlock();
 		}
 
-
-        printf("AS - Before lock 1 \n");
+        printf("AS - Done mapping iteration \n");
+        //printf("AS - Before lock 1 \n");
         newFrameMappedMutex.lock();
-        printf("AS - In lock 1 \n");
+        //printf("AS - In lock 1 \n");
 		newFrameMappedSignal.notify_all();
-        printf("AS - Notified newFrameMapped \n");
+        //printf("AS - Notified newFrameMapped \n");
         newFrameMappedMutex.unlock();
 
 	}
@@ -546,6 +550,7 @@ void SlamSystem::changeKeyframe(bool noCreate, bool force, float maxScore)
 	createNewKeyFrame = false;
 }
 
+// This is where the depth of the current keyframe is updated
 bool SlamSystem::updateKeyframe()
 {
 	std::shared_ptr<Frame> reference = nullptr;
@@ -744,6 +749,8 @@ void SlamSystem::takeRelocalizeResult()
 	}
 }
 
+// This is where depth is calculated / updated
+// This is also where new key frames are created
 bool SlamSystem::doMappingIteration()
 {
 	if(currentKeyFrame == 0)
@@ -773,11 +780,10 @@ bool SlamSystem::doMappingIteration()
 
     //printf("AS - Doing mapping iteration 1 \n");
 
-	// set mappingFrame
 	if(trackingIsGood)
 	{
         //printf("AS - Doing mapping iteration - Tracking good\n");
-		if(!doMapping)
+        if(!doMapping)  // doMapping is set to true
 		{
 			//printf("tryToChange refframe, lastScore %f!\n", lastTrackingClosenessScore);
 			if(lastTrackingClosenessScore > 1)
@@ -793,6 +799,7 @@ bool SlamSystem::doMappingIteration()
 		if (createNewKeyFrame)
 		{
             //printf("AS - Doing mapping iteration - Creating new keyframe\n");
+            printf("AS - Creating new keyframe\n");
 			finishCurrentKeyframe();
 			changeKeyframe(false, true, 1.0f);
 
@@ -907,51 +914,55 @@ void SlamSystem::randomInit(uchar* image, double timeStamp, int id)
 
 void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilMapped, double timestamp)
 {
-	// Create new frame
+    // Create new frame with incoming image
 	std::shared_ptr<Frame> trackingNewFrame(new Frame(frameID, width, height, K, timestamp, image));
 
 	if(!trackingIsGood)
 	{
+        // Set current frame  for relocalizer and run Relocalizer::threadLoop()
 		relocalizer.updateCurrentFrame(trackingNewFrame);
 
 		unmappedTrackedFramesMutex.lock();
-		unmappedTrackedFramesSignal.notify_one();
-		unmappedTrackedFramesMutex.unlock();
+        unmappedTrackedFramesSignal.notify_one();
+        unmappedTrackedFramesMutex.unlock();
 		return;
 	}
 
+    // trackingReference is the entire 3D point cloud used to track new frames
 	currentKeyFrameMutex.lock();
 	bool my_createNewKeyframe = createNewKeyFrame;	// pre-save here, to make decision afterwards.
 	if(trackingReference->keyframe != currentKeyFrame.get() || currentKeyFrame->depthHasBeenUpdatedFlag)
 	{
+        // If trackingReference has old keyframe set, update it
 		trackingReference->importFrame(currentKeyFrame.get());
 		currentKeyFrame->depthHasBeenUpdatedFlag = false;
 		trackingReferenceFrameSharedPT = currentKeyFrame;
 	}
 
-	FramePoseStruct* trackingReferencePose = trackingReference->keyframe->pose;
+    // Get pose of current keyframe
+    FramePoseStruct* trackingReferencePose = trackingReference->keyframe->pose;
 	currentKeyFrameMutex.unlock();
+
+
 
 	// DO TRACKING & Show tracking result.
 	if(enablePrintDebugInfo && printThreadingInfo)
 		printf("TRACKING %d on %d\n", trackingNewFrame->id(), trackingReferencePose->frameID);
 
-
+    // Here get pose estimate based on last frame, in se3 space (6D) and not sim3 (7D)
 	poseConsistencyMutex.lock_shared();
 	SE3 frameToReference_initialEstimate = se3FromSim3(
 			trackingReferencePose->getCamToWorld().inverse() * keyFrameGraph->allFramePoses.back()->getCamToWorld());
 	poseConsistencyMutex.unlock_shared();
 
-
-
-	struct timeval tv_start, tv_end;
+    struct timeval tv_start, tv_end;
 	gettimeofday(&tv_start, NULL);
 
+    // Actual tracking of new frame is performed, point cloud "trackingReference" is used
 	SE3 newRefToFrame_poseUpdate = tracker->trackFrame(
 			trackingReference,
 			trackingNewFrame.get(),
 			frameToReference_initialEstimate);
-
 
 	gettimeofday(&tv_end, NULL);
 	msTrackFrame = 0.9*msTrackFrame + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);
@@ -963,6 +974,8 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 	tracking_lastGoodPerTotal = tracker->lastGoodCount / (trackingNewFrame->width(SE3TRACKING_MIN_LEVEL)*trackingNewFrame->height(SE3TRACKING_MIN_LEVEL));
 
 
+
+    // Check if tracking was lost - add frame as unmapped
 	if(manualTrackingLossIndicated || tracker->diverged || (keyFrameGraph->keyframesAll.size() > INITIALIZATION_PHASE_COUNT && !tracker->trackingWasGood))
 	{
 		printf("TRACKING LOST for frame %d (%1.2f%% good Points, which is %1.2f%% of available points, %s)!\n",
@@ -971,7 +984,7 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 				100*tracking_lastGoodPerBad,
 				tracker->diverged ? "DIVERGED" : "NOT DIVERGED");
 
-		trackingReference->invalidate();
+        trackingReference->invalidate();    // Sets current keyframe to 0
 
 		trackingIsGood = false;
 		nextRelocIdx = -1;
@@ -986,7 +999,8 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 
 
 
-	if(plotTracking)
+    // ROS DISPLAY - Here the tracking was sent to ROS...
+    if(false && plotTracking)
 	{
 		Eigen::Matrix<float, 20, 1> data;
 		data.setZero();
@@ -1001,17 +1015,20 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 		outputWrapper->publishDebugInfo(data);
 	}
 
+    // Adds pose to vector storing all the keyframe poses list
 	keyFrameGraph->addFrame(trackingNewFrame.get());
 
 
 	//Sim3 lastTrackedCamToWorld = mostCurrentTrackedFrame->getScaledCamToWorld();//  mostCurrentTrackedFrame->TrackingParent->getScaledCamToWorld() * sim3FromSE3(mostCurrentTrackedFrame->thisToParent_SE3TrackingResult, 1.0);
 	if (outputWrapper != 0)
 	{
+        // ROS DISPLAY - Here the current frame was sent to ROS...
 		outputWrapper->publishTrackedFrame(trackingNewFrame.get());
 	}
 
 
-	// Keyframe selection
+    // Only keyframes have depth, other frames are tracked and used to update keyframes
+    // Keyframe selection - get new keyframe if distance is above threshold..
 	latestTrackedFrame = trackingNewFrame;
 	if (!my_createNewKeyframe && currentKeyFrame->numMappedOnThisTotal > MIN_NUM_MAPPED)
 	{
@@ -1037,24 +1054,23 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 		}
 	}
 
-
+    // Add frame to unmapped list and start mapping if conditions met..
 	unmappedTrackedFramesMutex.lock();
 	if(unmappedTrackedFrames.size() < 50 || (unmappedTrackedFrames.size() < 100 && trackingNewFrame->getTrackingParent()->numMappedOnThisTotal < 10))
 		unmappedTrackedFrames.push_back(trackingNewFrame);
 	unmappedTrackedFramesSignal.notify_one();
 	unmappedTrackedFramesMutex.unlock();
 
-	// implement blocking
-	if(blockUntilMapped && trackingIsGood)
+    // Implement blocking - wait until all tracked frames are mapped. Mapping thread does this.
+    // Please note - once keyframe is updated, all unmapped frames are discarded
+    if(blockUntilMapped && trackingIsGood)
 	{
-        printf("AS - Before lock 2 \n");
 		boost::unique_lock<boost::mutex> lock(newFrameMappedMutex);
-        printf("AS - In lock 2 \n");
 		while(unmappedTrackedFrames.size() > 0)
 		{
             printf("TRACKING IS BLOCKING, waiting for %d frames to finish mapping.\n", (int)unmappedTrackedFrames.size());
             newFrameMappedSignal.wait(lock);    // AS: HERE PROGRAM HANGS
-            printf("AS - After wait 2 \n");
+            //printf("AS - After wait 2 \n");
 		}
 		lock.unlock();
 	}

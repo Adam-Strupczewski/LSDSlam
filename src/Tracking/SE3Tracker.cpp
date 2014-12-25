@@ -313,6 +313,7 @@ SE3 SE3Tracker::trackFrame(
 	float last_residual = 0;
 
 
+    // Track consecutively for each pyramid level
 	for(int lvl=SE3TRACKING_MAX_LEVEL-1;lvl >= SE3TRACKING_MIN_LEVEL;lvl--)
 	{
 		numCalcResidualCalls[lvl] = 0;
