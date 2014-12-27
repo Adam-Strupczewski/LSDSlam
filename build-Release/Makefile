@@ -12,13 +12,13 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = 
-CFLAGS        = -pipe -O2 -Wall -W -fPIE $(DEFINES)
-CXXFLAGS      = -pipe -O2 -std=c++0x -Wall -W -fPIE $(DEFINES)
-INCPATH       = -I/opt/Qt_532/5.3/gcc_64/mkspecs/linux-g++ -I../lsd_slam_core_qt -I/usr/include/eigen3 -I/usr/include/suitesparse -I/usr/include/boost -I/usr/local/include/opencv -I/opt/ros/indigo/include -I../src -I../cfg/cpp -I../thirdparty/Sophus -I.
+DEFINES       = -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB
+CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
+CXXFLAGS      = -pipe -O2 -std=c++0x -Wall -W -D_REENTRANT -fPIE $(DEFINES)
+INCPATH       = -I/opt/Qt_532/5.3/gcc_64/mkspecs/linux-g++ -I../lsd_slam_core_qt -I/usr/include/eigen3 -I/usr/include/suitesparse -I/usr/include/boost -I/usr/include/QGLViewer -I/usr/local/include/opencv -I/opt/ros/indigo/include -I../src -I../cfg/cpp -I../thirdparty/Sophus -I/opt/Qt_532/5.3/gcc_64/include -I/opt/Qt_532/5.3/gcc_64/include/QtGui -I/opt/Qt_532/5.3/gcc_64/include/QtCore -I. -I.
 LINK          = g++
-LFLAGS        = -Wl,-O1 -Wl,-rpath,/opt/Qt_532/5.3/gcc_64
-LIBS          = $(SUBLIBS) -lpthread -lboost_system -lboost_thread -lboost_filesystem -lboost_iostreams -L/usr/local/lib -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy -lopencv_flann -L/opt/ros/indigo/lib -lg2o_core -lg2o_stuff -lg2o_solver_csparse -lg2o_csparse_extension -lg2o_types_sim3 -lg2o_types_sba -lcsparse -lcxsparse 
+LFLAGS        = -Wl,-O1 -Wl,-rpath,/opt/Qt_532/5.3/gcc_64 -Wl,-rpath,/opt/Qt_532/5.3/gcc_64/lib
+LIBS          = $(SUBLIBS) -lboost_system -lboost_thread -lboost_filesystem -lboost_iostreams -L/usr/local/lib -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy -lopencv_flann -L/opt/ros/indigo/lib -lg2o_core -lg2o_stuff -lg2o_solver_csparse -lg2o_csparse_extension -lg2o_types_sim3 -lg2o_types_sba -lcsparse -lcxsparse -L/usr/lib -lQGLViewer -L/opt/Qt_532/5.3/gcc_64/lib -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /opt/Qt_532/5.3/gcc_64/bin/qmake
@@ -70,7 +70,11 @@ SOURCES       = ../src/DataStructures/Frame.cpp \
 		../src/LiveSLAMWrapper.cpp \
 		../src/main_live_odometry.cpp \
 		../src/main_on_images.cpp \
-		../src/SlamSystem.cpp 
+		../src/SlamSystem.cpp \
+		../src/lsd_slam_viewer/KeyFrameDisplay.cpp \
+		../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp \
+		../src/lsd_slam_viewer/PointCloudViewer.cpp \
+		../src/lsd_slam_viewer/viewerSettings.cpp 
 OBJECTS       = Frame.o \
 		FrameMemory.o \
 		FramePoseStruct.o \
@@ -96,7 +100,11 @@ OBJECTS       = Frame.o \
 		LiveSLAMWrapper.o \
 		main_live_odometry.o \
 		main_on_images.o \
-		SlamSystem.o
+		SlamSystem.o \
+		KeyFrameDisplay.o \
+		KeyFrameGraphDisplay.o \
+		PointCloudViewer.o \
+		viewerSettings.o
 DIST          = /opt/Qt_532/5.3/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/common/shell-unix.conf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/common/unix.conf \
@@ -196,6 +204,11 @@ DIST          = /opt/Qt_532/5.3/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/default_post.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/c++11.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/warn_on.prf \
+		/opt/Qt_532/5.3/gcc_64/mkspecs/features/qt.prf \
+		/opt/Qt_532/5.3/gcc_64/mkspecs/features/resources.prf \
+		/opt/Qt_532/5.3/gcc_64/mkspecs/features/moc.prf \
+		/opt/Qt_532/5.3/gcc_64/mkspecs/features/unix/opengl.prf \
+		/opt/Qt_532/5.3/gcc_64/mkspecs/features/unix/thread.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/testcase_targets.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/exceptions.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/yacc.prf \
@@ -225,7 +238,11 @@ DIST          = /opt/Qt_532/5.3/gcc_64/mkspecs/features/spec_pre.prf \
 		../src/LiveSLAMWrapper.cpp \
 		../src/main_live_odometry.cpp \
 		../src/main_on_images.cpp \
-		../src/SlamSystem.cpp
+		../src/SlamSystem.cpp \
+		../src/lsd_slam_viewer/KeyFrameDisplay.cpp \
+		../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp \
+		../src/lsd_slam_viewer/PointCloudViewer.cpp \
+		../src/lsd_slam_viewer/viewerSettings.cpp
 QMAKE_TARGET  = lsd_slam_core_qt
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = lsd_slam_core_qt
@@ -357,11 +374,19 @@ Makefile: ../lsd_slam_core_qt/lsd_slam_core_qt.pro /opt/Qt_532/5.3/gcc_64/mkspec
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/default_post.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/c++11.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/warn_on.prf \
+		/opt/Qt_532/5.3/gcc_64/mkspecs/features/qt.prf \
+		/opt/Qt_532/5.3/gcc_64/mkspecs/features/resources.prf \
+		/opt/Qt_532/5.3/gcc_64/mkspecs/features/moc.prf \
+		/opt/Qt_532/5.3/gcc_64/mkspecs/features/unix/opengl.prf \
+		/opt/Qt_532/5.3/gcc_64/mkspecs/features/unix/thread.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/testcase_targets.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/exceptions.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/yacc.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/lex.prf \
-		../lsd_slam_core_qt/lsd_slam_core_qt.pro
+		../lsd_slam_core_qt/lsd_slam_core_qt.pro \
+		/usr/lib/libQGLViewer.prl \
+		/opt/Qt_532/5.3/gcc_64/lib/libQt5Gui.prl \
+		/opt/Qt_532/5.3/gcc_64/lib/libQt5Core.prl
 	$(QMAKE) -spec linux-g++ -o Makefile ../lsd_slam_core_qt/lsd_slam_core_qt.pro
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/spec_pre.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/common/shell-unix.conf:
@@ -462,11 +487,19 @@ Makefile: ../lsd_slam_core_qt/lsd_slam_core_qt.pro /opt/Qt_532/5.3/gcc_64/mkspec
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/default_post.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/c++11.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/warn_on.prf:
+/opt/Qt_532/5.3/gcc_64/mkspecs/features/qt.prf:
+/opt/Qt_532/5.3/gcc_64/mkspecs/features/resources.prf:
+/opt/Qt_532/5.3/gcc_64/mkspecs/features/moc.prf:
+/opt/Qt_532/5.3/gcc_64/mkspecs/features/unix/opengl.prf:
+/opt/Qt_532/5.3/gcc_64/mkspecs/features/unix/thread.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/testcase_targets.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/exceptions.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/yacc.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/lex.prf:
 ../lsd_slam_core_qt/lsd_slam_core_qt.pro:
+/usr/lib/libQGLViewer.prl:
+/opt/Qt_532/5.3/gcc_64/lib/libQt5Gui.prl:
+/opt/Qt_532/5.3/gcc_64/lib/libQt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -spec linux-g++ -o Makefile ../lsd_slam_core_qt/lsd_slam_core_qt.pro
 
@@ -474,7 +507,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/lsd_slam_core_qt1.0.0 || mkdir -p .tmp/lsd_slam_core_qt1.0.0
-	$(COPY_FILE) --parents $(DIST) .tmp/lsd_slam_core_qt1.0.0/ && (cd `dirname .tmp/lsd_slam_core_qt1.0.0` && $(TAR) lsd_slam_core_qt1.0.0.tar lsd_slam_core_qt1.0.0 && $(COMPRESS) lsd_slam_core_qt1.0.0.tar) && $(MOVE) `dirname .tmp/lsd_slam_core_qt1.0.0`/lsd_slam_core_qt1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/lsd_slam_core_qt1.0.0
+	$(COPY_FILE) --parents $(DIST) .tmp/lsd_slam_core_qt1.0.0/ && $(COPY_FILE) --parents ../src/DataStructures/Frame.h ../src/DataStructures/FrameMemory.h ../src/DataStructures/FramePoseStruct.h ../src/DepthEstimation/DepthMap.h ../src/DepthEstimation/DepthMapPixelHypothesis.h ../src/GlobalMapping/FabMap.h ../src/GlobalMapping/g2oTypeSim3Sophus.h ../src/GlobalMapping/KeyFrameGraph.h ../src/GlobalMapping/TrackableKeyFrameSearch.h ../src/IOWrapper/ROS/ROSImageStreamThread.h ../src/IOWrapper/ROS/ROSOutput3DWrapper.h ../src/IOWrapper/ROS/rosReconfigure.h ../src/IOWrapper/ImageDisplay.h ../src/IOWrapper/InputImageStream.h ../src/IOWrapper/NotifyBuffer.h ../src/IOWrapper/Output3DWrapper.h ../src/IOWrapper/Timestamp.h ../src/IOWrapper/TimestampedObject.h ../src/Tracking/least_squares.h ../src/Tracking/Relocalizer.h ../src/Tracking/SE3Tracker.h ../src/Tracking/Sim3Tracker.h ../src/Tracking/TrackingReference.h ../src/util/EigenCoreInclude.h ../src/util/globalFuncs.h ../src/util/IndexThreadReduce.h ../src/util/settings.h ../src/util/SophusUtil.h ../src/util/Undistorter.h ../src/LiveSLAMWrapper.h ../src/SlamSystem.h ../src/lsd_slam_viewer/keyframeGraphMsg.h ../src/lsd_slam_viewer/keyframeMsg.h ../src/lsd_slam_viewer/KeyFrameDisplay.h ../src/lsd_slam_viewer/KeyFrameGraphDisplay.h ../src/lsd_slam_viewer/PointCloudViewer.h ../src/lsd_slam_viewer/viewerSettings.h .tmp/lsd_slam_core_qt1.0.0/ && $(COPY_FILE) --parents ../src/DataStructures/Frame.cpp ../src/DataStructures/FrameMemory.cpp ../src/DataStructures/FramePoseStruct.cpp ../src/DepthEstimation/DepthMap.cpp ../src/DepthEstimation/DepthMapPixelHypothesis.cpp ../src/GlobalMapping/FabMap.cpp ../src/GlobalMapping/g2oTypeSim3Sophus.cpp ../src/GlobalMapping/KeyFrameGraph.cpp ../src/GlobalMapping/TrackableKeyFrameSearch.cpp ../src/IOWrapper/OpenCV/ImageDisplay_OpenCV.cpp ../src/IOWrapper/ROS/ROSImageStreamThread.cpp ../src/IOWrapper/ROS/ROSOutput3DWrapper.cpp ../src/IOWrapper/Timestamp.cpp ../src/Tracking/least_squares.cpp ../src/Tracking/Relocalizer.cpp ../src/Tracking/SE3Tracker.cpp ../src/Tracking/Sim3Tracker.cpp ../src/Tracking/TrackingReference.cpp ../src/util/globalFuncs.cpp ../src/util/settings.cpp ../src/util/SophusUtil.cpp ../src/util/Undistorter.cpp ../src/LiveSLAMWrapper.cpp ../src/main_live_odometry.cpp ../src/main_on_images.cpp ../src/SlamSystem.cpp ../src/lsd_slam_viewer/KeyFrameDisplay.cpp ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp ../src/lsd_slam_viewer/PointCloudViewer.cpp ../src/lsd_slam_viewer/viewerSettings.cpp .tmp/lsd_slam_core_qt1.0.0/ && (cd `dirname .tmp/lsd_slam_core_qt1.0.0` && $(TAR) lsd_slam_core_qt1.0.0.tar lsd_slam_core_qt1.0.0 && $(COMPRESS) lsd_slam_core_qt1.0.0.tar) && $(MOVE) `dirname .tmp/lsd_slam_core_qt1.0.0`/lsd_slam_core_qt1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/lsd_slam_core_qt1.0.0
 
 
 clean:compiler_clean 
@@ -489,8 +522,18 @@ distclean: clean
 
 ####### Sub-libraries
 
+mocclean: compiler_moc_header_clean compiler_moc_source_clean
+
+mocables: compiler_moc_header_make_all compiler_moc_source_make_all
+
 check: first
 
+compiler_rcc_make_all:
+compiler_rcc_clean:
+compiler_moc_header_make_all:
+compiler_moc_header_clean:
+compiler_moc_source_make_all:
+compiler_moc_source_clean:
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
 compiler_yacc_impl_make_all:
@@ -2753,400 +2796,10 @@ TrackableKeyFrameSearch.o: ../src/GlobalMapping/TrackableKeyFrameSearch.cpp ../s
 ImageDisplay_OpenCV.o: ../src/IOWrapper/OpenCV/ImageDisplay_OpenCV.cpp ../src/IOWrapper/ImageDisplay.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ImageDisplay_OpenCV.o ../src/IOWrapper/OpenCV/ImageDisplay_OpenCV.cpp
 
-ROSImageStreamThread.o: ../src/IOWrapper/ROS/ROSImageStreamThread.cpp ../src/IOWrapper/ROS/ROSImageStreamThread.h \
-		../src/IOWrapper/NotifyBuffer.h \
-		../src/IOWrapper/TimestampedObject.h \
-		../src/IOWrapper/Timestamp.h \
-		../src/IOWrapper/InputImageStream.h \
-		/opt/ros/indigo/include/ros/ros.h \
-		/opt/ros/indigo/include/ros/time.h \
-		/opt/ros/indigo/include/ros/platform.h \
-		/opt/ros/indigo/include/ros/exception.h \
-		/opt/ros/indigo/include/ros/duration.h \
-		/opt/ros/indigo/include/ros/rostime_decl.h \
-		/opt/ros/indigo/include/ros/macros.h \
-		/opt/ros/indigo/include/ros/rate.h \
-		/opt/ros/indigo/include/ros/console.h \
-		/opt/ros/indigo/include/ros/console_backend.h \
-		/opt/ros/indigo/include/rosconsole/macros_generated.h \
-		/opt/ros/indigo/include/ros/assert.h \
-		/opt/ros/indigo/include/ros/static_assert.h \
-		/opt/ros/indigo/include/ros/common.h \
-		/opt/ros/indigo/include/ros/forwards.h \
-		/opt/ros/indigo/include/ros/exceptions.h \
-		/opt/ros/indigo/include/ros/datatypes.h \
-		/opt/ros/indigo/include/ros/serialized_message.h \
-		/opt/ros/indigo/include/ros/roscpp_serialization_macros.h \
-		/opt/ros/indigo/include/ros/types.h \
-		/opt/ros/indigo/include/ros/node_handle.h \
-		/opt/ros/indigo/include/ros/publisher.h \
-		/opt/ros/indigo/include/ros/message.h \
-		/opt/ros/indigo/include/ros/serialization.h \
-		/opt/ros/indigo/include/ros/message_traits.h \
-		/opt/ros/indigo/include/ros/message_forward.h \
-		/opt/ros/indigo/include/ros/builtin_message_traits.h \
-		/opt/ros/indigo/include/ros/subscriber.h \
-		/opt/ros/indigo/include/ros/subscription_callback_helper.h \
-		/opt/ros/indigo/include/ros/parameter_adapter.h \
-		/opt/ros/indigo/include/ros/message_event.h \
-		/opt/ros/indigo/include/ros/service_server.h \
-		/opt/ros/indigo/include/ros/service_client.h \
-		/opt/ros/indigo/include/ros/service_traits.h \
-		/opt/ros/indigo/include/ros/timer.h \
-		/opt/ros/indigo/include/ros/timer_options.h \
-		/opt/ros/indigo/include/ros/wall_timer.h \
-		/opt/ros/indigo/include/ros/wall_timer_options.h \
-		/opt/ros/indigo/include/ros/advertise_options.h \
-		/opt/ros/indigo/include/ros/advertise_service_options.h \
-		/opt/ros/indigo/include/ros/service_callback_helper.h \
-		/opt/ros/indigo/include/ros/subscribe_options.h \
-		/opt/ros/indigo/include/ros/transport_hints.h \
-		/opt/ros/indigo/include/ros/service_client_options.h \
-		/opt/ros/indigo/include/ros/spinner.h \
-		/opt/ros/indigo/include/ros/init.h \
-		/opt/ros/indigo/include/XmlRpcValue.h \
-		/opt/ros/indigo/include/XmlRpcDecl.h \
-		/opt/ros/indigo/include/ros/single_subscriber_publisher.h \
-		/opt/ros/indigo/include/ros/service.h \
-		/opt/ros/indigo/include/ros/names.h \
-		/opt/ros/indigo/include/ros/master.h \
-		/opt/ros/indigo/include/ros/this_node.h \
-		/opt/ros/indigo/include/ros/param.h \
-		/opt/ros/indigo/include/ros/topic.h \
-		/opt/ros/indigo/include/ros/package.h \
-		/opt/ros/indigo/include/sensor_msgs/image_encodings.h \
-		/opt/ros/indigo/include/sensor_msgs/Image.h \
-		/opt/ros/indigo/include/ros/message_operations.h \
-		/opt/ros/indigo/include/std_msgs/Header.h \
-		/opt/ros/indigo/include/sensor_msgs/CameraInfo.h \
-		/opt/ros/indigo/include/sensor_msgs/RegionOfInterest.h \
-		/opt/ros/indigo/include/geometry_msgs/PoseStamped.h \
-		/opt/ros/indigo/include/geometry_msgs/Pose.h \
-		/opt/ros/indigo/include/geometry_msgs/Point.h \
-		/opt/ros/indigo/include/geometry_msgs/Quaternion.h \
-		../src/util/Undistorter.h \
-		/opt/ros/indigo/include/ros/callback_queue.h \
-		/opt/ros/indigo/include/ros/callback_queue_interface.h \
-		/opt/ros/indigo/include/cv_bridge/cv_bridge.h \
-		../src/util/settings.h
+ROSImageStreamThread.o: ../src/IOWrapper/ROS/ROSImageStreamThread.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ROSImageStreamThread.o ../src/IOWrapper/ROS/ROSImageStreamThread.cpp
 
-ROSOutput3DWrapper.o: ../src/IOWrapper/ROS/ROSOutput3DWrapper.cpp ../src/IOWrapper/ROS/ROSOutput3DWrapper.h \
-		/opt/ros/indigo/include/ros/ros.h \
-		/opt/ros/indigo/include/ros/time.h \
-		/opt/ros/indigo/include/ros/platform.h \
-		/opt/ros/indigo/include/ros/exception.h \
-		/opt/ros/indigo/include/ros/duration.h \
-		/opt/ros/indigo/include/ros/rostime_decl.h \
-		/opt/ros/indigo/include/ros/macros.h \
-		/opt/ros/indigo/include/ros/rate.h \
-		/opt/ros/indigo/include/ros/console.h \
-		/opt/ros/indigo/include/ros/console_backend.h \
-		/opt/ros/indigo/include/rosconsole/macros_generated.h \
-		/opt/ros/indigo/include/ros/assert.h \
-		/opt/ros/indigo/include/ros/static_assert.h \
-		/opt/ros/indigo/include/ros/common.h \
-		/opt/ros/indigo/include/ros/forwards.h \
-		/opt/ros/indigo/include/ros/exceptions.h \
-		/opt/ros/indigo/include/ros/datatypes.h \
-		/opt/ros/indigo/include/ros/serialized_message.h \
-		/opt/ros/indigo/include/ros/roscpp_serialization_macros.h \
-		/opt/ros/indigo/include/ros/types.h \
-		/opt/ros/indigo/include/ros/node_handle.h \
-		/opt/ros/indigo/include/ros/publisher.h \
-		/opt/ros/indigo/include/ros/message.h \
-		/opt/ros/indigo/include/ros/serialization.h \
-		/opt/ros/indigo/include/ros/message_traits.h \
-		/opt/ros/indigo/include/ros/message_forward.h \
-		/opt/ros/indigo/include/ros/builtin_message_traits.h \
-		/opt/ros/indigo/include/ros/subscriber.h \
-		/opt/ros/indigo/include/ros/subscription_callback_helper.h \
-		/opt/ros/indigo/include/ros/parameter_adapter.h \
-		/opt/ros/indigo/include/ros/message_event.h \
-		/opt/ros/indigo/include/ros/service_server.h \
-		/opt/ros/indigo/include/ros/service_client.h \
-		/opt/ros/indigo/include/ros/service_traits.h \
-		/opt/ros/indigo/include/ros/timer.h \
-		/opt/ros/indigo/include/ros/timer_options.h \
-		/opt/ros/indigo/include/ros/wall_timer.h \
-		/opt/ros/indigo/include/ros/wall_timer_options.h \
-		/opt/ros/indigo/include/ros/advertise_options.h \
-		/opt/ros/indigo/include/ros/advertise_service_options.h \
-		/opt/ros/indigo/include/ros/service_callback_helper.h \
-		/opt/ros/indigo/include/ros/subscribe_options.h \
-		/opt/ros/indigo/include/ros/transport_hints.h \
-		/opt/ros/indigo/include/ros/service_client_options.h \
-		/opt/ros/indigo/include/ros/spinner.h \
-		/opt/ros/indigo/include/ros/init.h \
-		/opt/ros/indigo/include/XmlRpcValue.h \
-		/opt/ros/indigo/include/XmlRpcDecl.h \
-		/opt/ros/indigo/include/ros/single_subscriber_publisher.h \
-		/opt/ros/indigo/include/ros/service.h \
-		/opt/ros/indigo/include/ros/names.h \
-		/opt/ros/indigo/include/ros/master.h \
-		/opt/ros/indigo/include/ros/this_node.h \
-		/opt/ros/indigo/include/ros/param.h \
-		/opt/ros/indigo/include/ros/topic.h \
-		../src/IOWrapper/Output3DWrapper.h \
-		../src/util/SophusUtil.h \
-		../thirdparty/Sophus/sophus/sim3.hpp \
-		../thirdparty/Sophus/sophus/rxso3.hpp \
-		../thirdparty/Sophus/sophus/sophus.hpp \
-		/usr/include/eigen3/Eigen/Eigen \
-		/usr/include/eigen3/Eigen/Dense \
-		/usr/include/eigen3/Eigen/Core \
-		/usr/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h \
-		/usr/include/eigen3/Eigen/src/Core/util/Macros.h \
-		/usr/include/eigen3/Eigen/src/Core/util/MKL_support.h \
-		/usr/include/eigen3/Eigen/src/Core/util/Constants.h \
-		/usr/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h \
-		/usr/include/eigen3/Eigen/src/Core/util/Meta.h \
-		/usr/include/eigen3/Eigen/src/Core/util/StaticAssert.h \
-		/usr/include/eigen3/Eigen/src/Core/util/XprHelper.h \
-		/usr/include/eigen3/Eigen/src/Core/util/Memory.h \
-		/usr/include/eigen3/Eigen/src/Core/NumTraits.h \
-		/usr/include/eigen3/Eigen/src/Core/MathFunctions.h \
-		/usr/include/eigen3/Eigen/src/Core/GenericPacketMath.h \
-		/usr/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h \
-		/usr/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h \
-		/usr/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h \
-		/usr/include/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h \
-		/usr/include/eigen3/Eigen/src/Core/arch/AltiVec/Complex.h \
-		/usr/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h \
-		/usr/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h \
-		/usr/include/eigen3/Eigen/src/Core/arch/Default/Settings.h \
-		/usr/include/eigen3/Eigen/src/Core/Functors.h \
-		/usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h \
-		/usr/include/eigen3/Eigen/src/Core/DenseBase.h \
-		/usr/include/eigen3/Eigen/src/plugins/BlockMethods.h \
-		/usr/include/eigen3/Eigen/src/Core/MatrixBase.h \
-		/usr/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h \
-		/usr/include/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h \
-		/usr/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h \
-		/usr/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h \
-		/usr/include/eigen3/Eigen/src/Core/EigenBase.h \
-		/usr/include/eigen3/Eigen/src/Core/Assign.h \
-		/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h \
-		/usr/include/eigen3/Eigen/src/Core/DenseStorage.h \
-		/usr/include/eigen3/Eigen/src/Core/NestByValue.h \
-		/usr/include/eigen3/Eigen/src/Core/ForceAlignedAccess.h \
-		/usr/include/eigen3/Eigen/src/Core/ReturnByValue.h \
-		/usr/include/eigen3/Eigen/src/Core/NoAlias.h \
-		/usr/include/eigen3/Eigen/src/Core/PlainObjectBase.h \
-		/usr/include/eigen3/Eigen/src/Core/Matrix.h \
-		/usr/include/eigen3/Eigen/src/Core/Array.h \
-		/usr/include/eigen3/Eigen/src/Core/CwiseBinaryOp.h \
-		/usr/include/eigen3/Eigen/src/Core/CwiseUnaryOp.h \
-		/usr/include/eigen3/Eigen/src/Core/CwiseNullaryOp.h \
-		/usr/include/eigen3/Eigen/src/Core/CwiseUnaryView.h \
-		/usr/include/eigen3/Eigen/src/Core/SelfCwiseBinaryOp.h \
-		/usr/include/eigen3/Eigen/src/Core/Dot.h \
-		/usr/include/eigen3/Eigen/src/Core/StableNorm.h \
-		/usr/include/eigen3/Eigen/src/Core/MapBase.h \
-		/usr/include/eigen3/Eigen/src/Core/Stride.h \
-		/usr/include/eigen3/Eigen/src/Core/Map.h \
-		/usr/include/eigen3/Eigen/src/Core/Block.h \
-		/usr/include/eigen3/Eigen/src/Core/VectorBlock.h \
-		/usr/include/eigen3/Eigen/src/Core/Ref.h \
-		/usr/include/eigen3/Eigen/src/Core/Transpose.h \
-		/usr/include/eigen3/Eigen/src/Core/DiagonalMatrix.h \
-		/usr/include/eigen3/Eigen/src/Core/Diagonal.h \
-		/usr/include/eigen3/Eigen/src/Core/DiagonalProduct.h \
-		/usr/include/eigen3/Eigen/src/Core/PermutationMatrix.h \
-		/usr/include/eigen3/Eigen/src/Core/Transpositions.h \
-		/usr/include/eigen3/Eigen/src/Core/Redux.h \
-		/usr/include/eigen3/Eigen/src/Core/Visitor.h \
-		/usr/include/eigen3/Eigen/src/Core/Fuzzy.h \
-		/usr/include/eigen3/Eigen/src/Core/IO.h \
-		/usr/include/eigen3/Eigen/src/Core/Swap.h \
-		/usr/include/eigen3/Eigen/src/Core/CommaInitializer.h \
-		/usr/include/eigen3/Eigen/src/Core/Flagged.h \
-		/usr/include/eigen3/Eigen/src/Core/ProductBase.h \
-		/usr/include/eigen3/Eigen/src/Core/GeneralProduct.h \
-		/usr/include/eigen3/Eigen/src/Core/TriangularMatrix.h \
-		/usr/include/eigen3/Eigen/src/Core/SelfAdjointView.h \
-		/usr/include/eigen3/Eigen/src/Core/products/GeneralBlockPanelKernel.h \
-		/usr/include/eigen3/Eigen/src/Core/products/Parallelizer.h \
-		/usr/include/eigen3/Eigen/src/Core/products/CoeffBasedProduct.h \
-		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixVector.h \
-		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrix.h \
-		/usr/include/eigen3/Eigen/src/Core/SolveTriangular.h \
-		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h \
-		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixVector.h \
-		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixMatrix.h \
-		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointProduct.h \
-		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointRank2Update.h \
-		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixVector.h \
-		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixMatrix.h \
-		/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix.h \
-		/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverVector.h \
-		/usr/include/eigen3/Eigen/src/Core/BandMatrix.h \
-		/usr/include/eigen3/Eigen/src/Core/CoreIterators.h \
-		/usr/include/eigen3/Eigen/src/Core/BooleanRedux.h \
-		/usr/include/eigen3/Eigen/src/Core/Select.h \
-		/usr/include/eigen3/Eigen/src/Core/VectorwiseOp.h \
-		/usr/include/eigen3/Eigen/src/Core/Random.h \
-		/usr/include/eigen3/Eigen/src/Core/Replicate.h \
-		/usr/include/eigen3/Eigen/src/Core/Reverse.h \
-		/usr/include/eigen3/Eigen/src/Core/ArrayBase.h \
-		/usr/include/eigen3/Eigen/src/plugins/ArrayCwiseUnaryOps.h \
-		/usr/include/eigen3/Eigen/src/plugins/ArrayCwiseBinaryOps.h \
-		/usr/include/eigen3/Eigen/src/Core/ArrayWrapper.h \
-		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrix_MKL.h \
-		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixVector_MKL.h \
-		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_MKL.h \
-		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixMatrix_MKL.h \
-		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixVector_MKL.h \
-		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixMatrix_MKL.h \
-		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixVector_MKL.h \
-		/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_MKL.h \
-		/usr/include/eigen3/Eigen/src/Core/Assign_MKL.h \
-		/usr/include/eigen3/Eigen/src/Core/GlobalFunctions.h \
-		/usr/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h \
-		/usr/include/eigen3/Eigen/Eigen2Support \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Macros.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Memory.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Meta.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Lazy.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Cwise.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/CwiseOperators.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/TriangularSolver.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Block.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/VectorBlock.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Minor.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/MathFunctions.h \
-		/usr/include/eigen3/Eigen/LU \
-		/usr/include/eigen3/Eigen/src/misc/Solve.h \
-		/usr/include/eigen3/Eigen/src/misc/Kernel.h \
-		/usr/include/eigen3/Eigen/src/misc/Image.h \
-		/usr/include/eigen3/Eigen/src/LU/FullPivLU.h \
-		/usr/include/eigen3/Eigen/src/LU/PartialPivLU.h \
-		/usr/include/eigen3/Eigen/src/LU/PartialPivLU_MKL.h \
-		/usr/include/eigen3/Eigen/src/LU/Determinant.h \
-		/usr/include/eigen3/Eigen/src/LU/Inverse.h \
-		/usr/include/eigen3/Eigen/src/LU/arch/Inverse_SSE.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/LU.h \
-		/usr/include/eigen3/Eigen/Cholesky \
-		/usr/include/eigen3/Eigen/src/Cholesky/LLT.h \
-		/usr/include/eigen3/Eigen/src/Cholesky/LDLT.h \
-		/usr/include/eigen3/Eigen/src/Cholesky/LLT_MKL.h \
-		/usr/include/eigen3/Eigen/QR \
-		/usr/include/eigen3/Eigen/Jacobi \
-		/usr/include/eigen3/Eigen/src/Jacobi/Jacobi.h \
-		/usr/include/eigen3/Eigen/Householder \
-		/usr/include/eigen3/Eigen/src/Householder/Householder.h \
-		/usr/include/eigen3/Eigen/src/Householder/HouseholderSequence.h \
-		/usr/include/eigen3/Eigen/src/Householder/BlockHouseholder.h \
-		/usr/include/eigen3/Eigen/src/QR/HouseholderQR.h \
-		/usr/include/eigen3/Eigen/src/QR/FullPivHouseholderQR.h \
-		/usr/include/eigen3/Eigen/src/QR/ColPivHouseholderQR.h \
-		/usr/include/eigen3/Eigen/src/QR/HouseholderQR_MKL.h \
-		/usr/include/eigen3/Eigen/src/QR/ColPivHouseholderQR_MKL.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/QR.h \
-		/usr/include/eigen3/Eigen/Eigenvalues \
-		/usr/include/eigen3/Eigen/Geometry \
-		/usr/include/eigen3/Eigen/SVD \
-		/usr/include/eigen3/Eigen/src/SVD/JacobiSVD.h \
-		/usr/include/eigen3/Eigen/src/SVD/JacobiSVD_MKL.h \
-		/usr/include/eigen3/Eigen/src/SVD/UpperBidiagonalization.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/SVD.h \
-		/usr/include/eigen3/Eigen/src/Geometry/OrthoMethods.h \
-		/usr/include/eigen3/Eigen/src/Geometry/EulerAngles.h \
-		/usr/include/eigen3/Eigen/src/Geometry/Homogeneous.h \
-		/usr/include/eigen3/Eigen/src/Geometry/RotationBase.h \
-		/usr/include/eigen3/Eigen/src/Geometry/Rotation2D.h \
-		/usr/include/eigen3/Eigen/src/Geometry/Quaternion.h \
-		/usr/include/eigen3/Eigen/src/Geometry/AngleAxis.h \
-		/usr/include/eigen3/Eigen/src/Geometry/Transform.h \
-		/usr/include/eigen3/Eigen/src/Geometry/Translation.h \
-		/usr/include/eigen3/Eigen/src/Geometry/Scaling.h \
-		/usr/include/eigen3/Eigen/src/Geometry/Hyperplane.h \
-		/usr/include/eigen3/Eigen/src/Geometry/ParametrizedLine.h \
-		/usr/include/eigen3/Eigen/src/Geometry/AlignedBox.h \
-		/usr/include/eigen3/Eigen/src/Geometry/Umeyama.h \
-		/usr/include/eigen3/Eigen/src/Geometry/arch/Geometry_SSE.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/All.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/RotationBase.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Rotation2D.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Quaternion.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/AngleAxis.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Transform.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Translation.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Scaling.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/AlignedBox.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Hyperplane.h \
-		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/ParametrizedLine.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/Tridiagonalization.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/RealSchur.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/EigenSolver.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexSchur.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexEigenSolver.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/RealQZ.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/RealSchur_MKL.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexSchur_MKL.h \
-		/usr/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_MKL.h \
-		../thirdparty/Sophus/sophus/so3.hpp \
-		../thirdparty/Sophus/sophus/se3.hpp \
-		../src/util/settings.h \
-		/opt/ros/indigo/include/std_msgs/Float32MultiArray.h \
-		/opt/ros/indigo/include/ros/message_operations.h \
-		/opt/ros/indigo/include/std_msgs/MultiArrayLayout.h \
-		/opt/ros/indigo/include/std_msgs/MultiArrayDimension.h \
-		../src/lsd_slam_viewer/keyframeGraphMsg.h \
-		../src/lsd_slam_viewer/keyframeMsg.h \
-		../src/DataStructures/Frame.h \
-		../src/DataStructures/FramePoseStruct.h \
-		../src/GlobalMapping/g2oTypeSim3Sophus.h \
-		/opt/ros/indigo/include/g2o/core/base_vertex.h \
-		/opt/ros/indigo/include/g2o/core/optimizable_graph.h \
-		/opt/ros/indigo/include/g2o/core/openmp_mutex.h \
-		/opt/ros/indigo/include/g2o/config.h \
-		/opt/ros/indigo/include/g2o/core/hyper_graph.h \
-		/opt/ros/indigo/include/g2o/core/g2o_core_api.h \
-		/opt/ros/indigo/include/g2o/core/parameter.h \
-		/opt/ros/indigo/include/g2o/core/parameter_container.h \
-		/opt/ros/indigo/include/g2o/core/jacobian_workspace.h \
-		/usr/include/eigen3/Eigen/StdVector \
-		/usr/include/eigen3/Eigen/src/StlSupport/StdVector.h \
-		/usr/include/eigen3/Eigen/src/StlSupport/details.h \
-		/opt/ros/indigo/include/g2o/stuff/macros.h \
-		/opt/ros/indigo/include/g2o/core/creators.h \
-		/opt/ros/indigo/include/g2o/core/base_vertex.hpp \
-		/opt/ros/indigo/include/g2o/core/base_binary_edge.h \
-		/opt/ros/indigo/include/g2o/core/base_edge.h \
-		/opt/ros/indigo/include/g2o/core/robust_kernel.h \
-		/opt/ros/indigo/include/g2o/core/base_binary_edge.hpp \
-		/opt/ros/indigo/include/g2o/types/sba/types_six_dof_expmap.h \
-		/opt/ros/indigo/include/g2o/types/slam3d/se3_ops.h \
-		/opt/ros/indigo/include/g2o/types/slam3d/g2o_types_slam3d_api.h \
-		/opt/ros/indigo/include/g2o/types/slam3d/se3_ops.hpp \
-		/opt/ros/indigo/include/g2o/types/sba/types_sba.h \
-		/opt/ros/indigo/include/g2o/core/base_multi_edge.h \
-		/opt/ros/indigo/include/g2o/core/base_multi_edge.hpp \
-		/opt/ros/indigo/include/g2o/types/sba/sbacam.h \
-		/opt/ros/indigo/include/g2o/stuff/misc.h \
-		/opt/ros/indigo/include/g2o/types/slam3d/se3quat.h \
-		/opt/ros/indigo/include/g2o/types/sba/g2o_types_sba_api.h \
-		../src/DataStructures/FrameMemory.h \
-		../src/GlobalMapping/KeyFrameGraph.h \
-		../src/util/EigenCoreInclude.h \
-		/opt/ros/indigo/include/g2o/core/sparse_optimizer.h \
-		/opt/ros/indigo/include/g2o/core/sparse_block_matrix.h \
-		/opt/ros/indigo/include/g2o/core/sparse_block_matrix_ccs.h \
-		/opt/ros/indigo/include/g2o/core/matrix_operations.h \
-		/opt/ros/indigo/include/g2o/core/matrix_structure.h \
-		/opt/ros/indigo/include/g2o/core/sparse_block_matrix.hpp \
-		/opt/ros/indigo/include/g2o/core/batch_stats.h \
-		/opt/ros/indigo/include/geometry_msgs/PoseStamped.h \
-		/opt/ros/indigo/include/std_msgs/Header.h \
-		/opt/ros/indigo/include/geometry_msgs/Pose.h \
-		/opt/ros/indigo/include/geometry_msgs/Point.h \
-		/opt/ros/indigo/include/geometry_msgs/Quaternion.h
+ROSOutput3DWrapper.o: ../src/IOWrapper/ROS/ROSOutput3DWrapper.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ROSOutput3DWrapper.o ../src/IOWrapper/ROS/ROSOutput3DWrapper.cpp
 
 Timestamp.o: ../src/IOWrapper/Timestamp.cpp ../src/IOWrapper/Timestamp.h
@@ -5362,83 +5015,8 @@ main_on_images.o: ../src/main_on_images.cpp ../src/LiveSLAMWrapper.h \
 		../src/SlamSystem.h \
 		../src/Tracking/Relocalizer.h \
 		../src/IOWrapper/ROS/ROSOutput3DWrapper.h \
-		/opt/ros/indigo/include/ros/ros.h \
-		/opt/ros/indigo/include/ros/time.h \
-		/opt/ros/indigo/include/ros/platform.h \
-		/opt/ros/indigo/include/ros/exception.h \
-		/opt/ros/indigo/include/ros/duration.h \
-		/opt/ros/indigo/include/ros/rostime_decl.h \
-		/opt/ros/indigo/include/ros/macros.h \
-		/opt/ros/indigo/include/ros/rate.h \
-		/opt/ros/indigo/include/ros/console.h \
-		/opt/ros/indigo/include/ros/console_backend.h \
-		/opt/ros/indigo/include/rosconsole/macros_generated.h \
-		/opt/ros/indigo/include/ros/assert.h \
-		/opt/ros/indigo/include/ros/static_assert.h \
-		/opt/ros/indigo/include/ros/common.h \
-		/opt/ros/indigo/include/ros/forwards.h \
-		/opt/ros/indigo/include/ros/exceptions.h \
-		/opt/ros/indigo/include/ros/datatypes.h \
-		/opt/ros/indigo/include/ros/serialized_message.h \
-		/opt/ros/indigo/include/ros/roscpp_serialization_macros.h \
-		/opt/ros/indigo/include/ros/types.h \
-		/opt/ros/indigo/include/ros/node_handle.h \
-		/opt/ros/indigo/include/ros/publisher.h \
-		/opt/ros/indigo/include/ros/message.h \
-		/opt/ros/indigo/include/ros/serialization.h \
-		/opt/ros/indigo/include/ros/message_traits.h \
-		/opt/ros/indigo/include/ros/message_forward.h \
-		/opt/ros/indigo/include/ros/builtin_message_traits.h \
-		/opt/ros/indigo/include/ros/subscriber.h \
-		/opt/ros/indigo/include/ros/subscription_callback_helper.h \
-		/opt/ros/indigo/include/ros/parameter_adapter.h \
-		/opt/ros/indigo/include/ros/message_event.h \
-		/opt/ros/indigo/include/ros/service_server.h \
-		/opt/ros/indigo/include/ros/service_client.h \
-		/opt/ros/indigo/include/ros/service_traits.h \
-		/opt/ros/indigo/include/ros/timer.h \
-		/opt/ros/indigo/include/ros/timer_options.h \
-		/opt/ros/indigo/include/ros/wall_timer.h \
-		/opt/ros/indigo/include/ros/wall_timer_options.h \
-		/opt/ros/indigo/include/ros/advertise_options.h \
-		/opt/ros/indigo/include/ros/advertise_service_options.h \
-		/opt/ros/indigo/include/ros/service_callback_helper.h \
-		/opt/ros/indigo/include/ros/subscribe_options.h \
-		/opt/ros/indigo/include/ros/transport_hints.h \
-		/opt/ros/indigo/include/ros/service_client_options.h \
-		/opt/ros/indigo/include/ros/spinner.h \
-		/opt/ros/indigo/include/ros/init.h \
-		/opt/ros/indigo/include/XmlRpcValue.h \
-		/opt/ros/indigo/include/XmlRpcDecl.h \
-		/opt/ros/indigo/include/ros/single_subscriber_publisher.h \
-		/opt/ros/indigo/include/ros/service.h \
-		/opt/ros/indigo/include/ros/names.h \
-		/opt/ros/indigo/include/ros/master.h \
-		/opt/ros/indigo/include/ros/this_node.h \
-		/opt/ros/indigo/include/ros/param.h \
-		/opt/ros/indigo/include/ros/topic.h \
-		../src/IOWrapper/Output3DWrapper.h \
 		../src/IOWrapper/ROS/rosReconfigure.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/server.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/ConfigDescription.h \
-		/opt/ros/indigo/include/ros/message_operations.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/Group.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/ParamDescription.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/Config.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/BoolParameter.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/IntParameter.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/StrParameter.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/DoubleParameter.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/GroupState.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/Reconfigure.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/ReconfigureRequest.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/ReconfigureResponse.h \
-		../cfg/cpp/lsd_slam_core/LSDParamsConfig.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/config_tools.h \
-		/opt/ros/indigo/include/dynamic_reconfigure/config_init_mutex.h \
-		../cfg/cpp/lsd_slam_core/LSDDebugParamsConfig.h \
-		../src/util/Undistorter.h \
-		/opt/ros/indigo/include/ros/package.h
+		../src/util/Undistorter.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main_on_images.o ../src/main_on_images.cpp
 
 SlamSystem.o: ../src/SlamSystem.cpp ../src/SlamSystem.h \
@@ -5708,6 +5286,18 @@ SlamSystem.o: ../src/SlamSystem.cpp ../src/SlamSystem.h \
 		../src/IOWrapper/Output3DWrapper.h \
 		/opt/ros/indigo/include/g2o/core/robust_kernel_impl.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SlamSystem.o ../src/SlamSystem.cpp
+
+KeyFrameDisplay.o: ../src/lsd_slam_viewer/KeyFrameDisplay.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o KeyFrameDisplay.o ../src/lsd_slam_viewer/KeyFrameDisplay.cpp
+
+KeyFrameGraphDisplay.o: ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o KeyFrameGraphDisplay.o ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp
+
+PointCloudViewer.o: ../src/lsd_slam_viewer/PointCloudViewer.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o PointCloudViewer.o ../src/lsd_slam_viewer/PointCloudViewer.cpp
+
+viewerSettings.o: ../src/lsd_slam_viewer/viewerSettings.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o viewerSettings.o ../src/lsd_slam_viewer/viewerSettings.cpp
 
 ####### Install
 

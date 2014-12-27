@@ -46,6 +46,12 @@
 
 #include "opencv2/opencv.hpp"
 
+
+/*
+ * All drawing is handled from this class
+ * publishXXX() functions are called to publish things to ROS
+ */
+
 using namespace lsd_slam;
 
 
