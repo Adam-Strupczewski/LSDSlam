@@ -69,6 +69,8 @@ void displayThreadLoop()
 					openWindows.insert(displayQueue.back().name);
 				}
 			}
+
+            // ASDISPLAY
             cv::imshow(displayQueue.back().name, displayQueue.back().img);
             // AS - added bellow
             cv::waitKey(5);
@@ -112,6 +114,7 @@ void displayImage(const char* windowName, const cv::Mat& image, bool autoSize)
 				openWindows.insert(windowName);
 			}
 		}
+        // ASDISPLAY
         cv::imshow(windowName, image);
         // AS - added 3 lines below
         //cv::waitKey(5);
