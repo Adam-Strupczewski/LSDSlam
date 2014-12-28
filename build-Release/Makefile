@@ -12,13 +12,13 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_NO_DEBUG -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 CXXFLAGS      = -pipe -O2 -std=c++0x -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-INCPATH       = -I/opt/Qt_532/5.3/gcc_64/mkspecs/linux-g++ -I../lsd_slam_core_qt -I/usr/include/eigen3 -I/usr/include/suitesparse -I/usr/include/boost -I/usr/include/QGLViewer -I/usr/local/include/opencv -I/opt/ros/indigo/include -I../src -I../cfg/cpp -I../thirdparty/Sophus -I/opt/Qt_532/5.3/gcc_64/include -I/opt/Qt_532/5.3/gcc_64/include/QtGui -I/opt/Qt_532/5.3/gcc_64/include/QtCore -I. -I.
+INCPATH       = -I/opt/Qt_532/5.3/gcc_64/mkspecs/linux-g++ -I../lsd_slam_core_qt -I/usr/include/eigen3 -I/usr/include/suitesparse -I/usr/include/boost -I../thirdparty/QGLViewerQT5 -I/usr/local/include/opencv -I/opt/ros/indigo/include -I../src -I../cfg/cpp -I../thirdparty/Sophus -I/opt/Qt_532/5.3/gcc_64/include -I/opt/Qt_532/5.3/gcc_64/include/QtOpenGL -I/opt/Qt_532/5.3/gcc_64/include/QtWidgets -I/opt/Qt_532/5.3/gcc_64/include/QtXml -I/opt/Qt_532/5.3/gcc_64/include/QtGui -I/opt/Qt_532/5.3/gcc_64/include/QtCore -I. -I.
 LINK          = g++
 LFLAGS        = -Wl,-O1 -Wl,-rpath,/opt/Qt_532/5.3/gcc_64 -Wl,-rpath,/opt/Qt_532/5.3/gcc_64/lib
-LIBS          = $(SUBLIBS) -lboost_system -lboost_thread -lboost_filesystem -lboost_iostreams -L/usr/local/lib -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy -lopencv_flann -L/opt/ros/indigo/lib -lg2o_core -lg2o_stuff -lg2o_solver_csparse -lg2o_csparse_extension -lg2o_types_sim3 -lg2o_types_sba -lcsparse -lcxsparse -L/usr/lib -lQGLViewer -L/opt/Qt_532/5.3/gcc_64/lib -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -lboost_system -lboost_thread -lboost_filesystem -lboost_iostreams -L/usr/lib/x86_64-linux-gnu -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy -lopencv_flann -L/opt/ros/indigo/lib -lg2o_core -lg2o_stuff -lg2o_solver_csparse -lg2o_csparse_extension -lg2o_types_sim3 -lg2o_types_sba -lcsparse -lcxsparse -L../thirdparty/QGLViewerQT5 -lQGLViewer -L/opt/Qt_532/5.3/gcc_64/lib -lQt5OpenGL -lQt5Widgets -lQt5Xml -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /opt/Qt_532/5.3/gcc_64/bin/qmake
@@ -208,6 +208,7 @@ DIST          = /opt/Qt_532/5.3/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/resources.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/moc.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/unix/opengl.prf \
+		/opt/Qt_532/5.3/gcc_64/mkspecs/features/uic.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/unix/thread.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/testcase_targets.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/exceptions.prf \
@@ -378,15 +379,18 @@ Makefile: ../lsd_slam_core_qt/lsd_slam_core_qt.pro /opt/Qt_532/5.3/gcc_64/mkspec
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/resources.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/moc.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/unix/opengl.prf \
+		/opt/Qt_532/5.3/gcc_64/mkspecs/features/uic.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/unix/thread.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/testcase_targets.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/exceptions.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/yacc.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/features/lex.prf \
 		../lsd_slam_core_qt/lsd_slam_core_qt.pro \
-		/usr/lib/libQGLViewer.prl \
+		/opt/Qt_532/5.3/gcc_64/lib/libQt5OpenGL.prl \
+		/opt/Qt_532/5.3/gcc_64/lib/libQt5Widgets.prl \
 		/opt/Qt_532/5.3/gcc_64/lib/libQt5Gui.prl \
-		/opt/Qt_532/5.3/gcc_64/lib/libQt5Core.prl
+		/opt/Qt_532/5.3/gcc_64/lib/libQt5Core.prl \
+		/opt/Qt_532/5.3/gcc_64/lib/libQt5Xml.prl
 	$(QMAKE) -spec linux-g++ -o Makefile ../lsd_slam_core_qt/lsd_slam_core_qt.pro
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/spec_pre.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/common/shell-unix.conf:
@@ -491,15 +495,18 @@ Makefile: ../lsd_slam_core_qt/lsd_slam_core_qt.pro /opt/Qt_532/5.3/gcc_64/mkspec
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/resources.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/moc.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/unix/opengl.prf:
+/opt/Qt_532/5.3/gcc_64/mkspecs/features/uic.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/unix/thread.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/testcase_targets.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/exceptions.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/yacc.prf:
 /opt/Qt_532/5.3/gcc_64/mkspecs/features/lex.prf:
 ../lsd_slam_core_qt/lsd_slam_core_qt.pro:
-/usr/lib/libQGLViewer.prl:
+/opt/Qt_532/5.3/gcc_64/lib/libQt5OpenGL.prl:
+/opt/Qt_532/5.3/gcc_64/lib/libQt5Widgets.prl:
 /opt/Qt_532/5.3/gcc_64/lib/libQt5Gui.prl:
 /opt/Qt_532/5.3/gcc_64/lib/libQt5Core.prl:
+/opt/Qt_532/5.3/gcc_64/lib/libQt5Xml.prl:
 qmake: FORCE
 	@$(QMAKE) -spec linux-g++ -o Makefile ../lsd_slam_core_qt/lsd_slam_core_qt.pro
 
@@ -534,6 +541,8 @@ compiler_moc_header_make_all:
 compiler_moc_header_clean:
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
+compiler_uic_make_all:
+compiler_uic_clean:
 compiler_yacc_decl_make_all:
 compiler_yacc_decl_clean:
 compiler_yacc_impl_make_all:
@@ -5287,16 +5296,799 @@ SlamSystem.o: ../src/SlamSystem.cpp ../src/SlamSystem.h \
 		/opt/ros/indigo/include/g2o/core/robust_kernel_impl.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o SlamSystem.o ../src/SlamSystem.cpp
 
-KeyFrameDisplay.o: ../src/lsd_slam_viewer/KeyFrameDisplay.cpp 
+KeyFrameDisplay.o: ../src/lsd_slam_viewer/KeyFrameDisplay.cpp ../src/lsd_slam_viewer/KeyFrameDisplay.h \
+		/usr/include/eigen3/Eigen/Core \
+		/usr/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h \
+		/usr/include/eigen3/Eigen/src/Core/util/Macros.h \
+		/usr/include/eigen3/Eigen/src/Core/util/MKL_support.h \
+		/usr/include/eigen3/Eigen/src/Core/util/Constants.h \
+		/usr/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h \
+		/usr/include/eigen3/Eigen/src/Core/util/Meta.h \
+		/usr/include/eigen3/Eigen/src/Core/util/StaticAssert.h \
+		/usr/include/eigen3/Eigen/src/Core/util/XprHelper.h \
+		/usr/include/eigen3/Eigen/src/Core/util/Memory.h \
+		/usr/include/eigen3/Eigen/src/Core/NumTraits.h \
+		/usr/include/eigen3/Eigen/src/Core/MathFunctions.h \
+		/usr/include/eigen3/Eigen/src/Core/GenericPacketMath.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/AltiVec/Complex.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/Default/Settings.h \
+		/usr/include/eigen3/Eigen/src/Core/Functors.h \
+		/usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h \
+		/usr/include/eigen3/Eigen/src/Core/DenseBase.h \
+		/usr/include/eigen3/Eigen/src/plugins/BlockMethods.h \
+		/usr/include/eigen3/Eigen/src/Core/MatrixBase.h \
+		/usr/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h \
+		/usr/include/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h \
+		/usr/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h \
+		/usr/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h \
+		/usr/include/eigen3/Eigen/src/Core/EigenBase.h \
+		/usr/include/eigen3/Eigen/src/Core/Assign.h \
+		/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h \
+		/usr/include/eigen3/Eigen/src/Core/DenseStorage.h \
+		/usr/include/eigen3/Eigen/src/Core/NestByValue.h \
+		/usr/include/eigen3/Eigen/src/Core/ForceAlignedAccess.h \
+		/usr/include/eigen3/Eigen/src/Core/ReturnByValue.h \
+		/usr/include/eigen3/Eigen/src/Core/NoAlias.h \
+		/usr/include/eigen3/Eigen/src/Core/PlainObjectBase.h \
+		/usr/include/eigen3/Eigen/src/Core/Matrix.h \
+		/usr/include/eigen3/Eigen/src/Core/Array.h \
+		/usr/include/eigen3/Eigen/src/Core/CwiseBinaryOp.h \
+		/usr/include/eigen3/Eigen/src/Core/CwiseUnaryOp.h \
+		/usr/include/eigen3/Eigen/src/Core/CwiseNullaryOp.h \
+		/usr/include/eigen3/Eigen/src/Core/CwiseUnaryView.h \
+		/usr/include/eigen3/Eigen/src/Core/SelfCwiseBinaryOp.h \
+		/usr/include/eigen3/Eigen/src/Core/Dot.h \
+		/usr/include/eigen3/Eigen/src/Core/StableNorm.h \
+		/usr/include/eigen3/Eigen/src/Core/MapBase.h \
+		/usr/include/eigen3/Eigen/src/Core/Stride.h \
+		/usr/include/eigen3/Eigen/src/Core/Map.h \
+		/usr/include/eigen3/Eigen/src/Core/Block.h \
+		/usr/include/eigen3/Eigen/src/Core/VectorBlock.h \
+		/usr/include/eigen3/Eigen/src/Core/Ref.h \
+		/usr/include/eigen3/Eigen/src/Core/Transpose.h \
+		/usr/include/eigen3/Eigen/src/Core/DiagonalMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/Diagonal.h \
+		/usr/include/eigen3/Eigen/src/Core/DiagonalProduct.h \
+		/usr/include/eigen3/Eigen/src/Core/PermutationMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/Transpositions.h \
+		/usr/include/eigen3/Eigen/src/Core/Redux.h \
+		/usr/include/eigen3/Eigen/src/Core/Visitor.h \
+		/usr/include/eigen3/Eigen/src/Core/Fuzzy.h \
+		/usr/include/eigen3/Eigen/src/Core/IO.h \
+		/usr/include/eigen3/Eigen/src/Core/Swap.h \
+		/usr/include/eigen3/Eigen/src/Core/CommaInitializer.h \
+		/usr/include/eigen3/Eigen/src/Core/Flagged.h \
+		/usr/include/eigen3/Eigen/src/Core/ProductBase.h \
+		/usr/include/eigen3/Eigen/src/Core/GeneralProduct.h \
+		/usr/include/eigen3/Eigen/src/Core/TriangularMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/SelfAdjointView.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralBlockPanelKernel.h \
+		/usr/include/eigen3/Eigen/src/Core/products/Parallelizer.h \
+		/usr/include/eigen3/Eigen/src/Core/products/CoeffBasedProduct.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixVector.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/SolveTriangular.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixVector.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointProduct.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointRank2Update.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixVector.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverVector.h \
+		/usr/include/eigen3/Eigen/src/Core/BandMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/CoreIterators.h \
+		/usr/include/eigen3/Eigen/src/Core/BooleanRedux.h \
+		/usr/include/eigen3/Eigen/src/Core/Select.h \
+		/usr/include/eigen3/Eigen/src/Core/VectorwiseOp.h \
+		/usr/include/eigen3/Eigen/src/Core/Random.h \
+		/usr/include/eigen3/Eigen/src/Core/Replicate.h \
+		/usr/include/eigen3/Eigen/src/Core/Reverse.h \
+		/usr/include/eigen3/Eigen/src/Core/ArrayBase.h \
+		/usr/include/eigen3/Eigen/src/plugins/ArrayCwiseUnaryOps.h \
+		/usr/include/eigen3/Eigen/src/plugins/ArrayCwiseBinaryOps.h \
+		/usr/include/eigen3/Eigen/src/Core/ArrayWrapper.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrix_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixVector_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixMatrix_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixVector_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixMatrix_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixVector_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/Assign_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/GlobalFunctions.h \
+		/usr/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h \
+		/usr/include/eigen3/Eigen/Eigen2Support \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Macros.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Memory.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Meta.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Lazy.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Cwise.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/CwiseOperators.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/TriangularSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Block.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/VectorBlock.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Minor.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/MathFunctions.h \
+		../src/lsd_slam_viewer/keyframeMsg.h \
+		/opt/ros/indigo/include/ros/serialization.h \
+		/opt/ros/indigo/include/ros/roscpp_serialization_macros.h \
+		/opt/ros/indigo/include/ros/macros.h \
+		/opt/ros/indigo/include/ros/types.h \
+		/opt/ros/indigo/include/ros/time.h \
+		/opt/ros/indigo/include/ros/platform.h \
+		/opt/ros/indigo/include/ros/exception.h \
+		/opt/ros/indigo/include/ros/duration.h \
+		/opt/ros/indigo/include/ros/rostime_decl.h \
+		/opt/ros/indigo/include/ros/serialized_message.h \
+		/opt/ros/indigo/include/ros/message_traits.h \
+		/opt/ros/indigo/include/ros/message_forward.h \
+		/opt/ros/indigo/include/ros/builtin_message_traits.h \
+		/opt/ros/indigo/include/ros/datatypes.h \
+		/opt/ros/indigo/include/ros/message_operations.h \
+		/opt/ros/indigo/include/ros/assert.h \
+		/opt/ros/indigo/include/ros/console.h \
+		/opt/ros/indigo/include/ros/console_backend.h \
+		/opt/ros/indigo/include/rosconsole/macros_generated.h \
+		/opt/ros/indigo/include/ros/static_assert.h \
+		../thirdparty/Sophus/sophus/sim3.hpp \
+		../thirdparty/Sophus/sophus/rxso3.hpp \
+		../thirdparty/Sophus/sophus/sophus.hpp \
+		/usr/include/eigen3/Eigen/Eigen \
+		/usr/include/eigen3/Eigen/Dense \
+		/usr/include/eigen3/Eigen/LU \
+		/usr/include/eigen3/Eigen/src/misc/Solve.h \
+		/usr/include/eigen3/Eigen/src/misc/Kernel.h \
+		/usr/include/eigen3/Eigen/src/misc/Image.h \
+		/usr/include/eigen3/Eigen/src/LU/FullPivLU.h \
+		/usr/include/eigen3/Eigen/src/LU/PartialPivLU.h \
+		/usr/include/eigen3/Eigen/src/LU/PartialPivLU_MKL.h \
+		/usr/include/eigen3/Eigen/src/LU/Determinant.h \
+		/usr/include/eigen3/Eigen/src/LU/Inverse.h \
+		/usr/include/eigen3/Eigen/src/LU/arch/Inverse_SSE.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/LU.h \
+		/usr/include/eigen3/Eigen/Cholesky \
+		/usr/include/eigen3/Eigen/src/Cholesky/LLT.h \
+		/usr/include/eigen3/Eigen/src/Cholesky/LDLT.h \
+		/usr/include/eigen3/Eigen/src/Cholesky/LLT_MKL.h \
+		/usr/include/eigen3/Eigen/QR \
+		/usr/include/eigen3/Eigen/Jacobi \
+		/usr/include/eigen3/Eigen/src/Jacobi/Jacobi.h \
+		/usr/include/eigen3/Eigen/Householder \
+		/usr/include/eigen3/Eigen/src/Householder/Householder.h \
+		/usr/include/eigen3/Eigen/src/Householder/HouseholderSequence.h \
+		/usr/include/eigen3/Eigen/src/Householder/BlockHouseholder.h \
+		/usr/include/eigen3/Eigen/src/QR/HouseholderQR.h \
+		/usr/include/eigen3/Eigen/src/QR/FullPivHouseholderQR.h \
+		/usr/include/eigen3/Eigen/src/QR/ColPivHouseholderQR.h \
+		/usr/include/eigen3/Eigen/src/QR/HouseholderQR_MKL.h \
+		/usr/include/eigen3/Eigen/src/QR/ColPivHouseholderQR_MKL.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/QR.h \
+		/usr/include/eigen3/Eigen/Eigenvalues \
+		/usr/include/eigen3/Eigen/Geometry \
+		/usr/include/eigen3/Eigen/SVD \
+		/usr/include/eigen3/Eigen/src/SVD/JacobiSVD.h \
+		/usr/include/eigen3/Eigen/src/SVD/JacobiSVD_MKL.h \
+		/usr/include/eigen3/Eigen/src/SVD/UpperBidiagonalization.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/SVD.h \
+		/usr/include/eigen3/Eigen/src/Geometry/OrthoMethods.h \
+		/usr/include/eigen3/Eigen/src/Geometry/EulerAngles.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Homogeneous.h \
+		/usr/include/eigen3/Eigen/src/Geometry/RotationBase.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Rotation2D.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Quaternion.h \
+		/usr/include/eigen3/Eigen/src/Geometry/AngleAxis.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Transform.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Translation.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Scaling.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Hyperplane.h \
+		/usr/include/eigen3/Eigen/src/Geometry/ParametrizedLine.h \
+		/usr/include/eigen3/Eigen/src/Geometry/AlignedBox.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Umeyama.h \
+		/usr/include/eigen3/Eigen/src/Geometry/arch/Geometry_SSE.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/All.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/RotationBase.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Rotation2D.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Quaternion.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/AngleAxis.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Transform.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Translation.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Scaling.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/AlignedBox.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Hyperplane.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/ParametrizedLine.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/Tridiagonalization.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/RealSchur.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/EigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexSchur.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexEigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/RealQZ.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/RealSchur_MKL.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexSchur_MKL.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_MKL.h \
+		../thirdparty/Sophus/sophus/so3.hpp \
+		../src/lsd_slam_viewer/viewerSettings.h \
+		/opt/ros/indigo/include/ros/package.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o KeyFrameDisplay.o ../src/lsd_slam_viewer/KeyFrameDisplay.cpp
 
-KeyFrameGraphDisplay.o: ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp 
+KeyFrameGraphDisplay.o: ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp ../src/lsd_slam_viewer/KeyFrameGraphDisplay.h \
+		../src/lsd_slam_viewer/keyframeGraphMsg.h \
+		/opt/ros/indigo/include/ros/serialization.h \
+		/opt/ros/indigo/include/ros/roscpp_serialization_macros.h \
+		/opt/ros/indigo/include/ros/macros.h \
+		/opt/ros/indigo/include/ros/types.h \
+		/opt/ros/indigo/include/ros/time.h \
+		/opt/ros/indigo/include/ros/platform.h \
+		/opt/ros/indigo/include/ros/exception.h \
+		/opt/ros/indigo/include/ros/duration.h \
+		/opt/ros/indigo/include/ros/rostime_decl.h \
+		/opt/ros/indigo/include/ros/serialized_message.h \
+		/opt/ros/indigo/include/ros/message_traits.h \
+		/opt/ros/indigo/include/ros/message_forward.h \
+		/opt/ros/indigo/include/ros/builtin_message_traits.h \
+		/opt/ros/indigo/include/ros/datatypes.h \
+		/opt/ros/indigo/include/ros/message_operations.h \
+		/opt/ros/indigo/include/ros/assert.h \
+		/opt/ros/indigo/include/ros/console.h \
+		/opt/ros/indigo/include/ros/console_backend.h \
+		/opt/ros/indigo/include/rosconsole/macros_generated.h \
+		/opt/ros/indigo/include/ros/static_assert.h \
+		../src/lsd_slam_viewer/keyframeMsg.h \
+		../src/lsd_slam_viewer/KeyFrameDisplay.h \
+		/usr/include/eigen3/Eigen/Core \
+		/usr/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h \
+		/usr/include/eigen3/Eigen/src/Core/util/Macros.h \
+		/usr/include/eigen3/Eigen/src/Core/util/MKL_support.h \
+		/usr/include/eigen3/Eigen/src/Core/util/Constants.h \
+		/usr/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h \
+		/usr/include/eigen3/Eigen/src/Core/util/Meta.h \
+		/usr/include/eigen3/Eigen/src/Core/util/StaticAssert.h \
+		/usr/include/eigen3/Eigen/src/Core/util/XprHelper.h \
+		/usr/include/eigen3/Eigen/src/Core/util/Memory.h \
+		/usr/include/eigen3/Eigen/src/Core/NumTraits.h \
+		/usr/include/eigen3/Eigen/src/Core/MathFunctions.h \
+		/usr/include/eigen3/Eigen/src/Core/GenericPacketMath.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/AltiVec/Complex.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/Default/Settings.h \
+		/usr/include/eigen3/Eigen/src/Core/Functors.h \
+		/usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h \
+		/usr/include/eigen3/Eigen/src/Core/DenseBase.h \
+		/usr/include/eigen3/Eigen/src/plugins/BlockMethods.h \
+		/usr/include/eigen3/Eigen/src/Core/MatrixBase.h \
+		/usr/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h \
+		/usr/include/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h \
+		/usr/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h \
+		/usr/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h \
+		/usr/include/eigen3/Eigen/src/Core/EigenBase.h \
+		/usr/include/eigen3/Eigen/src/Core/Assign.h \
+		/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h \
+		/usr/include/eigen3/Eigen/src/Core/DenseStorage.h \
+		/usr/include/eigen3/Eigen/src/Core/NestByValue.h \
+		/usr/include/eigen3/Eigen/src/Core/ForceAlignedAccess.h \
+		/usr/include/eigen3/Eigen/src/Core/ReturnByValue.h \
+		/usr/include/eigen3/Eigen/src/Core/NoAlias.h \
+		/usr/include/eigen3/Eigen/src/Core/PlainObjectBase.h \
+		/usr/include/eigen3/Eigen/src/Core/Matrix.h \
+		/usr/include/eigen3/Eigen/src/Core/Array.h \
+		/usr/include/eigen3/Eigen/src/Core/CwiseBinaryOp.h \
+		/usr/include/eigen3/Eigen/src/Core/CwiseUnaryOp.h \
+		/usr/include/eigen3/Eigen/src/Core/CwiseNullaryOp.h \
+		/usr/include/eigen3/Eigen/src/Core/CwiseUnaryView.h \
+		/usr/include/eigen3/Eigen/src/Core/SelfCwiseBinaryOp.h \
+		/usr/include/eigen3/Eigen/src/Core/Dot.h \
+		/usr/include/eigen3/Eigen/src/Core/StableNorm.h \
+		/usr/include/eigen3/Eigen/src/Core/MapBase.h \
+		/usr/include/eigen3/Eigen/src/Core/Stride.h \
+		/usr/include/eigen3/Eigen/src/Core/Map.h \
+		/usr/include/eigen3/Eigen/src/Core/Block.h \
+		/usr/include/eigen3/Eigen/src/Core/VectorBlock.h \
+		/usr/include/eigen3/Eigen/src/Core/Ref.h \
+		/usr/include/eigen3/Eigen/src/Core/Transpose.h \
+		/usr/include/eigen3/Eigen/src/Core/DiagonalMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/Diagonal.h \
+		/usr/include/eigen3/Eigen/src/Core/DiagonalProduct.h \
+		/usr/include/eigen3/Eigen/src/Core/PermutationMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/Transpositions.h \
+		/usr/include/eigen3/Eigen/src/Core/Redux.h \
+		/usr/include/eigen3/Eigen/src/Core/Visitor.h \
+		/usr/include/eigen3/Eigen/src/Core/Fuzzy.h \
+		/usr/include/eigen3/Eigen/src/Core/IO.h \
+		/usr/include/eigen3/Eigen/src/Core/Swap.h \
+		/usr/include/eigen3/Eigen/src/Core/CommaInitializer.h \
+		/usr/include/eigen3/Eigen/src/Core/Flagged.h \
+		/usr/include/eigen3/Eigen/src/Core/ProductBase.h \
+		/usr/include/eigen3/Eigen/src/Core/GeneralProduct.h \
+		/usr/include/eigen3/Eigen/src/Core/TriangularMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/SelfAdjointView.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralBlockPanelKernel.h \
+		/usr/include/eigen3/Eigen/src/Core/products/Parallelizer.h \
+		/usr/include/eigen3/Eigen/src/Core/products/CoeffBasedProduct.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixVector.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/SolveTriangular.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixVector.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointProduct.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointRank2Update.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixVector.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverVector.h \
+		/usr/include/eigen3/Eigen/src/Core/BandMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/CoreIterators.h \
+		/usr/include/eigen3/Eigen/src/Core/BooleanRedux.h \
+		/usr/include/eigen3/Eigen/src/Core/Select.h \
+		/usr/include/eigen3/Eigen/src/Core/VectorwiseOp.h \
+		/usr/include/eigen3/Eigen/src/Core/Random.h \
+		/usr/include/eigen3/Eigen/src/Core/Replicate.h \
+		/usr/include/eigen3/Eigen/src/Core/Reverse.h \
+		/usr/include/eigen3/Eigen/src/Core/ArrayBase.h \
+		/usr/include/eigen3/Eigen/src/plugins/ArrayCwiseUnaryOps.h \
+		/usr/include/eigen3/Eigen/src/plugins/ArrayCwiseBinaryOps.h \
+		/usr/include/eigen3/Eigen/src/Core/ArrayWrapper.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrix_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixVector_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixMatrix_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixVector_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixMatrix_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixVector_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/Assign_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/GlobalFunctions.h \
+		/usr/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h \
+		/usr/include/eigen3/Eigen/Eigen2Support \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Macros.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Memory.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Meta.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Lazy.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Cwise.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/CwiseOperators.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/TriangularSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Block.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/VectorBlock.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Minor.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/MathFunctions.h \
+		../thirdparty/Sophus/sophus/sim3.hpp \
+		../thirdparty/Sophus/sophus/rxso3.hpp \
+		../thirdparty/Sophus/sophus/sophus.hpp \
+		/usr/include/eigen3/Eigen/Eigen \
+		/usr/include/eigen3/Eigen/Dense \
+		/usr/include/eigen3/Eigen/LU \
+		/usr/include/eigen3/Eigen/src/misc/Solve.h \
+		/usr/include/eigen3/Eigen/src/misc/Kernel.h \
+		/usr/include/eigen3/Eigen/src/misc/Image.h \
+		/usr/include/eigen3/Eigen/src/LU/FullPivLU.h \
+		/usr/include/eigen3/Eigen/src/LU/PartialPivLU.h \
+		/usr/include/eigen3/Eigen/src/LU/PartialPivLU_MKL.h \
+		/usr/include/eigen3/Eigen/src/LU/Determinant.h \
+		/usr/include/eigen3/Eigen/src/LU/Inverse.h \
+		/usr/include/eigen3/Eigen/src/LU/arch/Inverse_SSE.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/LU.h \
+		/usr/include/eigen3/Eigen/Cholesky \
+		/usr/include/eigen3/Eigen/src/Cholesky/LLT.h \
+		/usr/include/eigen3/Eigen/src/Cholesky/LDLT.h \
+		/usr/include/eigen3/Eigen/src/Cholesky/LLT_MKL.h \
+		/usr/include/eigen3/Eigen/QR \
+		/usr/include/eigen3/Eigen/Jacobi \
+		/usr/include/eigen3/Eigen/src/Jacobi/Jacobi.h \
+		/usr/include/eigen3/Eigen/Householder \
+		/usr/include/eigen3/Eigen/src/Householder/Householder.h \
+		/usr/include/eigen3/Eigen/src/Householder/HouseholderSequence.h \
+		/usr/include/eigen3/Eigen/src/Householder/BlockHouseholder.h \
+		/usr/include/eigen3/Eigen/src/QR/HouseholderQR.h \
+		/usr/include/eigen3/Eigen/src/QR/FullPivHouseholderQR.h \
+		/usr/include/eigen3/Eigen/src/QR/ColPivHouseholderQR.h \
+		/usr/include/eigen3/Eigen/src/QR/HouseholderQR_MKL.h \
+		/usr/include/eigen3/Eigen/src/QR/ColPivHouseholderQR_MKL.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/QR.h \
+		/usr/include/eigen3/Eigen/Eigenvalues \
+		/usr/include/eigen3/Eigen/Geometry \
+		/usr/include/eigen3/Eigen/SVD \
+		/usr/include/eigen3/Eigen/src/SVD/JacobiSVD.h \
+		/usr/include/eigen3/Eigen/src/SVD/JacobiSVD_MKL.h \
+		/usr/include/eigen3/Eigen/src/SVD/UpperBidiagonalization.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/SVD.h \
+		/usr/include/eigen3/Eigen/src/Geometry/OrthoMethods.h \
+		/usr/include/eigen3/Eigen/src/Geometry/EulerAngles.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Homogeneous.h \
+		/usr/include/eigen3/Eigen/src/Geometry/RotationBase.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Rotation2D.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Quaternion.h \
+		/usr/include/eigen3/Eigen/src/Geometry/AngleAxis.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Transform.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Translation.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Scaling.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Hyperplane.h \
+		/usr/include/eigen3/Eigen/src/Geometry/ParametrizedLine.h \
+		/usr/include/eigen3/Eigen/src/Geometry/AlignedBox.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Umeyama.h \
+		/usr/include/eigen3/Eigen/src/Geometry/arch/Geometry_SSE.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/All.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/RotationBase.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Rotation2D.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Quaternion.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/AngleAxis.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Transform.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Translation.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Scaling.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/AlignedBox.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Hyperplane.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/ParametrizedLine.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/Tridiagonalization.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/RealSchur.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/EigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexSchur.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexEigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/RealQZ.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/RealSchur_MKL.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexSchur_MKL.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_MKL.h \
+		../thirdparty/Sophus/sophus/so3.hpp \
+		../src/lsd_slam_viewer/viewerSettings.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o KeyFrameGraphDisplay.o ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp
 
-PointCloudViewer.o: ../src/lsd_slam_viewer/PointCloudViewer.cpp 
+PointCloudViewer.o: ../src/lsd_slam_viewer/PointCloudViewer.cpp ../src/lsd_slam_viewer/PointCloudViewer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qevent.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobal.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qconfig.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfeatures.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtypetraits.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlogging.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qflags.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_msvc.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_armv7.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_armv6.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_armv5.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_ia64.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_mips.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_x86.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_gcc.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_unix.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmutex.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnumeric.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnamespace.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstring.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qchar.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbytearray.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrefcount.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qarraydata.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlist.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qiterator.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmetatype.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qisenum.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsize.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatastream.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qiodevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvariant.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdebug.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtextstream.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlocale.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qset.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringlist.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurlquery.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfile.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfiledevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qvector2d.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtouchdevice.h \
+		../src/lsd_slam_viewer/keyframeMsg.h \
+		/opt/ros/indigo/include/ros/serialization.h \
+		/opt/ros/indigo/include/ros/roscpp_serialization_macros.h \
+		/opt/ros/indigo/include/ros/macros.h \
+		/opt/ros/indigo/include/ros/types.h \
+		/opt/ros/indigo/include/ros/time.h \
+		/opt/ros/indigo/include/ros/platform.h \
+		/opt/ros/indigo/include/ros/exception.h \
+		/opt/ros/indigo/include/ros/duration.h \
+		/opt/ros/indigo/include/ros/rostime_decl.h \
+		/opt/ros/indigo/include/ros/serialized_message.h \
+		/opt/ros/indigo/include/ros/message_traits.h \
+		/opt/ros/indigo/include/ros/message_forward.h \
+		/opt/ros/indigo/include/ros/builtin_message_traits.h \
+		/opt/ros/indigo/include/ros/datatypes.h \
+		/opt/ros/indigo/include/ros/message_operations.h \
+		/opt/ros/indigo/include/ros/assert.h \
+		/opt/ros/indigo/include/ros/console.h \
+		/opt/ros/indigo/include/ros/console_backend.h \
+		/opt/ros/indigo/include/rosconsole/macros_generated.h \
+		/opt/ros/indigo/include/ros/static_assert.h \
+		../src/lsd_slam_viewer/keyframeGraphMsg.h \
+		../src/lsd_slam_viewer/viewerSettings.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qfiledialog.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdir.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfileinfo.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qdialog.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpalette.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qbrush.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qline.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtransform.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfont.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcursor.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcoreapplication.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qeventloop.h \
+		../src/lsd_slam_viewer/KeyFrameDisplay.h \
+		/usr/include/eigen3/Eigen/Core \
+		/usr/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h \
+		/usr/include/eigen3/Eigen/src/Core/util/Macros.h \
+		/usr/include/eigen3/Eigen/src/Core/util/MKL_support.h \
+		/usr/include/eigen3/Eigen/src/Core/util/Constants.h \
+		/usr/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h \
+		/usr/include/eigen3/Eigen/src/Core/util/Meta.h \
+		/usr/include/eigen3/Eigen/src/Core/util/StaticAssert.h \
+		/usr/include/eigen3/Eigen/src/Core/util/XprHelper.h \
+		/usr/include/eigen3/Eigen/src/Core/util/Memory.h \
+		/usr/include/eigen3/Eigen/src/Core/NumTraits.h \
+		/usr/include/eigen3/Eigen/src/Core/MathFunctions.h \
+		/usr/include/eigen3/Eigen/src/Core/GenericPacketMath.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/AltiVec/Complex.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h \
+		/usr/include/eigen3/Eigen/src/Core/arch/Default/Settings.h \
+		/usr/include/eigen3/Eigen/src/Core/Functors.h \
+		/usr/include/eigen3/Eigen/src/Core/DenseCoeffsBase.h \
+		/usr/include/eigen3/Eigen/src/Core/DenseBase.h \
+		/usr/include/eigen3/Eigen/src/plugins/BlockMethods.h \
+		/usr/include/eigen3/Eigen/src/Core/MatrixBase.h \
+		/usr/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h \
+		/usr/include/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h \
+		/usr/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h \
+		/usr/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h \
+		/usr/include/eigen3/Eigen/src/Core/EigenBase.h \
+		/usr/include/eigen3/Eigen/src/Core/Assign.h \
+		/usr/include/eigen3/Eigen/src/Core/util/BlasUtil.h \
+		/usr/include/eigen3/Eigen/src/Core/DenseStorage.h \
+		/usr/include/eigen3/Eigen/src/Core/NestByValue.h \
+		/usr/include/eigen3/Eigen/src/Core/ForceAlignedAccess.h \
+		/usr/include/eigen3/Eigen/src/Core/ReturnByValue.h \
+		/usr/include/eigen3/Eigen/src/Core/NoAlias.h \
+		/usr/include/eigen3/Eigen/src/Core/PlainObjectBase.h \
+		/usr/include/eigen3/Eigen/src/Core/Matrix.h \
+		/usr/include/eigen3/Eigen/src/Core/Array.h \
+		/usr/include/eigen3/Eigen/src/Core/CwiseBinaryOp.h \
+		/usr/include/eigen3/Eigen/src/Core/CwiseUnaryOp.h \
+		/usr/include/eigen3/Eigen/src/Core/CwiseNullaryOp.h \
+		/usr/include/eigen3/Eigen/src/Core/CwiseUnaryView.h \
+		/usr/include/eigen3/Eigen/src/Core/SelfCwiseBinaryOp.h \
+		/usr/include/eigen3/Eigen/src/Core/Dot.h \
+		/usr/include/eigen3/Eigen/src/Core/StableNorm.h \
+		/usr/include/eigen3/Eigen/src/Core/MapBase.h \
+		/usr/include/eigen3/Eigen/src/Core/Stride.h \
+		/usr/include/eigen3/Eigen/src/Core/Map.h \
+		/usr/include/eigen3/Eigen/src/Core/Block.h \
+		/usr/include/eigen3/Eigen/src/Core/VectorBlock.h \
+		/usr/include/eigen3/Eigen/src/Core/Ref.h \
+		/usr/include/eigen3/Eigen/src/Core/Transpose.h \
+		/usr/include/eigen3/Eigen/src/Core/DiagonalMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/Diagonal.h \
+		/usr/include/eigen3/Eigen/src/Core/DiagonalProduct.h \
+		/usr/include/eigen3/Eigen/src/Core/PermutationMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/Transpositions.h \
+		/usr/include/eigen3/Eigen/src/Core/Redux.h \
+		/usr/include/eigen3/Eigen/src/Core/Visitor.h \
+		/usr/include/eigen3/Eigen/src/Core/Fuzzy.h \
+		/usr/include/eigen3/Eigen/src/Core/IO.h \
+		/usr/include/eigen3/Eigen/src/Core/Swap.h \
+		/usr/include/eigen3/Eigen/src/Core/CommaInitializer.h \
+		/usr/include/eigen3/Eigen/src/Core/Flagged.h \
+		/usr/include/eigen3/Eigen/src/Core/ProductBase.h \
+		/usr/include/eigen3/Eigen/src/Core/GeneralProduct.h \
+		/usr/include/eigen3/Eigen/src/Core/TriangularMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/SelfAdjointView.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralBlockPanelKernel.h \
+		/usr/include/eigen3/Eigen/src/Core/products/Parallelizer.h \
+		/usr/include/eigen3/Eigen/src/Core/products/CoeffBasedProduct.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixVector.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/SolveTriangular.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixVector.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointProduct.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointRank2Update.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixVector.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverVector.h \
+		/usr/include/eigen3/Eigen/src/Core/BandMatrix.h \
+		/usr/include/eigen3/Eigen/src/Core/CoreIterators.h \
+		/usr/include/eigen3/Eigen/src/Core/BooleanRedux.h \
+		/usr/include/eigen3/Eigen/src/Core/Select.h \
+		/usr/include/eigen3/Eigen/src/Core/VectorwiseOp.h \
+		/usr/include/eigen3/Eigen/src/Core/Random.h \
+		/usr/include/eigen3/Eigen/src/Core/Replicate.h \
+		/usr/include/eigen3/Eigen/src/Core/Reverse.h \
+		/usr/include/eigen3/Eigen/src/Core/ArrayBase.h \
+		/usr/include/eigen3/Eigen/src/plugins/ArrayCwiseUnaryOps.h \
+		/usr/include/eigen3/Eigen/src/plugins/ArrayCwiseBinaryOps.h \
+		/usr/include/eigen3/Eigen/src/Core/ArrayWrapper.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrix_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixVector_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixMatrix_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/SelfadjointMatrixVector_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixMatrix_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularMatrixVector_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/Assign_MKL.h \
+		/usr/include/eigen3/Eigen/src/Core/GlobalFunctions.h \
+		/usr/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h \
+		/usr/include/eigen3/Eigen/Eigen2Support \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Macros.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Memory.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Meta.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Lazy.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Cwise.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/CwiseOperators.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/TriangularSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Block.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/VectorBlock.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Minor.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/MathFunctions.h \
+		../thirdparty/Sophus/sophus/sim3.hpp \
+		../thirdparty/Sophus/sophus/rxso3.hpp \
+		../thirdparty/Sophus/sophus/sophus.hpp \
+		/usr/include/eigen3/Eigen/Eigen \
+		/usr/include/eigen3/Eigen/Dense \
+		/usr/include/eigen3/Eigen/LU \
+		/usr/include/eigen3/Eigen/src/misc/Solve.h \
+		/usr/include/eigen3/Eigen/src/misc/Kernel.h \
+		/usr/include/eigen3/Eigen/src/misc/Image.h \
+		/usr/include/eigen3/Eigen/src/LU/FullPivLU.h \
+		/usr/include/eigen3/Eigen/src/LU/PartialPivLU.h \
+		/usr/include/eigen3/Eigen/src/LU/PartialPivLU_MKL.h \
+		/usr/include/eigen3/Eigen/src/LU/Determinant.h \
+		/usr/include/eigen3/Eigen/src/LU/Inverse.h \
+		/usr/include/eigen3/Eigen/src/LU/arch/Inverse_SSE.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/LU.h \
+		/usr/include/eigen3/Eigen/Cholesky \
+		/usr/include/eigen3/Eigen/src/Cholesky/LLT.h \
+		/usr/include/eigen3/Eigen/src/Cholesky/LDLT.h \
+		/usr/include/eigen3/Eigen/src/Cholesky/LLT_MKL.h \
+		/usr/include/eigen3/Eigen/QR \
+		/usr/include/eigen3/Eigen/Jacobi \
+		/usr/include/eigen3/Eigen/src/Jacobi/Jacobi.h \
+		/usr/include/eigen3/Eigen/Householder \
+		/usr/include/eigen3/Eigen/src/Householder/Householder.h \
+		/usr/include/eigen3/Eigen/src/Householder/HouseholderSequence.h \
+		/usr/include/eigen3/Eigen/src/Householder/BlockHouseholder.h \
+		/usr/include/eigen3/Eigen/src/QR/HouseholderQR.h \
+		/usr/include/eigen3/Eigen/src/QR/FullPivHouseholderQR.h \
+		/usr/include/eigen3/Eigen/src/QR/ColPivHouseholderQR.h \
+		/usr/include/eigen3/Eigen/src/QR/HouseholderQR_MKL.h \
+		/usr/include/eigen3/Eigen/src/QR/ColPivHouseholderQR_MKL.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/QR.h \
+		/usr/include/eigen3/Eigen/Eigenvalues \
+		/usr/include/eigen3/Eigen/Geometry \
+		/usr/include/eigen3/Eigen/SVD \
+		/usr/include/eigen3/Eigen/src/SVD/JacobiSVD.h \
+		/usr/include/eigen3/Eigen/src/SVD/JacobiSVD_MKL.h \
+		/usr/include/eigen3/Eigen/src/SVD/UpperBidiagonalization.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/SVD.h \
+		/usr/include/eigen3/Eigen/src/Geometry/OrthoMethods.h \
+		/usr/include/eigen3/Eigen/src/Geometry/EulerAngles.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Homogeneous.h \
+		/usr/include/eigen3/Eigen/src/Geometry/RotationBase.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Rotation2D.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Quaternion.h \
+		/usr/include/eigen3/Eigen/src/Geometry/AngleAxis.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Transform.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Translation.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Scaling.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Hyperplane.h \
+		/usr/include/eigen3/Eigen/src/Geometry/ParametrizedLine.h \
+		/usr/include/eigen3/Eigen/src/Geometry/AlignedBox.h \
+		/usr/include/eigen3/Eigen/src/Geometry/Umeyama.h \
+		/usr/include/eigen3/Eigen/src/Geometry/arch/Geometry_SSE.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/All.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/RotationBase.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Rotation2D.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Quaternion.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/AngleAxis.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Transform.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Translation.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Scaling.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/AlignedBox.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/Hyperplane.h \
+		/usr/include/eigen3/Eigen/src/Eigen2Support/Geometry/ParametrizedLine.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/Tridiagonalization.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/RealSchur.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/HessenbergDecomposition.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/EigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexSchur.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexEigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/RealQZ.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/RealSchur_MKL.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/ComplexSchur_MKL.h \
+		/usr/include/eigen3/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_MKL.h \
+		../thirdparty/Sophus/sophus/so3.hpp \
+		../src/lsd_slam_viewer/KeyFrameGraphDisplay.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o PointCloudViewer.o ../src/lsd_slam_viewer/PointCloudViewer.cpp
 
-viewerSettings.o: ../src/lsd_slam_viewer/viewerSettings.cpp 
+viewerSettings.o: ../src/lsd_slam_viewer/viewerSettings.cpp ../src/lsd_slam_viewer/viewerSettings.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o viewerSettings.o ../src/lsd_slam_viewer/viewerSettings.cpp
 
 ####### Install
