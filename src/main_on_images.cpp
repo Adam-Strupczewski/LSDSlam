@@ -38,6 +38,10 @@
 
 #include "opencv2/opencv.hpp"
 
+#include "lsd_slam_viewer/PointCloudViewer.h"
+#include <qapplication.h>
+#include <thread>         // std::thread
+
 std::string &ltrim(std::string &s) {
         s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
         return s;
@@ -123,6 +127,25 @@ int getFile (std::string source, std::vector<std::string> &files)
 
 }
 
+// This qt application and qglviewer stuff needs to be called from a different thread than main loop!
+int initQGLViewer()
+{
+    char *argv[] = {"QGLViewer application", "arg1", "arg2", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    QApplication application(argc, argv);
+
+    PointCloudViewer* viewer = 0;
+
+    // Instantiate the viewer of the scene reconstruction.
+    viewer = new PointCloudViewer();
+    viewer->setWindowTitle("PointCloud Viewer");
+
+    // Make the viewer window visible on screen.
+    viewer->show();
+
+    return application.exec();
+}
 
 using namespace lsd_slam;
 int main( int argc, char** argv )
@@ -220,8 +243,25 @@ int main( int argc, char** argv )
 
 //	ros::Rate r(hz);
 
+    // Create QGLViewer in a separate thread
+    std::thread t1(initQGLViewer);
+    //t1.join();
+
+
+//    QApplication application(argc, argv);
+//    PointCloudViewer* viewer = 0;
+
+//    // Instantiate the viewer of the scene reconstruction.
+//    viewer = new PointCloudViewer();
+//    viewer->setWindowTitle("PointCloud Viewer");
+
+//    // Make the viewer window visible on screen.
+//    viewer->show();
+
 	for(unsigned int i=0;i<files.size();i++)
 	{
+        //application.processEvents();
+
         printf("Processing image %s!\n", files[i].c_str());
 
 		cv::Mat imageDist = cv::imread(files[i], CV_LOAD_IMAGE_GRAYSCALE);
@@ -273,6 +313,7 @@ int main( int argc, char** argv )
 
 //		if(!ros::ok())
 //			break;
+
 	}
 
 

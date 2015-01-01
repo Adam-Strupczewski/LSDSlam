@@ -1,14 +1,21 @@
 TEMPLATE = app
 CONFIG += console
 CONFIG -= app_bundle
-CONFIG -= qt
+#CONFIG -= qt
 
 CONFIG += c++11
+
+QT       += core
+QT       += gui
+QT       += opengl
+QT       += xml
 
 INCLUDEPATH += \
     /usr/include/eigen3/ \
     /usr/include/suitesparse \
     /usr/include/boost \
+    #/usr/include/QGLViewer \
+    ../thirdparty/QGLViewerQT5 \
     /usr/local/include/opencv \
     /opt/ros/indigo/include/ \
     ../src \
@@ -21,7 +28,8 @@ LIBS += \
     -lboost_thread \
     -lboost_filesystem \
     -lboost_iostreams \
-    -L/usr/local/lib \
+#    -L/usr/local/lib \                  # OpenCV 2.4.9 fails with Qt!
+    -L/usr/lib/x86_64-linux-gnu \        # Preinstalled openCV 2.4.8
     -lopencv_core \
     -lopencv_imgproc \
     -lopencv_highgui \
@@ -41,7 +49,10 @@ LIBS += \
     -lg2o_types_sim3 \
     -lg2o_types_sba \
     -lcsparse \
-    -lcxsparse
+    -lcxsparse \
+    #-L/usr/lib \
+    -L../thirdparty/QGLViewerQT5 \
+    -lQGLViewer
 
 SOURCES += \
     ../src/DataStructures/Frame.cpp \
@@ -69,7 +80,11 @@ SOURCES += \
     ../src/LiveSLAMWrapper.cpp \
     ../src/main_live_odometry.cpp \
     ../src/main_on_images.cpp \
-    ../src/SlamSystem.cpp
+    ../src/SlamSystem.cpp \
+    ../src/lsd_slam_viewer/KeyFrameDisplay.cpp \
+    ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp \
+    ../src/lsd_slam_viewer/PointCloudViewer.cpp \
+    ../src/lsd_slam_viewer/viewerSettings.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
@@ -107,5 +122,9 @@ HEADERS += \
     ../src/LiveSLAMWrapper.h \
     ../src/SlamSystem.h \
     ../src/lsd_slam_viewer/keyframeGraphMsg.h \
-    ../src/lsd_slam_viewer/keyframeMsg.h
+    ../src/lsd_slam_viewer/keyframeMsg.h \
+    ../src/lsd_slam_viewer/KeyFrameDisplay.h \
+    ../src/lsd_slam_viewer/KeyFrameGraphDisplay.h \
+    ../src/lsd_slam_viewer/PointCloudViewer.h \
+    ../src/lsd_slam_viewer/viewerSettings.h
 
