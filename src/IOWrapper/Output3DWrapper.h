@@ -23,6 +23,8 @@
 
 #include "util/SophusUtil.h"
 
+#include "lsd_slam_viewer/PointCloudViewer.h"
+
 namespace cv {
 	class Mat;
 }
@@ -45,9 +47,8 @@ class Output3DWrapper
 public:
 	virtual ~Output3DWrapper() {};
 
-
-
-
+    // AS added
+    virtual void setViewer(PointCloudViewer *v){};
 
 	virtual void publishKeyframeGraph(KeyFrameGraph* graph) {};
 

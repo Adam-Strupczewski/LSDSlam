@@ -135,6 +135,32 @@ SlamSystem::SlamSystem(int w, int h, Eigen::Matrix3f K, bool enableSLAM)
 
 }
 
+/*
+// This qt application and qglviewer stuff needs to be called from a different thread than main loop!
+int SlamSystem::initQGLViewer()
+{
+    char *argv[] = {"QGLViewer application", "arg1", "arg2", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    QApplication application(argc, argv);
+
+    // Instantiate the viewer of the scene reconstruction.
+    viewer = new PointCloudViewer();
+    viewer->setWindowTitle("PointCloud Viewer");
+
+    // Make the viewer window visible on screen.
+    viewer->show();
+
+    return application.exec();
+}
+
+void SlamSystem::initVisualization()
+{
+    // Create QGLViewer in a separate thread
+    std::thread t1(&SlamSystem::initQGLViewer, this);
+    t1.join();
+}*/
+
 SlamSystem::~SlamSystem()
 {
 	keepRunning = false;
@@ -1018,6 +1044,7 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 
 		data[6] = tracker->affineEstimation_a;
 		data[7] = tracker->affineEstimation_b;
+        ///////////////////////////////////////////////////////////////////////////////////////////////
 		outputWrapper->publishDebugInfo(data);
 	}
 
@@ -1029,6 +1056,7 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 	if (outputWrapper != 0)
 	{
         // ROS DISPLAY - Here the current frame was sent to ROS...
+        ///////////////////////////////////////////////////////////////////////////////////////////////
 		outputWrapper->publishTrackedFrame(trackingNewFrame.get());
 	}
 

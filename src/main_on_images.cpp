@@ -42,6 +42,8 @@
 #include <qapplication.h>
 #include <thread>         // std::thread
 
+PointCloudViewer* viewer;
+
 std::string &ltrim(std::string &s) {
         s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
         return s;
@@ -135,14 +137,14 @@ int initQGLViewer()
 
     QApplication application(argc, argv);
 
-    PointCloudViewer* viewer = 0;
-
     // Instantiate the viewer of the scene reconstruction.
     viewer = new PointCloudViewer();
     viewer->setWindowTitle("PointCloud Viewer");
 
     // Make the viewer window visible on screen.
     viewer->show();
+
+
 
     return application.exec();
 }
@@ -191,16 +193,26 @@ int main( int argc, char** argv )
 	Sophus::Matrix3f K;
 	K << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0;
 
+    // Create QGLViewer in a separate thread
+    std::thread t1(initQGLViewer);
+    //t1.join();
 
-	// make output wrapper. just set to zero if no output is required.
-    Output3DWrapper* outputWrapper = NULL;// = new ROSOutput3DWrapper(w,h);
+    //system->initVisualization();
 
+    // Wait until PointcloudViewer is created - TODO
+    // ..............................................................
+    usleep(1000000);
 
-	// make slam system
-	SlamSystem* system = new SlamSystem(w, h, K, doSlam);
-	system->setVisualization(outputWrapper);
+    // make output wrapper. just set to zero if no output is required.
+    //Output3DWrapper* outputWrapper = NULL;// = new ROSOutput3DWrapper(w,h);
+    Output3DWrapper* outputWrapper = new ROSOutput3DWrapper(w,h);
 
+    // Set pointcloudviewer pointer in OutputWrapper
+    outputWrapper->setViewer(viewer);
 
+    // make slam system
+    SlamSystem* system = new SlamSystem(w, h, K, doSlam);
+    system->setVisualization(outputWrapper);
 
 	// open image files: first try to open as file.
 	std::string source;
@@ -242,11 +254,6 @@ int main( int argc, char** argv )
     float fakeTimeStamp = 0;
 
 //	ros::Rate r(hz);
-
-    // Create QGLViewer in a separate thread
-    std::thread t1(initQGLViewer);
-    //t1.join();
-
 
 //    QApplication application(argc, argv);
 //    PointCloudViewer* viewer = 0;

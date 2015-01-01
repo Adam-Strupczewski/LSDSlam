@@ -32,7 +32,9 @@
 
 #include "Tracking/Relocalizer.h"
 
-
+#include "lsd_slam_viewer/PointCloudViewer.h"
+#include <qapplication.h>
+//#include <thread>         // std::thread
 
 namespace lsd_slam
 {
@@ -76,7 +78,9 @@ public:
 	void randomInit(uchar* image, double timeStamp, int id);
 	void gtDepthInit(uchar* image, float* depth, double timeStamp, int id);
 
-	
+    // Creates qglviewer window
+//    void initVisualization();
+//    void setViewer(PointCloudViewer *v){this->viewer = v;};
 
 	// tracks a frame.
 	// first frame will return Identity = camToWord.
@@ -120,6 +124,7 @@ public:
 
 private:
 
+    //PointCloudViewer* viewer;
 
 	// ============= EXCLUSIVELY TRACKING THREAD (+ init) ===============
 	TrackingReference* trackingReference; // tracking reference for current keyframe. only used by tracking.
@@ -269,7 +274,7 @@ private:
 
 	void optimizationThreadLoop();
 
-
+//    void initQGLViewer();
 	
 };
 

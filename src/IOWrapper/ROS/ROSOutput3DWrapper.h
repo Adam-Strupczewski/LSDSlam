@@ -19,8 +19,8 @@
 */
 
 #pragma once
-/*
-#include <ros/ros.h>
+
+//#include <ros/ros.h>
 #include "IOWrapper/Output3DWrapper.h"
 
 
@@ -62,6 +62,8 @@ public:
 	ROSOutput3DWrapper(int width, int height);
 	~ROSOutput3DWrapper();
 
+    virtual void setViewer(PointCloudViewer *v){this->viewer = v;};
+
 	virtual void publishKeyframeGraph(KeyFrameGraph* graph);
 
 	// publishes a keyframe. if that frame already existis, it is overwritten, otherwise it is added.
@@ -77,29 +79,31 @@ public:
 
 	virtual void publishDebugInfo(Eigen::Matrix<float, 20, 1> data);
 
-
 	int publishLvl;
 	
 private:
+
+    PointCloudViewer* viewer;
+
 	int width, height;
 
 	std::string liveframe_channel;
-	ros::Publisher liveframe_publisher;
+    //ros::Publisher liveframe_publisher;
 
 	std::string keyframe_channel;
-	ros::Publisher keyframe_publisher;
+    //ros::Publisher keyframe_publisher;
 
 	std::string graph_channel;
-	ros::Publisher graph_publisher;
+    //ros::Publisher graph_publisher;
 
 	std::string debugInfo_channel;
-	ros::Publisher debugInfo_publisher;
+    //ros::Publisher debugInfo_publisher;
 
 
 	std::string pose_channel;
-	ros::Publisher pose_publisher;
+    //ros::Publisher pose_publisher;
 
-	ros::NodeHandle nh_;
+    //ros::NodeHandle nh_;
 };
 }
-*/
+
