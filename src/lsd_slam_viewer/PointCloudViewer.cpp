@@ -118,7 +118,7 @@ void PointCloudViewer::reset()
     animationPlaybackEnabled = false;
 }
 
-void PointCloudViewer::addFrameMsg(lsd_slam_viewer::keyframeMsgConstPtr msg)
+void PointCloudViewer::addFrameMsg(lsd_slam_viewer::keyframeMsg * msg)
 {
     meddleMutex.lock();
 
@@ -139,7 +139,7 @@ void PointCloudViewer::addFrameMsg(lsd_slam_viewer::keyframeMsgConstPtr msg)
     meddleMutex.unlock();
 }
 
-void PointCloudViewer::addGraphMsg(lsd_slam_viewer::keyframeGraphMsgConstPtr msg)
+void PointCloudViewer::addGraphMsg(lsd_slam_viewer::keyframeGraphMsg/*ConstPtr*/ * msg)
 {
     meddleMutex.lock();
 

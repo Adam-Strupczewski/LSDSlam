@@ -144,8 +144,6 @@ int initQGLViewer()
     // Make the viewer window visible on screen.
     viewer->show();
 
-
-
     return application.exec();
 }
 

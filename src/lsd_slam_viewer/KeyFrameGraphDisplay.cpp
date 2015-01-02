@@ -140,7 +140,7 @@ void KeyFrameGraphDisplay::draw()
     dataMutex.unlock();
 }
 
-void KeyFrameGraphDisplay::addMsg(lsd_slam_viewer::keyframeMsgConstPtr msg)
+void KeyFrameGraphDisplay::addMsg(lsd_slam_viewer::keyframeMsg * msg)
 {
     dataMutex.lock();
     if(keyframesByID.count(msg->id) == 0)
@@ -156,7 +156,7 @@ void KeyFrameGraphDisplay::addMsg(lsd_slam_viewer::keyframeMsgConstPtr msg)
     dataMutex.unlock();
 }
 
-void KeyFrameGraphDisplay::addGraphMsg(lsd_slam_viewer::keyframeGraphMsgConstPtr msg)
+void KeyFrameGraphDisplay::addGraphMsg(lsd_slam_viewer::keyframeGraphMsg/*ConstPtr*/ * msg)
 {
     dataMutex.lock();
 

@@ -23,7 +23,6 @@
 //#include <ros/ros.h>
 #include "util/settings.h"
 
-
 #include "std_msgs/Float32MultiArray.h"
 #include "lsd_slam_viewer/keyframeGraphMsg.h"
 #include "lsd_slam_viewer/keyframeMsg.h"
@@ -33,6 +32,9 @@
 #include "sophus/sim3.hpp"
 #include "geometry_msgs/PoseStamped.h"
 #include "GlobalMapping/g2oTypeSim3Sophus.h"
+
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
 
 namespace lsd_slam
 {
@@ -68,8 +70,7 @@ ROSOutput3DWrapper::~ROSOutput3DWrapper()
 
 void ROSOutput3DWrapper::publishKeyframe(Frame* f)
 {
-/*	lsd_slam_viewer::keyframeMsg fMsg;
-
+    lsd_slam_viewer::keyframeMsg fMsg;
 
 	boost::shared_lock<boost::shared_mutex> lock = f->getActiveLock();
 
@@ -107,7 +108,15 @@ void ROSOutput3DWrapper::publishKeyframe(Frame* f)
 		pc[idx].color[3] = color[idx];
 	}
 
-//ASCOMM	keyframe_publisher.publish(fMsg);*/
+    //boost::shared_ptr<lsd_slam_viewer::keyframeMsg const> p =
+    //        boost::shared_ptr<lsd_slam_viewer::keyframeMsg const>(new lsd_slam_viewer::keyframeMsg const());
+
+    //boost::shared_ptr<lsd_slam_viewer::keyframeMsg const> kfm_ptr(boost::make_shared<lsd_slam_viewer::keyframeMsg const>(fMsg));
+    //viewer->addFrameMsg(kfm_ptr);
+
+    viewer->addFrameMsg(&fMsg);
+
+//ASCOMM	keyframe_publisher.publish(fMsg);
 }
 
 void ROSOutput3DWrapper::publishTrackedFrame(Frame* kf)

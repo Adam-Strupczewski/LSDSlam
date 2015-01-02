@@ -62,7 +62,7 @@ KeyFrameDisplay::~KeyFrameDisplay()
 }
 
 
-void KeyFrameDisplay::setFrom(lsd_slam_viewer::keyframeMsgConstPtr msg)
+void KeyFrameDisplay::setFrom(lsd_slam_viewer::keyframeMsg/*ConstPtr*/ * msg)
 {
     // copy over campose.
     memcpy(camToWorld.data(), msg->camToWorld.data(), 7*sizeof(float));
