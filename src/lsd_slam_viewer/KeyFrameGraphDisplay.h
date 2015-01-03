@@ -60,8 +60,8 @@ public:
 
     void draw();
 
-    void addMsg(lsd_slam_viewer::keyframeMsgConstPtr msg);
-    void addGraphMsg(lsd_slam_viewer::keyframeGraphMsgConstPtr msg);
+    void addMsg(lsd_slam_viewer::keyframeMsg/*ConstPtr*/ * msg);
+    void addGraphMsg(lsd_slam_viewer::keyframeGraphMsg/*ConstPtr*/ * msg);
 
 
 

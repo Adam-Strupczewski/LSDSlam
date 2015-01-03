@@ -135,6 +135,32 @@ SlamSystem::SlamSystem(int w, int h, Eigen::Matrix3f K, bool enableSLAM)
 
 }
 
+/*
+// This qt application and qglviewer stuff needs to be called from a different thread than main loop!
+int SlamSystem::initQGLViewer()
+{
+    char *argv[] = {"QGLViewer application", "arg1", "arg2", NULL};
+    int argc = sizeof(argv) / sizeof(char*) - 1;
+
+    QApplication application(argc, argv);
+
+    // Instantiate the viewer of the scene reconstruction.
+    viewer = new PointCloudViewer();
+    viewer->setWindowTitle("PointCloud Viewer");
+
+    // Make the viewer window visible on screen.
+    viewer->show();
+
+    return application.exec();
+}
+
+void SlamSystem::initVisualization()
+{
+    // Create QGLViewer in a separate thread
+    std::thread t1(&SlamSystem::initQGLViewer, this);
+    t1.join();
+}*/
+
 SlamSystem::~SlamSystem()
 {
 	keepRunning = false;
@@ -223,11 +249,11 @@ void SlamSystem::mappingThreadLoop()
 		{
             //printf("AS - No mapping iteration \n");
 			boost::unique_lock<boost::mutex> lock(unmappedTrackedFramesMutex);
-            unmappedTrackedFramesSignal.timed_wait(lock,boost::posix_time::milliseconds(200));	// slight chance of deadlock otherwise
+            unmappedTrackedFramesSignal.timed_wait(lock,boost::posix_time::milliseconds(40));	// slight chance of deadlock otherwise
 			lock.unlock();
 		}
 
-        printf("AS - Done mapping iteration \n");
+        //printf("AS - Done mapping iteration \n");
         //printf("AS - Before lock 1 \n");
         newFrameMappedMutex.lock();
         //printf("AS - In lock 1 \n");
@@ -979,8 +1005,6 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 	tracking_lastGoodPerBad = tracker->lastGoodCount / (tracker->lastGoodCount + tracker->lastBadCount);
 	tracking_lastGoodPerTotal = tracker->lastGoodCount / (trackingNewFrame->width(SE3TRACKING_MIN_LEVEL)*trackingNewFrame->height(SE3TRACKING_MIN_LEVEL));
 
-
-
     // Check if tracking was lost - add frame as unmapped
 	if(manualTrackingLossIndicated || tracker->diverged || (keyFrameGraph->keyframesAll.size() > INITIALIZATION_PHASE_COUNT && !tracker->trackingWasGood))
 	{
@@ -1018,6 +1042,7 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 
 		data[6] = tracker->affineEstimation_a;
 		data[7] = tracker->affineEstimation_b;
+        ///////////////////////////////////////////////////////////////////////////////////////////////
 		outputWrapper->publishDebugInfo(data);
 	}
 
@@ -1029,6 +1054,7 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 	if (outputWrapper != 0)
 	{
         // ROS DISPLAY - Here the current frame was sent to ROS...
+        ///////////////////////////////////////////////////////////////////////////////////////////////
 		outputWrapper->publishTrackedFrame(trackingNewFrame.get());
 	}
 

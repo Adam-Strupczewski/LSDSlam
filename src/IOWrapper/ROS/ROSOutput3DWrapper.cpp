@@ -17,12 +17,11 @@
 * You should have received a copy of the GNU General Public License
 * along with LSD-SLAM. If not, see <http://www.gnu.org/licenses/>.
 */
-/*
+
 #include "ROSOutput3DWrapper.h"
 #include "util/SophusUtil.h"
-#include <ros/ros.h>
+//#include <ros/ros.h>
 #include "util/settings.h"
-
 
 #include "std_msgs/Float32MultiArray.h"
 #include "lsd_slam_viewer/keyframeGraphMsg.h"
@@ -34,6 +33,9 @@
 #include "geometry_msgs/PoseStamped.h"
 #include "GlobalMapping/g2oTypeSim3Sophus.h"
 
+#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
+
 namespace lsd_slam
 {
 
@@ -42,7 +44,7 @@ ROSOutput3DWrapper::ROSOutput3DWrapper(int width, int height)
 {
 	this->width = width;
 	this->height = height;
-
+/*
 	liveframe_channel = nh_.resolveName("lsd_slam/liveframes");
 	liveframe_publisher = nh_.advertise<lsd_slam_viewer::keyframeMsg>(liveframe_channel,1);
 
@@ -56,8 +58,7 @@ ROSOutput3DWrapper::ROSOutput3DWrapper(int width, int height)
 	debugInfo_publisher = nh_.advertise<std_msgs::Float32MultiArray>(debugInfo_channel,1);
 
 	pose_channel = nh_.resolveName("lsd_slam/pose");
-	pose_publisher = nh_.advertise<geometry_msgs::PoseStamped>(pose_channel,1);
-
+    pose_publisher = nh_.advertise<geometry_msgs::PoseStamped>(pose_channel,1);*/
 
 	publishLvl=0;
 }
@@ -69,8 +70,7 @@ ROSOutput3DWrapper::~ROSOutput3DWrapper()
 
 void ROSOutput3DWrapper::publishKeyframe(Frame* f)
 {
-	lsd_slam_viewer::keyframeMsg fMsg;
-
+    lsd_slam_viewer::keyframeMsg fMsg;
 
 	boost::shared_lock<boost::shared_mutex> lock = f->getActiveLock();
 
@@ -108,13 +108,20 @@ void ROSOutput3DWrapper::publishKeyframe(Frame* f)
 		pc[idx].color[3] = color[idx];
 	}
 
-	keyframe_publisher.publish(fMsg);
+    //boost::shared_ptr<lsd_slam_viewer::keyframeMsg const> p =
+    //        boost::shared_ptr<lsd_slam_viewer::keyframeMsg const>(new lsd_slam_viewer::keyframeMsg const());
+
+    //boost::shared_ptr<lsd_slam_viewer::keyframeMsg const> kfm_ptr(boost::make_shared<lsd_slam_viewer::keyframeMsg const>(fMsg));
+    //viewer->addFrameMsg(kfm_ptr);
+
+    viewer->addFrameMsg(&fMsg);
+
+//ASCOMM	keyframe_publisher.publish(fMsg);
 }
 
 void ROSOutput3DWrapper::publishTrackedFrame(Frame* kf)
 {
 	lsd_slam_viewer::keyframeMsg fMsg;
-
 
 	fMsg.id = kf->id();
 	fMsg.time = kf->timestamp();
@@ -131,8 +138,8 @@ void ROSOutput3DWrapper::publishTrackedFrame(Frame* kf)
 
 	fMsg.pointcloud.clear();
 
-	liveframe_publisher.publish(fMsg);
-
+//ASCOMM	liveframe_publisher.publish(fMsg);
+    viewer->addFrameMsg(&fMsg);
 
 	SE3 camToWorld = se3FromSim3(kf->getScaledCamToWorld());
 
@@ -156,13 +163,14 @@ void ROSOutput3DWrapper::publishTrackedFrame(Frame* kf)
 
 	pMsg.header.stamp = ros::Time(kf->timestamp());
 	pMsg.header.frame_id = "world";
-	pose_publisher.publish(pMsg);
+//ASCOMM	pose_publisher.publish(pMsg);*/
+
 }
 
 
 
 void ROSOutput3DWrapper::publishKeyframeGraph(KeyFrameGraph* graph)
-{
+{/*
 	lsd_slam_viewer::keyframeGraphMsg gMsg;
 
 	graph->edgesListsMutex.lock();
@@ -189,7 +197,7 @@ void ROSOutput3DWrapper::publishKeyframeGraph(KeyFrameGraph* graph)
 	}
 	graph->keyframesAllMutex.unlock_shared();
 
-	graph_publisher.publish(gMsg);
+//ASCOMM	graph_publisher.publish(gMsg);*/
 }
 
 void ROSOutput3DWrapper::publishTrajectory(std::vector<Eigen::Matrix<float, 3, 1>> trajectory, std::string identifier)
@@ -203,13 +211,13 @@ void ROSOutput3DWrapper::publishTrajectoryIncrement(Eigen::Matrix<float, 3, 1> p
 }
 
 void ROSOutput3DWrapper::publishDebugInfo(Eigen::Matrix<float, 20, 1> data)
-{
+{/*
 	std_msgs::Float32MultiArray msg;
 	for(int i=0;i<20;i++)
 		msg.data.push_back((float)(data[i]));
 
-	debugInfo_publisher.publish(msg);
+//ASCOMM	debugInfo_publisher.publish(msg);*/
 }
 
 }
-*/
+

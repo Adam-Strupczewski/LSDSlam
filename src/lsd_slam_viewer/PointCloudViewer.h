@@ -39,6 +39,7 @@ class CameraDisplay;
 class KeyFrameDisplay;
 
 #include "viewerSettings.h"
+#include <mutex>
 
 class AnimationObject
 {
@@ -158,8 +159,8 @@ public:
 
     void reset();
 
-    void addFrameMsg(lsd_slam_viewer::keyframeMsgConstPtr msg);
-    void addGraphMsg(lsd_slam_viewer::keyframeGraphMsgConstPtr msg);
+    void addFrameMsg(lsd_slam_viewer::keyframeMsg/*ConstPtr*/ * msg);
+    void addGraphMsg(lsd_slam_viewer::keyframeGraphMsg/*ConstPtr*/ * msg);
 
 
 protected :
@@ -184,6 +185,7 @@ private:
 
     // meddle mutex
     boost::mutex meddleMutex;
+    //std::mutex meddleMutex;
 
 
     void setToVideoSize();

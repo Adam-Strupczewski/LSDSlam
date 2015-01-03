@@ -368,8 +368,10 @@ SE3 SE3Tracker::trackFrame(
 
 
 				// re-evaluate residual
-				callOptimized(calcResidualAndBuffers, (reference->posData[lvl], reference->colorAndVarData[lvl], SE3TRACKING_MIN_LEVEL == lvl ? reference->pointPosInXYGrid[lvl] : 0, reference->numData[lvl], frame, new_referenceToFrame, lvl, (plotTracking && lvl == SE3TRACKING_MIN_LEVEL)));
-				if(buf_warped_size < MIN_GOODPERALL_PIXEL_ABSMIN* (width>>lvl)*(height>>lvl))
+                //callOptimized(calcResidualAndBuffers, (reference->posData[lvl], reference->colorAndVarData[lvl], SE3TRACKING_MIN_LEVEL == lvl ? reference->pointPosInXYGrid[lvl] : 0, reference->numData[lvl], frame, new_referenceToFrame, lvl, (plotTracking && lvl == SE3TRACKING_MIN_LEVEL)));
+
+                calcResidualAndBuffers(reference->posData[lvl], reference->colorAndVarData[lvl], SE3TRACKING_MIN_LEVEL == lvl ? reference->pointPosInXYGrid[lvl] : 0, reference->numData[lvl], frame, new_referenceToFrame, lvl, (plotTracking && lvl == SE3TRACKING_MIN_LEVEL));
+                if(buf_warped_size < MIN_GOODPERALL_PIXEL_ABSMIN* (width>>lvl)*(height>>lvl))
 				{
 					diverged = true;
 					trackingWasGood = false;
@@ -895,6 +897,8 @@ float SE3Tracker::calcResidualAndBuffers(
 		int level,
 		bool plotResidual)
 {
+//    printf("calcResidualAndBuffers start\n");
+
 	calcResidualAndBuffers_debugStart();
 
 	if(plotResidual)
@@ -1015,8 +1019,12 @@ float SE3Tracker::calcResidualAndBuffers(
 
 		}
 	}
-
+//    printf("Set buffer warp size before: %d\n", buf_warped_size);
 	buf_warped_size = idx;
+    if (idx==0){
+        printf("FAILING BECAUSE NEW COORDINATES ARE NOT IN IMAGE");
+    }
+//    printf("Set buffer warp size after: %d\n", buf_warped_size);
 
 	pointUsage = usageCount / (float)refNum;
 	lastGoodCount = goodCount;

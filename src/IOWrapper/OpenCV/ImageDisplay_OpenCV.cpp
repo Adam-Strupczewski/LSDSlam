@@ -58,6 +58,10 @@ void displayThreadLoop()
 		if(!imageThreadKeepRunning)
 			break;
 
+        // ATTENTION
+        // The display with opencv functions cannot be used together with qt display
+        // In this case the processes block each other
+/*
 		while(displayQueue.size() > 0)
 		{
 			if(!displayQueue.back().autoSize)
@@ -76,7 +80,7 @@ void displayThreadLoop()
             cv::waitKey(5);
 
 			displayQueue.pop_back();
-		}
+        }*/
 	}
 	cv::destroyAllWindows();
 	openWindows.clear();
@@ -90,7 +94,7 @@ void makeDisplayThread()
 }
 void displayImage(const char* windowName, const cv::Mat& image, bool autoSize)
 {
-	if(useImageDisplayThread)
+    if(useImageDisplayThread)   //default true
 	{
 		if(imageDisplayThread == 0)
 			makeDisplayThread();

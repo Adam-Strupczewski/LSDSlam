@@ -41,6 +41,12 @@
 #include "lsd_slam_viewer/PointCloudViewer.h"
 #include <qapplication.h>
 #include <thread>         // std::thread
+#include <QFuture>
+#include <QtConcurrent/QtConcurrent>
+
+PointCloudViewer* viewer;
+
+int mainLoopCodeForQtThread();
 
 std::string &ltrim(std::string &s) {
         s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
@@ -135,8 +141,6 @@ int initQGLViewer()
 
     QApplication application(argc, argv);
 
-    PointCloudViewer* viewer = 0;
-
     // Instantiate the viewer of the scene reconstruction.
     viewer = new PointCloudViewer();
     viewer->setWindowTitle("PointCloud Viewer");
@@ -150,6 +154,22 @@ int initQGLViewer()
 using namespace lsd_slam;
 int main( int argc, char** argv )
 {
+
+    QApplication application(argc, argv);
+    setlocale(LC_NUMERIC,"C");
+
+    // Instantiate the viewer of the scene reconstruction.
+    viewer = new PointCloudViewer();
+    viewer->setWindowTitle("PointCloud Viewer");
+
+    // Make the viewer window visible on screen.
+    viewer->show();
+
+    QFuture<void> future = QtConcurrent::run(mainLoopCodeForQtThread);
+    //future.waitForFinished();
+    //return 0;
+    return application.exec();
+/*
 //	ros::init(argc, argv, "LSD_SLAM");
 
 //	dynamic_reconfigure::Server<lsd_slam_core::LSDParamsConfig> srv(ros::NodeHandle("~"));
@@ -191,16 +211,27 @@ int main( int argc, char** argv )
 	Sophus::Matrix3f K;
 	K << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0;
 
+    // Create QGLViewer in a separate thread
+    //std::thread t1(initQGLViewer);
+    //initQGLViewer();
+    //t1.join();
 
-	// make output wrapper. just set to zero if no output is required.
-    Output3DWrapper* outputWrapper = NULL;// = new ROSOutput3DWrapper(w,h);
+    //system->initVisualization();
 
+    // Wait until PointcloudViewer is created - TODO
+    // ..............................................................
+    usleep(1000000);
 
-	// make slam system
-	SlamSystem* system = new SlamSystem(w, h, K, doSlam);
-	system->setVisualization(outputWrapper);
+    // make output wrapper. just set to zero if no output is required.
+    //Output3DWrapper* outputWrapper = NULL;// = new ROSOutput3DWrapper(w,h);
+    Output3DWrapper* outputWrapper = new ROSOutput3DWrapper(w,h);
 
+    // Set pointcloudviewer pointer in OutputWrapper
+    outputWrapper->setViewer(viewer);
 
+    // make slam system
+    SlamSystem* system = new SlamSystem(w, h, K, doSlam);
+    system->setVisualization(outputWrapper);
 
 	// open image files: first try to open as file.
 	std::string source;
@@ -242,11 +273,6 @@ int main( int argc, char** argv )
     float fakeTimeStamp = 0;
 
 //	ros::Rate r(hz);
-
-    // Create QGLViewer in a separate thread
-    std::thread t1(initQGLViewer);
-    //t1.join();
-
 
 //    QApplication application(argc, argv);
 //    PointCloudViewer* viewer = 0;
@@ -316,11 +342,139 @@ int main( int argc, char** argv )
 
 	}
 
-
 	system->finalize();
 
 	delete system;
 	delete undistorter;
 	delete outputWrapper;
-	return 0;
+
+    return 0;*/
+}
+
+int mainLoopCodeForQtThread()
+{
+
+    // get camera calibration in form of an undistorter object.
+    // if no undistortion is required, the undistorter will just pass images through.
+    Undistorter* undistorter = 0;
+
+//	if(ros::param::get("~calib", calibFile))
+//	{
+//		 undistorter = Undistorter::getUndistorterForFile(calibFile.c_str());
+//		 ros::param::del("~calib");
+//	}
+    undistorter = Undistorter::getUndistorterForFile("/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg");
+
+    if(undistorter == 0)
+    {
+        printf("need camera calibration file! (set using _calib:=FILE)\n");
+        exit(0);
+    }
+
+    int w = undistorter->getOutputWidth();
+    int h = undistorter->getOutputHeight();
+
+    int w_inp = undistorter->getInputWidth();
+    int h_inp = undistorter->getInputHeight();
+
+    float fx = undistorter->getK().at<double>(0, 0);
+    float fy = undistorter->getK().at<double>(1, 1);
+    float cx = undistorter->getK().at<double>(2, 0);
+    float cy = undistorter->getK().at<double>(2, 1);
+    Sophus::Matrix3f K;
+    K << fx, 0.0, cx, 0.0, fy, cy, 0.0, 0.0, 1.0;
+
+    // make output wrapper. just set to zero if no output is required.
+    //Output3DWrapper* outputWrapper = NULL;// = new ROSOutput3DWrapper(w,h);
+    Output3DWrapper* outputWrapper = new ROSOutput3DWrapper(w,h);
+
+    // Set pointcloudviewer pointer in OutputWrapper
+    outputWrapper->setViewer(viewer);
+
+    // make slam system
+    SlamSystem* system = new SlamSystem(w, h, K, doSlam);
+    system->setVisualization(outputWrapper);
+
+    // open image files: first try to open as file.
+    std::string source;
+    std::vector<std::string> files;
+
+    source = "/home/adam/dokt_ws/LSD_machine_small/images";
+
+    if(getdir(source, files) >= 0)
+    {
+        printf("found %d image files in folder %s!\n", (int)files.size(), source.c_str());
+    }
+    else if(getFile(source, files) >= 0)
+    {
+        printf("found %d image files in file %s!\n", (int)files.size(), source.c_str());
+    }
+    else
+    {
+        printf("could not load file list! wrong path / file?\n");
+    }
+
+    // get HZ
+    double hz = 0;
+
+    cv::Mat image = cv::Mat(h,w,CV_8U);
+    int runningIDX=0;
+    float fakeTimeStamp = 0;
+
+    for(unsigned int i=0;i<files.size();i++)
+    {
+        //application.processEvents();
+
+        printf("Processing image %s!\n", files[i].c_str());
+
+        cv::Mat imageDist = cv::imread(files[i], CV_LOAD_IMAGE_GRAYSCALE);
+
+        if(imageDist.rows != h_inp || imageDist.cols != w_inp)
+        {
+            if(imageDist.rows * imageDist.cols == 0)
+                printf("failed to load image %s! skipping.\n", files[i].c_str());
+            else
+                printf("image %s has wrong dimensions - expecting %d x %d, found %d x %d. Skipping.\n",
+                        files[i].c_str(),
+                        w,h,imageDist.cols, imageDist.rows);
+            continue;
+        }
+        assert(imageDist.type() == CV_8U);
+
+        undistorter->undistort(imageDist, image);
+        assert(image.type() == CV_8U);
+
+        if(runningIDX == 0)
+            system->randomInit(image.data, fakeTimeStamp, runningIDX);
+        else
+            system->trackFrame(image.data, runningIDX ,hz == 0,fakeTimeStamp);
+        runningIDX++;
+        fakeTimeStamp+=0.03;
+
+        // Is supposed to make the loop run at the desired frequency, sleep occurs for leftover time from cycle
+//		if(hz != 0)
+//			r.sleep();
+
+        if(fullResetRequested)
+        {
+
+            printf("FULL RESET!\n");
+            delete system;
+
+            system = new SlamSystem(w, h, K, doSlam);
+            system->setVisualization(outputWrapper);
+
+            fullResetRequested = false;
+            runningIDX = 0;
+        }
+
+    }
+
+    system->finalize();
+
+    delete system;
+    delete undistorter;
+    delete outputWrapper;
+
+    return 0;
 }

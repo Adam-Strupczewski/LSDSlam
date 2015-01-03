@@ -118,7 +118,7 @@ void PointCloudViewer::reset()
     animationPlaybackEnabled = false;
 }
 
-void PointCloudViewer::addFrameMsg(lsd_slam_viewer::keyframeMsgConstPtr msg)
+void PointCloudViewer::addFrameMsg(lsd_slam_viewer::keyframeMsg * msg)
 {
     meddleMutex.lock();
 
@@ -139,7 +139,7 @@ void PointCloudViewer::addFrameMsg(lsd_slam_viewer::keyframeMsgConstPtr msg)
     meddleMutex.unlock();
 }
 
-void PointCloudViewer::addGraphMsg(lsd_slam_viewer::keyframeGraphMsgConstPtr msg)
+void PointCloudViewer::addGraphMsg(lsd_slam_viewer::keyframeGraphMsg/*ConstPtr*/ * msg)
 {
     meddleMutex.lock();
 
@@ -162,8 +162,29 @@ QString PointCloudViewer::helpString() const
 
 void PointCloudViewer::draw()
 {
-    meddleMutex.lock();
+    // To check if drawing works correctly
+/*    const float nbSteps = 200.0;
 
+    glBegin(GL_QUAD_STRIP);
+    for (int i=0; i<nbSteps; ++i)
+      {
+        const float ratio = i/nbSteps;
+        const float angle = 21.0*ratio;
+        const float c = cos(angle);
+        const float s = sin(angle);
+        const float r1 = 1.0 - 0.8f*ratio;
+        const float r2 = 0.8f - 0.8f*ratio;
+        const float alt = ratio - 0.5f;
+        const float nor = 0.5f;
+        const float up = sqrt(1.0-nor*nor);
+        glColor3f(1.0-ratio, 0.2f , ratio);
+        glNormal3f(nor*c, up, nor*s);
+        glVertex3f(r1*c, alt, r1*s);
+        glVertex3f(r2*c, alt+0.05f, r2*s);
+      }
+    glEnd();*/
+
+    meddleMutex.lock();
 
     if(resetRequested)
     {
@@ -175,61 +196,59 @@ void PointCloudViewer::draw()
     glPushMatrix();
 
     // ASROS
-    /*
-    if(animationPlaybackEnabled)
-    {
-        double tm = ros::Time::now().toSec() - animationPlaybackTime;
+//    if(animationPlaybackEnabled)
+//    {
+//        double tm = ros::Time::now().toSec() - animationPlaybackTime;
 
-        if(tm > kfInt->lastTime())
-        {
-            animationPlaybackEnabled = false;
-            tm = kfInt->lastTime();
-        }
+//        if(tm > kfInt->lastTime())
+//        {
+//            animationPlaybackEnabled = false;
+//            tm = kfInt->lastTime();
+//        }
 
-        if(tm < kfInt->firstTime())
-            tm = kfInt->firstTime();
+//        if(tm < kfInt->firstTime())
+//            tm = kfInt->firstTime();
 
-        printf("anim at %.2f (%.2f to %.2f)\n", tm, kfInt->firstTime(), kfInt->lastTime());
-
-
-        kfInt->interpolateAtTime(tm);
-        camera()->frame()->setFromMatrix(kfInt->frame()-> matrix());
+//        printf("anim at %.2f (%.2f to %.2f)\n", tm, kfInt->firstTime(), kfInt->lastTime());
 
 
-
-        double accTime = 0;
-        for(unsigned int i=0;i<animationList.size();i++)
-        {
-            if(tm >= accTime && tm < accTime+animationList[i].duration && animationList[i].isFix)
-            {
-                camera()->frame()->setFromMatrix(animationList[i].frame.matrix());
-
-                printf("fixFrameto %d at %.2f (%.2f to %.2f)\n", i, tm, kfInt->firstTime(), kfInt->lastTime());
-            }
-
-            accTime += animationList[i].duration;
-        }
+//        kfInt->interpolateAtTime(tm);
+//        camera()->frame()->setFromMatrix(kfInt->frame()-> matrix());
 
 
-        accTime = 0;
-        AnimationObject* lastAnimObj = 0;
-        for(unsigned int i=0;i<animationList.size();i++)
-        {
-            accTime += animationList[i].duration;
-            if(animationList[i].isSettings && accTime <= tm)
-                lastAnimObj = &(animationList[i]);
-        }
-        if(lastAnimObj != 0)
-        {
-            absDepthVarTH = lastAnimObj->absTH;
-            scaledDepthVarTH = lastAnimObj->scaledTH;
-            minNearSupport = lastAnimObj->neighb;
-            sparsifyFactor = lastAnimObj->sparsity;
-            showKFCameras = lastAnimObj->showKeyframes;
-            showConstraints = lastAnimObj->showLoopClosures;
-        }
-    }
-    */
+
+//        double accTime = 0;
+//        for(unsigned int i=0;i<animationList.size();i++)
+//        {
+//            if(tm >= accTime && tm < accTime+animationList[i].duration && animationList[i].isFix)
+//            {
+//                camera()->frame()->setFromMatrix(animationList[i].frame.matrix());
+
+//                printf("fixFrameto %d at %.2f (%.2f to %.2f)\n", i, tm, kfInt->firstTime(), kfInt->lastTime());
+//            }
+
+//            accTime += animationList[i].duration;
+//        }
+
+
+//        accTime = 0;
+//        AnimationObject* lastAnimObj = 0;
+//        for(unsigned int i=0;i<animationList.size();i++)
+//        {
+//            accTime += animationList[i].duration;
+//            if(animationList[i].isSettings && accTime <= tm)
+//                lastAnimObj = &(animationList[i]);
+//        }
+//        if(lastAnimObj != 0)
+//        {
+//            absDepthVarTH = lastAnimObj->absTH;
+//            scaledDepthVarTH = lastAnimObj->scaledTH;
+//            minNearSupport = lastAnimObj->neighb;
+//            sparsifyFactor = lastAnimObj->sparsity;
+//            showKFCameras = lastAnimObj->showKeyframes;
+//            showConstraints = lastAnimObj->showLoopClosures;
+//        }
+//    }
 
     if(showCurrentCamera)
         currentCamDisplay->drawCam(2*lineTesselation, 0);
@@ -247,25 +266,23 @@ void PointCloudViewer::draw()
 
 
     // ASROS
-    /*
-    if(saveAllVideo)
-    {
-        double span = ros::Time::now().toSec() - lastRealSaveTime;
-        if(span > 0.4)
-        {
-            setSnapshotQuality(100);
+//    if(saveAllVideo)
+//    {
+//        double span = ros::Time::now().toSec() - lastRealSaveTime;
+//        if(span > 0.4)
+//        {
+//            setSnapshotQuality(100);
 
-            printf("saved (img %d @ time %lf, saveHZ %f)!\n", lastCamID, lastAnimTime, 1.0/localMsBetweenSaves);
+//            printf("saved (img %d @ time %lf, saveHZ %f)!\n", lastCamID, lastAnimTime, 1.0/localMsBetweenSaves);
 
-            char buf[500];
-            snprintf(buf,500,"%s%lf.png",save_folder.c_str(),  ros::Time::now().toSec());
-            saveSnapshot(QString(buf));
-            lastRealSaveTime = ros::Time::now().toSec();
-        }
+//            char buf[500];
+//            snprintf(buf,500,"%s%lf.png",save_folder.c_str(),  ros::Time::now().toSec());
+//            saveSnapshot(QString(buf));
+//            lastRealSaveTime = ros::Time::now().toSec();
+//        }
 
 
-    }
-    */
+//    }
 }
 
 void PointCloudViewer::keyReleaseEvent(QKeyEvent *e)
