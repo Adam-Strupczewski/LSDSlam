@@ -897,7 +897,7 @@ float SE3Tracker::calcResidualAndBuffers(
 		int level,
 		bool plotResidual)
 {
-    printf("calcResidualAndBuffers start\n");
+//    printf("calcResidualAndBuffers start\n");
 
 	calcResidualAndBuffers_debugStart();
 
@@ -1019,12 +1019,12 @@ float SE3Tracker::calcResidualAndBuffers(
 
 		}
 	}
-    printf("Set buffer warp size before: %d\n", buf_warped_size);
+//    printf("Set buffer warp size before: %d\n", buf_warped_size);
 	buf_warped_size = idx;
     if (idx==0){
-        printf("Set buffer warp size before: %d\n", refNum);
+        printf("FAILING BECAUSE NEW COORDINATES ARE NOT IN IMAGE");
     }
-    printf("Set buffer warp size after: %d\n", buf_warped_size);
+//    printf("Set buffer warp size after: %d\n", buf_warped_size);
 
 	pointUsage = usageCount / (float)refNum;
 	lastGoodCount = goodCount;

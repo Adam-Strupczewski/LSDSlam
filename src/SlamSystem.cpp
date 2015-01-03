@@ -249,11 +249,11 @@ void SlamSystem::mappingThreadLoop()
 		{
             //printf("AS - No mapping iteration \n");
 			boost::unique_lock<boost::mutex> lock(unmappedTrackedFramesMutex);
-            unmappedTrackedFramesSignal.timed_wait(lock,boost::posix_time::milliseconds(400));	// slight chance of deadlock otherwise
+            unmappedTrackedFramesSignal.timed_wait(lock,boost::posix_time::milliseconds(40));	// slight chance of deadlock otherwise
 			lock.unlock();
 		}
 
-        printf("AS - Done mapping iteration \n");
+        //printf("AS - Done mapping iteration \n");
         //printf("AS - Before lock 1 \n");
         newFrameMappedMutex.lock();
         //printf("AS - In lock 1 \n");
