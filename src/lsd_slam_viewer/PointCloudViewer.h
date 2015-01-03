@@ -39,6 +39,7 @@ class CameraDisplay;
 class KeyFrameDisplay;
 
 #include "viewerSettings.h"
+#include <mutex>
 
 class AnimationObject
 {
@@ -184,6 +185,7 @@ private:
 
     // meddle mutex
     boost::mutex meddleMutex;
+    //std::mutex meddleMutex;
 
 
     void setToVideoSize();

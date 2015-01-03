@@ -249,7 +249,7 @@ void SlamSystem::mappingThreadLoop()
 		{
             //printf("AS - No mapping iteration \n");
 			boost::unique_lock<boost::mutex> lock(unmappedTrackedFramesMutex);
-            unmappedTrackedFramesSignal.timed_wait(lock,boost::posix_time::milliseconds(200));	// slight chance of deadlock otherwise
+            unmappedTrackedFramesSignal.timed_wait(lock,boost::posix_time::milliseconds(400));	// slight chance of deadlock otherwise
 			lock.unlock();
 		}
 
@@ -1004,8 +1004,6 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 	tracking_lastUsage = tracker->pointUsage;
 	tracking_lastGoodPerBad = tracker->lastGoodCount / (tracker->lastGoodCount + tracker->lastBadCount);
 	tracking_lastGoodPerTotal = tracker->lastGoodCount / (trackingNewFrame->width(SE3TRACKING_MIN_LEVEL)*trackingNewFrame->height(SE3TRACKING_MIN_LEVEL));
-
-
 
     // Check if tracking was lost - add frame as unmapped
 	if(manualTrackingLossIndicated || tracker->diverged || (keyFrameGraph->keyframesAll.size() > INITIALIZATION_PHASE_COUNT && !tracker->trackingWasGood))

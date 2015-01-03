@@ -120,7 +120,7 @@ void ROSOutput3DWrapper::publishKeyframe(Frame* f)
 }
 
 void ROSOutput3DWrapper::publishTrackedFrame(Frame* kf)
-{/*
+{
 	lsd_slam_viewer::keyframeMsg fMsg;
 
 	fMsg.id = kf->id();
@@ -139,6 +139,7 @@ void ROSOutput3DWrapper::publishTrackedFrame(Frame* kf)
 	fMsg.pointcloud.clear();
 
 //ASCOMM	liveframe_publisher.publish(fMsg);
+    viewer->addFrameMsg(&fMsg);
 
 	SE3 camToWorld = se3FromSim3(kf->getScaledCamToWorld());
 
