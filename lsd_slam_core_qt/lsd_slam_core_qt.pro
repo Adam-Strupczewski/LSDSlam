@@ -85,7 +85,7 @@ SOURCES += \
     ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp \
     ../src/lsd_slam_viewer/PointCloudViewer.cpp \
     ../src/lsd_slam_viewer/viewerSettings.cpp \
-    ../src/lsd_slam_viewer/qgldisplay.cpp
+    ../src/lsd_slam_viewer/QGLDisplay.cpp
 
 include(deployment.pri)
 qtcAddDeployment()

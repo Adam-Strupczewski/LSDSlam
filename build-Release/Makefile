@@ -18,7 +18,7 @@ CXXFLAGS      = -pipe -O2 -std=c++0x -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 INCPATH       = -I/opt/Qt_532/5.3/gcc_64/mkspecs/linux-g++ -I../lsd_slam_core_qt -I/usr/include/eigen3 -I/usr/include/suitesparse -I/usr/include/boost -I../thirdparty/QGLViewerQT5 -I/usr/local/include/opencv -I/opt/ros/indigo/include -I../src -I../cfg/cpp -I../thirdparty/Sophus -I/opt/Qt_532/5.3/gcc_64/include -I/opt/Qt_532/5.3/gcc_64/include/QtOpenGL -I/opt/Qt_532/5.3/gcc_64/include/QtWidgets -I/opt/Qt_532/5.3/gcc_64/include/QtXml -I/opt/Qt_532/5.3/gcc_64/include/QtGui -I/opt/Qt_532/5.3/gcc_64/include/QtCore -I. -I.
 LINK          = g++
 LFLAGS        = -Wl,-O1 -Wl,-rpath,/opt/Qt_532/5.3/gcc_64 -Wl,-rpath,/opt/Qt_532/5.3/gcc_64/lib
-LIBS          = $(SUBLIBS) -lboost_system -lboost_thread -lboost_filesystem -lboost_iostreams -L/usr/lib/x86_64-linux-gnu -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy -lopencv_flann -L/opt/ros/indigo/lib -lg2o_core -lg2o_stuff -lg2o_solver_csparse -lg2o_csparse_extension -lg2o_types_sim3 -lg2o_types_sba -lcsparse -lcxsparse -L../thirdparty/QGLViewerQT5 -lQGLViewer -L/opt/Qt_532/5.3/gcc_64/lib -lQt5OpenGL -lQt5Widgets -lQt5Xml -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -lboost_system -lboost_thread -lboost_filesystem -lboost_iostreams -L/usr/lib/x86_64-linux-gnu -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_ml -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_objdetect -lopencv_contrib -lopencv_legacy -lopencv_flann -L/opt/ros/indigo/lib -lg2o_core -lg2o_stuff -lg2o_solver_csparse -lg2o_csparse_extension -lg2o_types_sim3 -lg2o_types_sba -lcsparse -lcxsparse -L../thirdparty/QGLViewerQT5 -lQGLViewerQT5 -L/opt/Qt_532/5.3/gcc_64/lib -lQt5OpenGL -lQt5Widgets -lQt5Xml -lQt5Gui -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 QMAKE         = /opt/Qt_532/5.3/gcc_64/bin/qmake
@@ -74,7 +74,8 @@ SOURCES       = ../src/DataStructures/Frame.cpp \
 		../src/lsd_slam_viewer/KeyFrameDisplay.cpp \
 		../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp \
 		../src/lsd_slam_viewer/PointCloudViewer.cpp \
-		../src/lsd_slam_viewer/viewerSettings.cpp 
+		../src/lsd_slam_viewer/viewerSettings.cpp \
+		../src/lsd_slam_viewer/QGLDisplay.cpp 
 OBJECTS       = Frame.o \
 		FrameMemory.o \
 		FramePoseStruct.o \
@@ -104,7 +105,8 @@ OBJECTS       = Frame.o \
 		KeyFrameDisplay.o \
 		KeyFrameGraphDisplay.o \
 		PointCloudViewer.o \
-		viewerSettings.o
+		viewerSettings.o \
+		QGLDisplay.o
 DIST          = /opt/Qt_532/5.3/gcc_64/mkspecs/features/spec_pre.prf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/common/shell-unix.conf \
 		/opt/Qt_532/5.3/gcc_64/mkspecs/common/unix.conf \
@@ -243,7 +245,8 @@ DIST          = /opt/Qt_532/5.3/gcc_64/mkspecs/features/spec_pre.prf \
 		../src/lsd_slam_viewer/KeyFrameDisplay.cpp \
 		../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp \
 		../src/lsd_slam_viewer/PointCloudViewer.cpp \
-		../src/lsd_slam_viewer/viewerSettings.cpp
+		../src/lsd_slam_viewer/viewerSettings.cpp \
+		../src/lsd_slam_viewer/QGLDisplay.cpp
 QMAKE_TARGET  = lsd_slam_core_qt
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = lsd_slam_core_qt
@@ -514,7 +517,7 @@ qmake_all: FORCE
 
 dist: 
 	@test -d .tmp/lsd_slam_core_qt1.0.0 || mkdir -p .tmp/lsd_slam_core_qt1.0.0
-	$(COPY_FILE) --parents $(DIST) .tmp/lsd_slam_core_qt1.0.0/ && $(COPY_FILE) --parents ../src/DataStructures/Frame.h ../src/DataStructures/FrameMemory.h ../src/DataStructures/FramePoseStruct.h ../src/DepthEstimation/DepthMap.h ../src/DepthEstimation/DepthMapPixelHypothesis.h ../src/GlobalMapping/FabMap.h ../src/GlobalMapping/g2oTypeSim3Sophus.h ../src/GlobalMapping/KeyFrameGraph.h ../src/GlobalMapping/TrackableKeyFrameSearch.h ../src/IOWrapper/ROS/ROSImageStreamThread.h ../src/IOWrapper/ROS/ROSOutput3DWrapper.h ../src/IOWrapper/ROS/rosReconfigure.h ../src/IOWrapper/ImageDisplay.h ../src/IOWrapper/InputImageStream.h ../src/IOWrapper/NotifyBuffer.h ../src/IOWrapper/Output3DWrapper.h ../src/IOWrapper/Timestamp.h ../src/IOWrapper/TimestampedObject.h ../src/Tracking/least_squares.h ../src/Tracking/Relocalizer.h ../src/Tracking/SE3Tracker.h ../src/Tracking/Sim3Tracker.h ../src/Tracking/TrackingReference.h ../src/util/EigenCoreInclude.h ../src/util/globalFuncs.h ../src/util/IndexThreadReduce.h ../src/util/settings.h ../src/util/SophusUtil.h ../src/util/Undistorter.h ../src/LiveSLAMWrapper.h ../src/SlamSystem.h ../src/lsd_slam_viewer/keyframeGraphMsg.h ../src/lsd_slam_viewer/keyframeMsg.h ../src/lsd_slam_viewer/KeyFrameDisplay.h ../src/lsd_slam_viewer/KeyFrameGraphDisplay.h ../src/lsd_slam_viewer/PointCloudViewer.h ../src/lsd_slam_viewer/viewerSettings.h ../src/lsd_slam_viewer/QGLDisplay.h .tmp/lsd_slam_core_qt1.0.0/ && $(COPY_FILE) --parents ../src/DataStructures/Frame.cpp ../src/DataStructures/FrameMemory.cpp ../src/DataStructures/FramePoseStruct.cpp ../src/DepthEstimation/DepthMap.cpp ../src/DepthEstimation/DepthMapPixelHypothesis.cpp ../src/GlobalMapping/FabMap.cpp ../src/GlobalMapping/g2oTypeSim3Sophus.cpp ../src/GlobalMapping/KeyFrameGraph.cpp ../src/GlobalMapping/TrackableKeyFrameSearch.cpp ../src/IOWrapper/OpenCV/ImageDisplay_OpenCV.cpp ../src/IOWrapper/ROS/ROSImageStreamThread.cpp ../src/IOWrapper/ROS/ROSOutput3DWrapper.cpp ../src/IOWrapper/Timestamp.cpp ../src/Tracking/least_squares.cpp ../src/Tracking/Relocalizer.cpp ../src/Tracking/SE3Tracker.cpp ../src/Tracking/Sim3Tracker.cpp ../src/Tracking/TrackingReference.cpp ../src/util/globalFuncs.cpp ../src/util/settings.cpp ../src/util/SophusUtil.cpp ../src/util/Undistorter.cpp ../src/LiveSLAMWrapper.cpp ../src/main_live_odometry.cpp ../src/main_on_images.cpp ../src/SlamSystem.cpp ../src/lsd_slam_viewer/KeyFrameDisplay.cpp ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp ../src/lsd_slam_viewer/PointCloudViewer.cpp ../src/lsd_slam_viewer/viewerSettings.cpp .tmp/lsd_slam_core_qt1.0.0/ && (cd `dirname .tmp/lsd_slam_core_qt1.0.0` && $(TAR) lsd_slam_core_qt1.0.0.tar lsd_slam_core_qt1.0.0 && $(COMPRESS) lsd_slam_core_qt1.0.0.tar) && $(MOVE) `dirname .tmp/lsd_slam_core_qt1.0.0`/lsd_slam_core_qt1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/lsd_slam_core_qt1.0.0
+	$(COPY_FILE) --parents $(DIST) .tmp/lsd_slam_core_qt1.0.0/ && $(COPY_FILE) --parents ../src/DataStructures/Frame.h ../src/DataStructures/FrameMemory.h ../src/DataStructures/FramePoseStruct.h ../src/DepthEstimation/DepthMap.h ../src/DepthEstimation/DepthMapPixelHypothesis.h ../src/GlobalMapping/FabMap.h ../src/GlobalMapping/g2oTypeSim3Sophus.h ../src/GlobalMapping/KeyFrameGraph.h ../src/GlobalMapping/TrackableKeyFrameSearch.h ../src/IOWrapper/ROS/ROSImageStreamThread.h ../src/IOWrapper/ROS/ROSOutput3DWrapper.h ../src/IOWrapper/ROS/rosReconfigure.h ../src/IOWrapper/ImageDisplay.h ../src/IOWrapper/InputImageStream.h ../src/IOWrapper/NotifyBuffer.h ../src/IOWrapper/Output3DWrapper.h ../src/IOWrapper/Timestamp.h ../src/IOWrapper/TimestampedObject.h ../src/Tracking/least_squares.h ../src/Tracking/Relocalizer.h ../src/Tracking/SE3Tracker.h ../src/Tracking/Sim3Tracker.h ../src/Tracking/TrackingReference.h ../src/util/EigenCoreInclude.h ../src/util/globalFuncs.h ../src/util/IndexThreadReduce.h ../src/util/settings.h ../src/util/SophusUtil.h ../src/util/Undistorter.h ../src/LiveSLAMWrapper.h ../src/SlamSystem.h ../src/lsd_slam_viewer/keyframeGraphMsg.h ../src/lsd_slam_viewer/keyframeMsg.h ../src/lsd_slam_viewer/KeyFrameDisplay.h ../src/lsd_slam_viewer/KeyFrameGraphDisplay.h ../src/lsd_slam_viewer/PointCloudViewer.h ../src/lsd_slam_viewer/viewerSettings.h ../src/lsd_slam_viewer/QGLDisplay.h .tmp/lsd_slam_core_qt1.0.0/ && $(COPY_FILE) --parents ../src/DataStructures/Frame.cpp ../src/DataStructures/FrameMemory.cpp ../src/DataStructures/FramePoseStruct.cpp ../src/DepthEstimation/DepthMap.cpp ../src/DepthEstimation/DepthMapPixelHypothesis.cpp ../src/GlobalMapping/FabMap.cpp ../src/GlobalMapping/g2oTypeSim3Sophus.cpp ../src/GlobalMapping/KeyFrameGraph.cpp ../src/GlobalMapping/TrackableKeyFrameSearch.cpp ../src/IOWrapper/OpenCV/ImageDisplay_OpenCV.cpp ../src/IOWrapper/ROS/ROSImageStreamThread.cpp ../src/IOWrapper/ROS/ROSOutput3DWrapper.cpp ../src/IOWrapper/Timestamp.cpp ../src/Tracking/least_squares.cpp ../src/Tracking/Relocalizer.cpp ../src/Tracking/SE3Tracker.cpp ../src/Tracking/Sim3Tracker.cpp ../src/Tracking/TrackingReference.cpp ../src/util/globalFuncs.cpp ../src/util/settings.cpp ../src/util/SophusUtil.cpp ../src/util/Undistorter.cpp ../src/LiveSLAMWrapper.cpp ../src/main_live_odometry.cpp ../src/main_on_images.cpp ../src/SlamSystem.cpp ../src/lsd_slam_viewer/KeyFrameDisplay.cpp ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp ../src/lsd_slam_viewer/PointCloudViewer.cpp ../src/lsd_slam_viewer/viewerSettings.cpp ../src/lsd_slam_viewer/QGLDisplay.cpp .tmp/lsd_slam_core_qt1.0.0/ && (cd `dirname .tmp/lsd_slam_core_qt1.0.0` && $(TAR) lsd_slam_core_qt1.0.0.tar lsd_slam_core_qt1.0.0 && $(COMPRESS) lsd_slam_core_qt1.0.0.tar) && $(MOVE) `dirname .tmp/lsd_slam_core_qt1.0.0`/lsd_slam_core_qt1.0.0.tar.gz . && $(DEL_FILE) -r .tmp/lsd_slam_core_qt1.0.0
 
 
 clean:compiler_clean 
@@ -3127,8 +3130,13 @@ ROSOutput3DWrapper.o: ../src/IOWrapper/ROS/ROSOutput3DWrapper.cpp ../src/IOWrapp
 		../thirdparty/Sophus/sophus/so3.hpp \
 		../thirdparty/Sophus/sophus/se3.hpp \
 		../src/lsd_slam_viewer/PointCloudViewer.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qevent.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs.h \
+		../thirdparty/QGLViewerQT5/qglviewer.h \
+		../thirdparty/QGLViewerQT5/camera.h \
+		../thirdparty/QGLViewerQT5/keyFrameInterpolator.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QObject \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnamespace.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobal.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qconfig.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfeatures.h \
@@ -3157,11 +3165,7 @@ ROSOutput3DWrapper.o: ../src/IOWrapper/ROS/ROSOutput3DWrapper.cpp ../src/IOWrapp
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobalstatic.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmutex.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnumeric.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnamespace.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs_win.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstring.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qchar.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbytearray.h \
@@ -3178,34 +3182,90 @@ ROSOutput3DWrapper.o: ../src/IOWrapper/ROS/ROSOutput3DWrapper.cpp ../src/IOWrapp
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontainerfwd.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qisenum.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qregion.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QTimer \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtimer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbasictimer.h \
+		../thirdparty/QGLViewerQT5/quaternion.h \
+		../thirdparty/QGLViewerQT5/vec.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/QDomElement \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/qdom.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/qtxmlglobal.h \
+		../thirdparty/QGLViewerQT5/config.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/QGLWidget \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qgl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopengl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qt_windows.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopengles2ext.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopenglext.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs_win.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrect.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsize.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpalette.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringlist.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatastream.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qiodevice.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qbrush.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qline.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtransform.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfont.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcursor.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qevent.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvariant.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmap.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdebug.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qhash.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtextstream.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlocale.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qshareddata.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvector.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qset.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontiguouscache.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringlist.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qregexp.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringmatcher.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurl.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurlquery.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfile.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfiledevice.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qvector2d.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintengine.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainter.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qglcolormap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qtopenglglobal.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QSurfaceFormat \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qsurfaceformat.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QList \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QVector \
+		../thirdparty/QGLViewerQT5/frame.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QString \
+		../thirdparty/QGLViewerQT5/constraint.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QMap \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QClipboard \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qclipboard.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QTime \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatetime.h \
 		../src/lsd_slam_viewer/keyframeMsg.h \
 		/opt/ros/indigo/include/ros/serialization.h \
 		/opt/ros/indigo/include/ros/roscpp_serialization_macros.h \
@@ -3229,6 +3289,11 @@ ROSOutput3DWrapper.o: ../src/IOWrapper/ROS/ROSOutput3DWrapper.cpp ../src/IOWrapp
 		/opt/ros/indigo/include/ros/static_assert.h \
 		../src/lsd_slam_viewer/keyframeGraphMsg.h \
 		../src/lsd_slam_viewer/viewerSettings.h \
+		../src/lsd_slam_viewer/QGLDisplay.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/QWidget \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QImage \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QPainter \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QPaintEvent \
 		../src/util/settings.h \
 		/opt/ros/indigo/include/std_msgs/Float32MultiArray.h \
 		/opt/ros/indigo/include/std_msgs/MultiArrayLayout.h \
@@ -5275,8 +5340,13 @@ LiveSLAMWrapper.o: ../src/LiveSLAMWrapper.cpp ../src/LiveSLAMWrapper.h \
 		../src/util/settings.h \
 		../src/Tracking/Relocalizer.h \
 		../src/lsd_slam_viewer/PointCloudViewer.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qevent.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs.h \
+		../thirdparty/QGLViewerQT5/qglviewer.h \
+		../thirdparty/QGLViewerQT5/camera.h \
+		../thirdparty/QGLViewerQT5/keyFrameInterpolator.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QObject \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnamespace.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobal.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qconfig.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfeatures.h \
@@ -5305,11 +5375,7 @@ LiveSLAMWrapper.o: ../src/LiveSLAMWrapper.cpp ../src/LiveSLAMWrapper.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobalstatic.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmutex.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnumeric.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnamespace.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs_win.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstring.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qchar.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbytearray.h \
@@ -5326,34 +5392,90 @@ LiveSLAMWrapper.o: ../src/LiveSLAMWrapper.cpp ../src/LiveSLAMWrapper.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontainerfwd.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qisenum.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qregion.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QTimer \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtimer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbasictimer.h \
+		../thirdparty/QGLViewerQT5/quaternion.h \
+		../thirdparty/QGLViewerQT5/vec.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/QDomElement \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/qdom.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/qtxmlglobal.h \
+		../thirdparty/QGLViewerQT5/config.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/QGLWidget \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qgl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopengl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qt_windows.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopengles2ext.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopenglext.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs_win.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrect.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsize.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpalette.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringlist.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatastream.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qiodevice.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qbrush.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qline.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtransform.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfont.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcursor.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qevent.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvariant.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmap.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdebug.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qhash.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtextstream.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlocale.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qshareddata.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvector.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qset.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontiguouscache.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringlist.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qregexp.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringmatcher.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurl.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurlquery.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfile.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfiledevice.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qvector2d.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintengine.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainter.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qglcolormap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qtopenglglobal.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QSurfaceFormat \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qsurfaceformat.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QList \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QVector \
+		../thirdparty/QGLViewerQT5/frame.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QString \
+		../thirdparty/QGLViewerQT5/constraint.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QMap \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QClipboard \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qclipboard.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QTime \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatetime.h \
 		../src/lsd_slam_viewer/keyframeMsg.h \
 		/opt/ros/indigo/include/ros/serialization.h \
 		/opt/ros/indigo/include/ros/roscpp_serialization_macros.h \
@@ -5380,27 +5502,7 @@ LiveSLAMWrapper.o: ../src/LiveSLAMWrapper.cpp ../src/LiveSLAMWrapper.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qapplication.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcoreapplication.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qeventloop.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcursor.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qdesktopwidget.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qwidget.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintdevice.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpalette.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcolor.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qrgb.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qbrush.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qmatrix.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpolygon.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qline.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtransform.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainterpath.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qimage.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpixmap.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfont.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontmetrics.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontinfo.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qsizepolicy.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qguiapplication.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qinputmethod.h \
 		../src/IOWrapper/ImageDisplay.h \
@@ -5625,8 +5727,13 @@ main_on_images.o: ../src/main_on_images.cpp ../src/LiveSLAMWrapper.h \
 		../src/SlamSystem.h \
 		../src/Tracking/Relocalizer.h \
 		../src/lsd_slam_viewer/PointCloudViewer.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qevent.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs.h \
+		../thirdparty/QGLViewerQT5/qglviewer.h \
+		../thirdparty/QGLViewerQT5/camera.h \
+		../thirdparty/QGLViewerQT5/keyFrameInterpolator.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QObject \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnamespace.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobal.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qconfig.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfeatures.h \
@@ -5655,11 +5762,7 @@ main_on_images.o: ../src/main_on_images.cpp ../src/LiveSLAMWrapper.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobalstatic.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmutex.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnumeric.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnamespace.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs_win.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstring.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qchar.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbytearray.h \
@@ -5676,34 +5779,90 @@ main_on_images.o: ../src/main_on_images.cpp ../src/LiveSLAMWrapper.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontainerfwd.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qisenum.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qregion.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QTimer \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtimer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbasictimer.h \
+		../thirdparty/QGLViewerQT5/quaternion.h \
+		../thirdparty/QGLViewerQT5/vec.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/QDomElement \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/qdom.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/qtxmlglobal.h \
+		../thirdparty/QGLViewerQT5/config.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/QGLWidget \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qgl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopengl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qt_windows.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopengles2ext.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopenglext.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs_win.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrect.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsize.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpalette.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringlist.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatastream.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qiodevice.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qbrush.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qline.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtransform.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfont.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcursor.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qevent.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvariant.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmap.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdebug.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qhash.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtextstream.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlocale.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qshareddata.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvector.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qset.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontiguouscache.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringlist.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qregexp.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringmatcher.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurl.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurlquery.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfile.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfiledevice.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qvector2d.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintengine.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainter.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qglcolormap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qtopenglglobal.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QSurfaceFormat \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qsurfaceformat.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QList \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QVector \
+		../thirdparty/QGLViewerQT5/frame.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QString \
+		../thirdparty/QGLViewerQT5/constraint.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QMap \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QClipboard \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qclipboard.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QTime \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatetime.h \
 		../src/lsd_slam_viewer/keyframeMsg.h \
 		/opt/ros/indigo/include/ros/serialization.h \
 		/opt/ros/indigo/include/ros/roscpp_serialization_macros.h \
@@ -5730,31 +5889,16 @@ main_on_images.o: ../src/main_on_images.cpp ../src/LiveSLAMWrapper.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qapplication.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcoreapplication.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qeventloop.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcursor.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qdesktopwidget.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qwidget.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintdevice.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpalette.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcolor.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qrgb.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qbrush.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qmatrix.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpolygon.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qline.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtransform.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainterpath.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qimage.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpixmap.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfont.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontmetrics.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontinfo.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qsizepolicy.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qguiapplication.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qinputmethod.h \
 		../src/IOWrapper/ROS/ROSOutput3DWrapper.h \
 		../src/IOWrapper/Output3DWrapper.h \
+		../src/lsd_slam_viewer/QGLDisplay.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/QWidget \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QImage \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QPainter \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QPaintEvent \
 		../src/IOWrapper/ROS/rosReconfigure.h \
 		../src/util/Undistorter.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/QFuture \
@@ -5778,13 +5922,11 @@ main_on_images.o: ../src/main_on_images.cpp ../src/LiveSLAMWrapper.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtextcodec.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qendian.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlibraryinfo.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatetime.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbuffer.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdir.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfileinfo.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdiriterator.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfileselector.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/QObject \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/QStringList \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfilesystemwatcher.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlockfile.h \
@@ -5809,7 +5951,6 @@ main_on_images.o: ../src/main_on_images.cpp ../src/LiveSLAMWrapper.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qjsonobject.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qabstracteventdispatcher.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qabstractnativeeventfilter.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbasictimer.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmath.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmetaobject.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmimedata.h \
@@ -5819,7 +5960,6 @@ main_on_images.o: ../src/main_on_images.cpp ../src/LiveSLAMWrapper.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsignalmapper.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsocketnotifier.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsystemsemaphore.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtimer.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtranslator.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qwineventnotifier.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmimedatabase.h \
@@ -5881,20 +6021,7 @@ main_on_images.o: ../src/main_on_images.cpp ../src/LiveSLAMWrapper.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtConcurrent/qtconcurrentrun.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtConcurrent/qtconcurrentrunbase.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtConcurrent/qtconcurrentstoredfunctioncall.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtConcurrent/qtconcurrentversion.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/QGraphicsView \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qgraphicsview.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainter.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtextoption.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpen.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qscrollarea.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qabstractscrollarea.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qframe.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qgraphicsscene.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/QGraphicsScene \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/QPixmap \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/QGraphicsPixmapItem \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qgraphicsitem.h
+		/opt/Qt_532/5.3/gcc_64/include/QtConcurrent/qtconcurrentversion.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main_on_images.o ../src/main_on_images.cpp
 
 SlamSystem.o: ../src/SlamSystem.cpp ../src/SlamSystem.h \
@@ -6106,8 +6233,13 @@ SlamSystem.o: ../src/SlamSystem.cpp ../src/SlamSystem.h \
 		../thirdparty/Sophus/sophus/se3.hpp \
 		../src/Tracking/Relocalizer.h \
 		../src/lsd_slam_viewer/PointCloudViewer.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qevent.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs.h \
+		../thirdparty/QGLViewerQT5/qglviewer.h \
+		../thirdparty/QGLViewerQT5/camera.h \
+		../thirdparty/QGLViewerQT5/keyFrameInterpolator.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QObject \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnamespace.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobal.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qconfig.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfeatures.h \
@@ -6136,11 +6268,7 @@ SlamSystem.o: ../src/SlamSystem.cpp ../src/SlamSystem.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobalstatic.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmutex.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnumeric.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnamespace.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs_win.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstring.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qchar.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbytearray.h \
@@ -6157,34 +6285,90 @@ SlamSystem.o: ../src/SlamSystem.cpp ../src/SlamSystem.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontainerfwd.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qisenum.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qregion.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QTimer \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtimer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbasictimer.h \
+		../thirdparty/QGLViewerQT5/quaternion.h \
+		../thirdparty/QGLViewerQT5/vec.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/QDomElement \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/qdom.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/qtxmlglobal.h \
+		../thirdparty/QGLViewerQT5/config.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/QGLWidget \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qgl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopengl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qt_windows.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopengles2ext.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopenglext.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs_win.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrect.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsize.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpalette.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringlist.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatastream.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qiodevice.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qbrush.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qline.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtransform.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfont.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcursor.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qevent.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvariant.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmap.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdebug.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qhash.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtextstream.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlocale.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qshareddata.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvector.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qset.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontiguouscache.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringlist.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qregexp.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringmatcher.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurl.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurlquery.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfile.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfiledevice.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qvector2d.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintengine.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainter.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qglcolormap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qtopenglglobal.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QSurfaceFormat \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qsurfaceformat.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QList \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QVector \
+		../thirdparty/QGLViewerQT5/frame.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QString \
+		../thirdparty/QGLViewerQT5/constraint.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QMap \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QClipboard \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qclipboard.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QTime \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatetime.h \
 		../src/lsd_slam_viewer/keyframeMsg.h \
 		/opt/ros/indigo/include/ros/serialization.h \
 		/opt/ros/indigo/include/ros/roscpp_serialization_macros.h \
@@ -6211,27 +6395,7 @@ SlamSystem.o: ../src/SlamSystem.cpp ../src/SlamSystem.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qapplication.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcoreapplication.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qeventloop.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcursor.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qdesktopwidget.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qwidget.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintdevice.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpalette.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcolor.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qrgb.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qbrush.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qmatrix.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpolygon.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qline.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtransform.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainterpath.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qimage.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpixmap.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfont.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontmetrics.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontinfo.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qsizepolicy.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qguiapplication.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qinputmethod.h \
 		../src/DataStructures/Frame.h \
@@ -6752,8 +6916,13 @@ KeyFrameGraphDisplay.o: ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp ../src/l
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o KeyFrameGraphDisplay.o ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp
 
 PointCloudViewer.o: ../src/lsd_slam_viewer/PointCloudViewer.cpp ../src/lsd_slam_viewer/PointCloudViewer.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qevent.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs.h \
+		../thirdparty/QGLViewerQT5/qglviewer.h \
+		../thirdparty/QGLViewerQT5/camera.h \
+		../thirdparty/QGLViewerQT5/keyFrameInterpolator.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QObject \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnamespace.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobal.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qconfig.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfeatures.h \
@@ -6782,11 +6951,7 @@ PointCloudViewer.o: ../src/lsd_slam_viewer/PointCloudViewer.cpp ../src/lsd_slam_
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobalstatic.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmutex.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnumeric.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnamespace.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs_win.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstring.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qchar.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbytearray.h \
@@ -6803,34 +6968,90 @@ PointCloudViewer.o: ../src/lsd_slam_viewer/PointCloudViewer.cpp ../src/lsd_slam_
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontainerfwd.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qisenum.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qregion.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QTimer \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtimer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbasictimer.h \
+		../thirdparty/QGLViewerQT5/quaternion.h \
+		../thirdparty/QGLViewerQT5/vec.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/QDomElement \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/qdom.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtXml/qtxmlglobal.h \
+		../thirdparty/QGLViewerQT5/config.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/QGLWidget \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qgl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopengl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qt_windows.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopengles2ext.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopenglext.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs_win.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrect.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsize.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpalette.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringlist.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatastream.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qiodevice.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qbrush.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qline.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtransform.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfont.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcursor.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qevent.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvariant.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmap.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdebug.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qhash.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtextstream.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlocale.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qshareddata.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvector.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qset.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontiguouscache.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringlist.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qregexp.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringmatcher.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurl.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurlquery.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfile.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfiledevice.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qvector2d.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintengine.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainter.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qglcolormap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qtopenglglobal.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QSurfaceFormat \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qsurfaceformat.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QList \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QVector \
+		../thirdparty/QGLViewerQT5/frame.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QString \
+		../thirdparty/QGLViewerQT5/constraint.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QMap \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QClipboard \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qclipboard.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QTime \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatetime.h \
 		../src/lsd_slam_viewer/keyframeMsg.h \
 		/opt/ros/indigo/include/ros/serialization.h \
 		/opt/ros/indigo/include/ros/roscpp_serialization_macros.h \
@@ -6858,28 +7079,13 @@ PointCloudViewer.o: ../src/lsd_slam_viewer/PointCloudViewer.cpp ../src/lsd_slam_
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdir.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfileinfo.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qdialog.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qwidget.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintdevice.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpalette.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcolor.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qrgb.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qbrush.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qmatrix.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpolygon.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qline.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtransform.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainterpath.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qimage.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpixmap.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer_impl.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfont.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontmetrics.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontinfo.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qsizepolicy.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcursor.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcoreapplication.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtCore/qeventloop.h \
+		../thirdparty/QGLViewerQT5/manipulatedCameraFrame.h \
+		../thirdparty/QGLViewerQT5/manipulatedFrame.h \
+		../thirdparty/QGLViewerQT5/mouseGrabber.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QEvent \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/QDateTime \
 		../src/lsd_slam_viewer/KeyFrameDisplay.h \
 		/usr/include/eigen3/Eigen/Core \
 		/usr/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h \
@@ -7086,9 +7292,6 @@ PointCloudViewer.o: ../src/lsd_slam_viewer/PointCloudViewer.cpp ../src/lsd_slam_
 		../src/lsd_slam_viewer/KeyFrameGraphDisplay.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/QGraphicsView \
 		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qgraphicsview.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainter.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtextoption.h \
-		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpen.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qscrollarea.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qabstractscrollarea.h \
 		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qframe.h \
@@ -7101,6 +7304,126 @@ PointCloudViewer.o: ../src/lsd_slam_viewer/PointCloudViewer.cpp ../src/lsd_slam_
 
 viewerSettings.o: ../src/lsd_slam_viewer/viewerSettings.cpp ../src/lsd_slam_viewer/viewerSettings.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o viewerSettings.o ../src/lsd_slam_viewer/viewerSettings.cpp
+
+QGLDisplay.o: ../src/lsd_slam_viewer/QGLDisplay.cpp ../src/lsd_slam_viewer/QGLDisplay.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/QGLWidget \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qgl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopengl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobal.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qconfig.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfeatures.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsystemdetection.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qprocessordetection.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcompilerdetection.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtypeinfo.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtypetraits.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsysinfo.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlogging.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qflags.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbasicatomic.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qgenericatomic.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_msvc.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_armv7.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_armv6.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_armv5.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_ia64.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_mips.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_x86.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_cxx11.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_gcc.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qatomic_unix.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qglobalstatic.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmutex.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnumeric.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qt_windows.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopengles2ext.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qopenglext.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qwidget.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qnamespace.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qwindowdefs_win.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstring.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qchar.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qbytearray.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrefcount.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qarraydata.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringbuilder.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlist.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qalgorithms.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qiterator.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcoreevent.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qscopedpointer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmetatype.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvarlengtharray.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontainerfwd.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qisenum.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qobject_impl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmargins.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qrect.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsize.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpoint.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpalette.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcolor.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qrgb.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringlist.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdatastream.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qiodevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qpair.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qregexp.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qstringmatcher.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qbrush.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvector.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qmatrix.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpolygon.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qregion.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qline.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtransform.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainterpath.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qimage.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpixmap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qshareddata.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qhash.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfont.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontmetrics.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qfontinfo.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/qsizepolicy.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qcursor.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qkeysequence.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qevent.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qvariant.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qmap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qdebug.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qtextstream.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qlocale.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qset.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qcontiguouscache.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurl.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qurlquery.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfile.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtCore/qfiledevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qvector2d.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtouchdevice.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpaintengine.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpainter.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qtextoption.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qpen.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qglcolormap.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtOpenGL/qtopenglglobal.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QSurfaceFormat \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/qsurfaceformat.h \
+		/opt/Qt_532/5.3/gcc_64/include/QtWidgets/QWidget \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QImage \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QPainter \
+		/opt/Qt_532/5.3/gcc_64/include/QtGui/QPaintEvent
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o QGLDisplay.o ../src/lsd_slam_viewer/QGLDisplay.cpp
 
 ####### Install
 
