@@ -23,14 +23,14 @@
 //#define GL3_PROTOTYPES 1
 //#include <GL/glew.h>
 
-#include "QGLViewer/qglviewer.h"
+#include "qglviewer.h"
 #include <vector>
 #include "boost/thread.hpp"
 #include "qevent.h"
 #include "lsd_slam_viewer/keyframeMsg.h"
 #include "lsd_slam_viewer/keyframeGraphMsg.h"
 
-#include "QGLViewer/keyFrameInterpolator.h"
+#include "keyFrameInterpolator.h"
 
 class QApplication;
 

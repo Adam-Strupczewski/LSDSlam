@@ -33,7 +33,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "QGLViewer/manipulatedCameraFrame.h"
+#include "manipulatedCameraFrame.h"
 
 #include "KeyFrameDisplay.h"
 #include "KeyFrameGraphDisplay.h"

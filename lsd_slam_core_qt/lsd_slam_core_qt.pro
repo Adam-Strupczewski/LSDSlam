@@ -52,7 +52,7 @@ LIBS += \
     -lcxsparse \
     #-L/usr/lib \
     -L../thirdparty/QGLViewerQT5 \
-    -lQGLViewer
+    -lQGLViewerQT5
 
 SOURCES += \
     ../src/DataStructures/Frame.cpp \
@@ -84,7 +84,8 @@ SOURCES += \
     ../src/lsd_slam_viewer/KeyFrameDisplay.cpp \
     ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp \
     ../src/lsd_slam_viewer/PointCloudViewer.cpp \
-    ../src/lsd_slam_viewer/viewerSettings.cpp
+    ../src/lsd_slam_viewer/viewerSettings.cpp \
+    ../src/lsd_slam_viewer/qgldisplay.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
@@ -126,5 +127,6 @@ HEADERS += \
     ../src/lsd_slam_viewer/KeyFrameDisplay.h \
     ../src/lsd_slam_viewer/KeyFrameGraphDisplay.h \
     ../src/lsd_slam_viewer/PointCloudViewer.h \
-    ../src/lsd_slam_viewer/viewerSettings.h
+    ../src/lsd_slam_viewer/viewerSettings.h \
+    ../src/lsd_slam_viewer/QGLDisplay.h
 
