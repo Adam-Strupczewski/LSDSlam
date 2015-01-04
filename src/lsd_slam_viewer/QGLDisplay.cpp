@@ -3,6 +3,7 @@
 QGLDisplay::QGLDisplay(QWidget* parent)
     : QGLWidget(parent)
 {
+    img = QImage("/home/adam/1.png");
 }
 
 void QGLDisplay::setImage(const QImage& image)

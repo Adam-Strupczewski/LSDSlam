@@ -846,7 +846,7 @@ bool SlamSystem::doMappingIteration()
 
             if (displayDepthMap || depthMapScreenshotFlag){
                 //printf("AS - Doing mapping iteration - Debug display\n");
-				debugDisplayDepthMap();
+                //ASMOD debugDisplayDepthMap();
                 //printf("AS - Doing mapping iteration - Debug display finished\n");
             }
             if(!didSomething){
