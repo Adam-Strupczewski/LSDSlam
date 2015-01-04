@@ -39,12 +39,20 @@
 #include "opencv2/opencv.hpp"
 
 #include "lsd_slam_viewer/PointCloudViewer.h"
+#include "lsd_slam_viewer/QGLDisplay.h"
+
 #include <qapplication.h>
 #include <thread>         // std::thread
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 
-PointCloudViewer* viewer;
+// Viewer for 3D reconstructed scene, uses qglviewer
+PointCloudViewer *viewer;
+
+// Views for image streams, altogether 4 image stream will be displayed
+QGLDisplay display1;
+QGLDisplay display2;
+//...
 
 int mainLoopCodeForQtThread();
 
@@ -133,24 +141,6 @@ int getFile (std::string source, std::vector<std::string> &files)
 
 }
 
-// This qt application and qglviewer stuff needs to be called from a different thread than main loop!
-int initQGLViewer()
-{
-    char *argv[] = {"QGLViewer application", "arg1", "arg2", NULL};
-    int argc = sizeof(argv) / sizeof(char*) - 1;
-
-    QApplication application(argc, argv);
-
-    // Instantiate the viewer of the scene reconstruction.
-    viewer = new PointCloudViewer();
-    viewer->setWindowTitle("PointCloud Viewer");
-
-    // Make the viewer window visible on screen.
-    viewer->show();
-
-    return application.exec();
-}
-
 using namespace lsd_slam;
 int main( int argc, char** argv )
 {
@@ -164,6 +154,12 @@ int main( int argc, char** argv )
 
     // Make the viewer window visible on screen.
     viewer->show();
+
+    //display1 = new QGLDisplay();
+    display1.show();
+
+    //display2 = new QGLDisplay();
+    display2.show();
 
     QFuture<void> future = QtConcurrent::run(mainLoopCodeForQtThread);
     //future.waitForFinished();
@@ -358,11 +354,6 @@ int mainLoopCodeForQtThread()
     // if no undistortion is required, the undistorter will just pass images through.
     Undistorter* undistorter = 0;
 
-//	if(ros::param::get("~calib", calibFile))
-//	{
-//		 undistorter = Undistorter::getUndistorterForFile(calibFile.c_str());
-//		 ros::param::del("~calib");
-//	}
     undistorter = Undistorter::getUndistorterForFile("/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg");
 
     if(undistorter == 0)
@@ -390,6 +381,7 @@ int mainLoopCodeForQtThread()
 
     // Set pointcloudviewer pointer in OutputWrapper
     outputWrapper->setViewer(viewer);
+    outputWrapper->setViews(&display1, &display2);
 
     // make slam system
     SlamSystem* system = new SlamSystem(w, h, K, doSlam);
@@ -423,8 +415,6 @@ int mainLoopCodeForQtThread()
 
     for(unsigned int i=0;i<files.size();i++)
     {
-        //application.processEvents();
-
         printf("Processing image %s!\n", files[i].c_str());
 
         cv::Mat imageDist = cv::imread(files[i], CV_LOAD_IMAGE_GRAYSCALE);
@@ -450,10 +440,6 @@ int mainLoopCodeForQtThread()
             system->trackFrame(image.data, runningIDX ,hz == 0,fakeTimeStamp);
         runningIDX++;
         fakeTimeStamp+=0.03;
-
-        // Is supposed to make the loop run at the desired frequency, sleep occurs for leftover time from cycle
-//		if(hz != 0)
-//			r.sleep();
 
         if(fullResetRequested)
         {

@@ -156,7 +156,6 @@ public:
     PointCloudViewer();
     ~PointCloudViewer();
 
-
     void reset();
 
     void addFrameMsg(lsd_slam_viewer::keyframeMsg/*ConstPtr*/ * msg);
