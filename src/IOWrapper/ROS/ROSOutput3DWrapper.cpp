@@ -67,6 +67,11 @@ ROSOutput3DWrapper::~ROSOutput3DWrapper()
 {
 }
 
+void ROSOutput3DWrapper::showView1(){
+}
+
+void ROSOutput3DWrapper::showView2(){
+}
 
 void ROSOutput3DWrapper::publishKeyframe(Frame* f)
 {
@@ -170,7 +175,7 @@ void ROSOutput3DWrapper::publishTrackedFrame(Frame* kf)
 
 
 void ROSOutput3DWrapper::publishKeyframeGraph(KeyFrameGraph* graph)
-{/*
+{
 	lsd_slam_viewer::keyframeGraphMsg gMsg;
 
 	graph->edgesListsMutex.lock();
@@ -198,6 +203,7 @@ void ROSOutput3DWrapper::publishKeyframeGraph(KeyFrameGraph* graph)
 	graph->keyframesAllMutex.unlock_shared();
 
 //ASCOMM	graph_publisher.publish(gMsg);*/
+    viewer->addGraphMsg(&gMsg);
 }
 
 void ROSOutput3DWrapper::publishTrajectory(std::vector<Eigen::Matrix<float, 3, 1>> trajectory, std::string identifier)
@@ -211,12 +217,12 @@ void ROSOutput3DWrapper::publishTrajectoryIncrement(Eigen::Matrix<float, 3, 1> p
 }
 
 void ROSOutput3DWrapper::publishDebugInfo(Eigen::Matrix<float, 20, 1> data)
-{/*
+{
 	std_msgs::Float32MultiArray msg;
 	for(int i=0;i<20;i++)
 		msg.data.push_back((float)(data[i]));
 
-//ASCOMM	debugInfo_publisher.publish(msg);*/
+//ASCOMM	debugInfo_publisher.publish(msg);
 }
 
 }

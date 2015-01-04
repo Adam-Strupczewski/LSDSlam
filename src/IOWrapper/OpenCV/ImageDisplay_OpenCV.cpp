@@ -27,6 +27,11 @@
 
 #include <boost/thread.hpp>
 
+#include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QPixmap>
+#include <QGraphicsPixmapItem>
+
 namespace lsd_slam
 {
 
@@ -60,9 +65,8 @@ void displayThreadLoop()
 
         // ATTENTION
         // The display with opencv functions cannot be used together with qt display
-        // In this case the processes block each other
-/*
-		while(displayQueue.size() > 0)
+        // In this case the processes block each other''
+        /*while(displayQueue.size() > 0)
 		{
 			if(!displayQueue.back().autoSize)
 			{
@@ -81,8 +85,31 @@ void displayThreadLoop()
 
 			displayQueue.pop_back();
         }*/
+
+        // Use qt windows for display
+/*        while(displayQueue.size() > 0)
+        {
+            if(!displayQueue.back().autoSize)
+            {
+                if(openWindows.find(displayQueue.back().name) == openWindows.end())
+                {
+                    //cv::namedWindow(displayQueue.back().name, cv::WINDOW_NORMAL);
+                    //cv::resizeWindow(displayQueue.back().name, displayQueue.back().img.cols, displayQueue.back().img.rows);
+                    openWindows.insert(displayQueue.back().name);
+                }
+            }
+
+            // ASDISPLAY
+            //cv::imshow(displayQueue.back().name, displayQueue.back().img);
+            // AS - added bellow
+            //cv::waitKey(5);
+
+            displayQueue.pop_back();
+        }*/
 	}
-	cv::destroyAllWindows();
+
+    //cv::destroyAllWindows();
+
 	openWindows.clear();
 
 	printf("ended image display thread!\n");

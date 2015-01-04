@@ -23,6 +23,7 @@
 //#include <ros/ros.h>
 #include "IOWrapper/Output3DWrapper.h"
 
+#include "lsd_slam_viewer/QGLDisplay.h"
 
 namespace lsd_slam
 {
@@ -64,6 +65,11 @@ public:
 
     virtual void setViewer(PointCloudViewer *v){this->viewer = v;};
 
+    virtual void setViews(QGLDisplay *v1, QGLDisplay *v2){this->v1=v1; this->v2=v2;};
+
+    virtual void showView1();
+    virtual void showView2();
+
 	virtual void publishKeyframeGraph(KeyFrameGraph* graph);
 
 	// publishes a keyframe. if that frame already existis, it is overwritten, otherwise it is added.
@@ -83,7 +89,12 @@ public:
 	
 private:
 
+    // Viewer for 3D reconstructed scene, uses qglviewer
     PointCloudViewer* viewer;
+
+    // Views for image streams, altogether 4 image stream will be displayed
+    QGLDisplay *v1;
+    QGLDisplay *v2;
 
 	int width, height;
 
@@ -98,7 +109,6 @@ private:
 
 	std::string debugInfo_channel;
     //ros::Publisher debugInfo_publisher;
-
 
 	std::string pose_channel;
     //ros::Publisher pose_publisher;

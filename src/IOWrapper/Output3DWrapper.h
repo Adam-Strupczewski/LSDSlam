@@ -25,6 +25,8 @@
 
 #include "lsd_slam_viewer/PointCloudViewer.h"
 
+class QGLDisplay;
+
 namespace cv {
 	class Mat;
 }
@@ -38,7 +40,6 @@ class KeyFrameGraph;
 class Frame;
 
 
-
 /**
  * Virtual 3D display object.
  */
@@ -49,6 +50,8 @@ public:
 
     // AS added
     virtual void setViewer(PointCloudViewer *v){};
+    virtual void setViews(QGLDisplay *v1, QGLDisplay *v2){};
+    virtual void showImage(){};
 
 	virtual void publishKeyframeGraph(KeyFrameGraph* graph) {};
 

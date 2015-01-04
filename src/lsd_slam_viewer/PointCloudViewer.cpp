@@ -41,6 +41,11 @@
 #include <iostream>
 #include <fstream>
 
+#include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QPixmap>
+#include <QGraphicsPixmapItem>
+
 PointCloudViewer::PointCloudViewer()
 {
     setPathKey(Qt::Key_0,0);
@@ -79,7 +84,6 @@ PointCloudViewer::~PointCloudViewer()
     delete currentCamDisplay;
     delete graphDisplay;
 }
-
 
 void PointCloudViewer::reset()
 {

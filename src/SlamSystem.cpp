@@ -249,7 +249,7 @@ void SlamSystem::mappingThreadLoop()
 		{
             //printf("AS - No mapping iteration \n");
 			boost::unique_lock<boost::mutex> lock(unmappedTrackedFramesMutex);
-            unmappedTrackedFramesSignal.timed_wait(lock,boost::posix_time::milliseconds(40));	// slight chance of deadlock otherwise
+            unmappedTrackedFramesSignal.timed_wait(lock,boost::posix_time::milliseconds(20));	// slight chance of deadlock otherwise
 			lock.unlock();
 		}
 
@@ -946,6 +946,9 @@ void SlamSystem::randomInit(uchar* image, double timeStamp, int id)
 
 void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilMapped, double timestamp)
 {
+
+    //outputWrapper->showImage();
+
     // Create new frame with incoming image
 	std::shared_ptr<Frame> trackingNewFrame(new Frame(frameID, width, height, K, timestamp, image));
 
