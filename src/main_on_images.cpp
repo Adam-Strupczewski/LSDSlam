@@ -56,8 +56,8 @@
 PointCloudViewer *viewer;
 
 // Views for image streams, altogether 4 image stream will be displayed
-QGLDisplay display1;
-QGLDisplay display2;
+QGLDisplay *display1;
+QGLDisplay *display2;
 //...
 
 int mainLoopCodeForQtThread();
@@ -161,11 +161,11 @@ int main( int argc, char** argv )
     // Make the viewer window visible on screen.
     viewer->show();
 
-    //display1 = new QGLDisplay();
-    display1.show();
+    display1 = new QGLDisplay();
+    display1->show();
 
-    //display2 = new QGLDisplay();
-    display2.show();
+    display2 = new QGLDisplay();
+    display2->show();
 
     QFuture<void> future = QtConcurrent::run(mainLoopCodeForQtThread);
     //future.waitForFinished();
@@ -387,7 +387,7 @@ int mainLoopCodeForQtThread()
 
     // Set pointcloudviewer pointer in OutputWrapper
     outputWrapper->setViewer(viewer);
-    outputWrapper->setViews(&display1, &display2);
+    outputWrapper->setViews(display1, display2);
 
     // make slam system
     SlamSystem* system = new SlamSystem(w, h, K, doSlam);
