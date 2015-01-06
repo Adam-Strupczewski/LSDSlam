@@ -612,7 +612,7 @@ bool SlamSystem::updateKeyframe()
 		if(enablePrintDebugInfo && printThreadingInfo)
 			printf("MAPPING %d on %d to %d (%d frames)\n", currentKeyFrame->id(), references.front()->id(), references.back()->id(), (int)references.size());
 
-		map->updateKeyframe(references);
+        map->updateKeyframe(references, outputWrapper);
 
 		popped->clear_refPixelWasGood();
 		references.clear();
@@ -729,7 +729,9 @@ void SlamSystem::debugDisplayDepthMap()
 	if(onSceenInfoDisplay)
 		printMessageOnCVImage(map->debugImageDepth, buf1, buf2);
 	if (displayDepthMap)
-		Util::displayImage( "DebugWindow DEPTH", map->debugImageDepth, false );
+        //Util::displayImage( "DebugWindow DEPTH", map->debugImageDepth, false );
+        outputWrapper->showKeyframeDepth(map->debugImageDepth);
+
 
     // AS - here program hangs
     //int pressedKey = Util::waitKey(1);
@@ -947,15 +949,13 @@ void SlamSystem::randomInit(uchar* image, double timeStamp, int id)
 void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilMapped, double timestamp)
 {
 
-    //outputWrapper->showImage();
-
     // Create new frame with incoming image
 	std::shared_ptr<Frame> trackingNewFrame(new Frame(frameID, width, height, K, timestamp, image));
 
 	if(!trackingIsGood)
 	{
         // Set current frame  for relocalizer and run Relocalizer::threadLoop()
-		relocalizer.updateCurrentFrame(trackingNewFrame);
+        relocalizer.updateCurrentFrame(trackingNewFrame, outputWrapper);
 
 		unmappedTrackedFramesMutex.lock();
         unmappedTrackedFramesSignal.notify_one();
@@ -997,7 +997,8 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 	SE3 newRefToFrame_poseUpdate = tracker->trackFrame(
 			trackingReference,
 			trackingNewFrame.get(),
-			frameToReference_initialEstimate);
+            frameToReference_initialEstimate,
+            outputWrapper);
 
 	gettimeofday(&tv_end, NULL);
 	msTrackFrame = 0.9*msTrackFrame + 0.1*((tv_end.tv_sec-tv_start.tv_sec)*1000.0f + (tv_end.tv_usec-tv_start.tv_usec)/1000.0f);

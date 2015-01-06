@@ -32,6 +32,8 @@
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
 
+#include "lsd_slam_viewer/QGLDisplay.h"
+
 namespace lsd_slam
 {
 
@@ -41,16 +43,16 @@ namespace Util
 
 	const bool useImageDisplayThread = true;
 
-
 	std::unordered_set<std::string> openWindows;
 	boost::mutex openCVdisplayMutex;
 	boost::condition_variable  openCVdisplaySignal;
-
 
 	boost::thread* imageDisplayThread = 0;
 	std::vector<DisplayImageObect> displayQueue;
 	bool imageThreadKeepRunning = true;
 
+    QGLDisplay *display1;
+    QGLDisplay *display2;
 
 void displayThreadLoop()
 {
@@ -85,27 +87,6 @@ void displayThreadLoop()
 
 			displayQueue.pop_back();
         }*/
-
-        // Use qt windows for display
-/*        while(displayQueue.size() > 0)
-        {
-            if(!displayQueue.back().autoSize)
-            {
-                if(openWindows.find(displayQueue.back().name) == openWindows.end())
-                {
-                    //cv::namedWindow(displayQueue.back().name, cv::WINDOW_NORMAL);
-                    //cv::resizeWindow(displayQueue.back().name, displayQueue.back().img.cols, displayQueue.back().img.rows);
-                    openWindows.insert(displayQueue.back().name);
-                }
-            }
-
-            // ASDISPLAY
-            //cv::imshow(displayQueue.back().name, displayQueue.back().img);
-            // AS - added bellow
-            //cv::waitKey(5);
-
-            displayQueue.pop_back();
-        }*/
 	}
 
     //cv::destroyAllWindows();
@@ -121,6 +102,13 @@ void makeDisplayThread()
 }
 void displayImage(const char* windowName, const cv::Mat& image, bool autoSize)
 {
+
+    // ASMOD - use qt
+
+
+    return;
+
+
     if(useImageDisplayThread)   //default true
 	{
 		if(imageDisplayThread == 0)

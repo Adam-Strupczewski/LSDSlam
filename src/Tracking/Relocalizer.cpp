@@ -69,7 +69,7 @@ void Relocalizer::stop()
 }
 
 
-void Relocalizer::updateCurrentFrame(std::shared_ptr<Frame> currentFrame)
+void Relocalizer::updateCurrentFrame(std::shared_ptr<Frame> currentFrame, lsd_slam::Output3DWrapper* outputWrapper)
 {
 	boost::unique_lock<boost::mutex> lock(exMutex);
 
@@ -86,7 +86,9 @@ void Relocalizer::updateCurrentFrame(std::shared_ptr<Frame> currentFrame)
 //			currentFrame->id(), nextRelocIDX, maxRelocIDX);
 
 	if (displayDepthMap)
-		Util::displayImage( "DebugWindow DEPTH", cv::Mat(currentFrame->height(), currentFrame->width(), CV_32F, currentFrame->image())*(1/255.0f), false );
+        //Util::displayImage( "DebugWindow DEPTH", cv::Mat(currentFrame->height(), currentFrame->width(), CV_32F, currentFrame->image())*(1/255.0f), false );
+        if (outputWrapper != NULL)
+            outputWrapper->showKeyframeDepth(cv::Mat(currentFrame->height(), currentFrame->width(), CV_32F, currentFrame->image())*(1/255.0f));
 
     int pressedKey = Util::waitKey(1);
 	handleKey(pressedKey);

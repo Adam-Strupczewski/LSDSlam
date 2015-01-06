@@ -50,8 +50,12 @@ public:
 
     // AS added
     virtual void setViewer(PointCloudViewer *v){};
-    virtual void setViews(QGLDisplay *v1, QGLDisplay *v2){};
-    virtual void showImage(){};
+    virtual void setViews(QGLDisplay *v1, QGLDisplay *v2, QGLDisplay *v3, QGLDisplay *v4){};
+
+    virtual void showKeyframeDepth( const cv::Mat& image){};
+    virtual void showTrackingResidual( const cv::Mat& image){};
+    virtual void showStereoKeyframe( const cv::Mat& image){};
+    virtual void showStereoReferenceFrame( const cv::Mat& image){};
 
 	virtual void publishKeyframeGraph(KeyFrameGraph* graph) {};
 

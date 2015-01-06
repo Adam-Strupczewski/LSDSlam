@@ -1069,7 +1069,7 @@ void DepthMap::resetCounters()
 
 // This functions assumes a list of reference frames to the keyframe and updates depthmap of a keyframne
 // This function can also plot stereo images...
-void DepthMap::updateKeyframe(std::deque< std::shared_ptr<Frame> > referenceFrames)
+void DepthMap::updateKeyframe(std::deque< std::shared_ptr<Frame> > referenceFrames, lsd_slam::Output3DWrapper* outputWrapper)
 {
 	assert(isValid());
 
@@ -1171,8 +1171,12 @@ void DepthMap::updateKeyframe(std::deque< std::shared_ptr<Frame> > referenceFram
 
 	if(plotStereoImages)
 	{
-		Util::displayImage( "Stereo Key Frame", debugImageHypothesisHandling, false );
-		Util::displayImage( "Stereo Reference Frame", debugImageStereoLines, false );
+        //Util::displayImage( "Stereo Key Frame", debugImageHypothesisHandling, false );
+        //Util::displayImage( "Stereo Reference Frame", debugImageStereoLines, false );
+        if (outputWrapper != NULL){
+            outputWrapper->showStereoKeyframe(debugImageHypothesisHandling);
+            outputWrapper->showStereoReferenceFrame(debugImageStereoLines);
+        }
 	}
 
 

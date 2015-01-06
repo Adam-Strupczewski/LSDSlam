@@ -3,6 +3,7 @@
 #include <QImage>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QMutex>
 
 #ifndef QGLDISPLAY_H
 #define QGLDISPLAY_H
@@ -16,6 +17,8 @@ protected:
     void paintEvent(QPaintEvent*);
 private:
     QImage img;
+    QMutex mutex;
+    bool imgReady;
 };
 
 #endif // QGLDISPLAY_H
