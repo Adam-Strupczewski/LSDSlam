@@ -36,6 +36,11 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+
+
 namespace lsd_slam
 {
 
@@ -67,10 +72,37 @@ ROSOutput3DWrapper::~ROSOutput3DWrapper()
 {
 }
 
-void ROSOutput3DWrapper::showView1(){
+QImage Mat2QImage(cv::Mat const& src)
+{
+     cv::Mat temp; // make the same cv::Mat
+     cvtColor(src, temp,CV_BGR2RGB); // cvtColor Makes a copt, that what i need
+     QImage dest((const uchar *) temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);
+     dest.bits(); // enforce deep copy, see documentation of QImage::QImage ( const uchar * data, int width, int height, Format format )
+     return dest;
 }
 
-void ROSOutput3DWrapper::showView2(){
+cv::Mat QImage2Mat(QImage const& src)
+{
+     cv::Mat tmp(src.height(),src.width(),CV_8UC3,(uchar*)src.bits(),src.bytesPerLine());
+     cv::Mat result; // deep copy just in case (my lack of knowledge with open cv)
+     cvtColor(tmp, result,CV_BGR2RGB);
+     return result;
+}
+
+void ROSOutput3DWrapper::showKeyframeDepth( const cv::Mat& image){
+    v1->setImage(Mat2QImage(image));
+}
+
+void ROSOutput3DWrapper::showTrackingResidual(const cv::Mat& image){
+    v2->setImage(Mat2QImage(image));
+}
+
+void ROSOutput3DWrapper::showStereoKeyframe(const cv::Mat& image){
+    v3->setImage(Mat2QImage(image));
+}
+
+void ROSOutput3DWrapper::showStereoReferenceFrame(const cv::Mat& image){
+    v4->setImage(Mat2QImage(image));
 }
 
 void ROSOutput3DWrapper::publishKeyframe(Frame* f)

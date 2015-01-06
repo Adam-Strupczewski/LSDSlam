@@ -46,18 +46,14 @@
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 
-//#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg"
-//#define IMAGES_PATH "/home/adam/dokt_ws/LSD_machine_small/images"
-
-#define CAMERA_CALIB_PATH "/home/blazej/datasets/LSD_room/cameraCalibration.cfg"
-#define IMAGES_PATH "/home/blazej/datasets/LSD_room/images"
-
 // Viewer for 3D reconstructed scene, uses qglviewer
 PointCloudViewer *viewer;
 
 // Views for image streams, altogether 4 image stream will be displayed
 QGLDisplay *display1;
 QGLDisplay *display2;
+QGLDisplay *display3;
+QGLDisplay *display4;
 //...
 
 int mainLoopCodeForQtThread();
@@ -162,12 +158,22 @@ int main( int argc, char** argv )
     viewer->show();
 
     display1 = new QGLDisplay();
-    display1->show();
-
     display2 = new QGLDisplay();
-    display2->show();
+    display3 = new QGLDisplay();
+    display4 = new QGLDisplay();
 
-    QFuture<void> future = QtConcurrent::run(mainLoopCodeForQtThread);
+    display1->setWindowTitle("Debug Depth");
+    display2->setWindowTitle("Tracking Residual");
+    display3->setWindowTitle("Stereo Keyframe");
+    display4->setWindowTitle("Stereo Reference Frame");
+
+    display1->show();
+    display2->show();
+    display3->show();
+    display4->show();
+
+    QtConcurrent::run(mainLoopCodeForQtThread);
+    //QFuture<void> future = QtConcurrent::run(mainLoopCodeForQtThread);
     //future.waitForFinished();
     //return 0;
     return application.exec();
@@ -360,7 +366,7 @@ int mainLoopCodeForQtThread()
     // if no undistortion is required, the undistorter will just pass images through.
     Undistorter* undistorter = 0;
 
-    undistorter = Undistorter::getUndistorterForFile(CAMERA_CALIB_PATH);
+    undistorter = Undistorter::getUndistorterForFile("/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg");
 
     if(undistorter == 0)
     {
@@ -387,7 +393,7 @@ int mainLoopCodeForQtThread()
 
     // Set pointcloudviewer pointer in OutputWrapper
     outputWrapper->setViewer(viewer);
-    outputWrapper->setViews(display1, display2);
+    outputWrapper->setViews(display1, display2, display3, display4);
 
     // make slam system
     SlamSystem* system = new SlamSystem(w, h, K, doSlam);
@@ -397,7 +403,7 @@ int mainLoopCodeForQtThread()
     std::string source;
     std::vector<std::string> files;
 
-    source = IMAGES_PATH;
+    source = "/home/adam/dokt_ws/LSD_machine/images";
 
     if(getdir(source, files) >= 0)
     {

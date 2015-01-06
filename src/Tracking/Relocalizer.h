@@ -25,6 +25,7 @@
 #include <iostream>
 #include "util/SophusUtil.h"
 
+#include "IOWrapper/ROS/ROSOutput3DWrapper.h"
 
 namespace lsd_slam
 {
@@ -38,7 +39,7 @@ public:
 	Relocalizer(int w, int h, Eigen::Matrix3f K);
 	~Relocalizer();
 
-	void updateCurrentFrame(std::shared_ptr<Frame> currentFrame);
+    void updateCurrentFrame(std::shared_ptr<Frame> currentFrame, lsd_slam::Output3DWrapper* outputWrapper=NULL);
     void start(std::vector<Frame*, Eigen::aligned_allocator<lsd_slam::Frame*> > &allKeyframesList);
 	void stop();
 

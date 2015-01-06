@@ -25,6 +25,7 @@
 #include "util/SophusUtil.h"
 #include "Tracking/least_squares.h"
 
+#include "IOWrapper/ROS/ROSOutput3DWrapper.h"
 
 namespace lsd_slam
 {
@@ -65,7 +66,8 @@ public:
 	SE3 trackFrame(
 			TrackingReference* reference,
 			Frame* frame,
-			const SE3& frameToReference_initialEstimate);
+            const SE3& frameToReference_initialEstimate,
+            lsd_slam::Output3DWrapper* outputWrapper=NULL);
 	
 
 	SE3 trackFrameOnPermaref(

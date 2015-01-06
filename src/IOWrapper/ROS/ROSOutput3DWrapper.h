@@ -65,10 +65,19 @@ public:
 
     virtual void setViewer(PointCloudViewer *v){this->viewer = v;};
 
-    virtual void setViews(QGLDisplay *v1, QGLDisplay *v2){this->v1=v1; this->v2=v2;};
+    virtual void setViews(QGLDisplay *v1, QGLDisplay *v2, QGLDisplay *v3, QGLDisplay *v4)
+    {
+        this->v1=v1; this->v2=v2;this->v3=v3; this->v4=v4;
+        v1->setWindowTitle("Debug Depth");
+        v2->setWindowTitle("Tracking Residual");
+        v3->setWindowTitle("Stereo Keyframe");
+        v4->setWindowTitle("Stereo Reference Frame");
+    };
 
-    virtual void showView1();
-    virtual void showView2();
+    virtual void showKeyframeDepth( const cv::Mat& image);
+    virtual void showTrackingResidual( const cv::Mat& image);
+    virtual void showStereoKeyframe( const cv::Mat& image);
+    virtual void showStereoReferenceFrame( const cv::Mat& image);
 
 	virtual void publishKeyframeGraph(KeyFrameGraph* graph);
 
@@ -95,6 +104,8 @@ private:
     // Views for image streams, altogether 4 image stream will be displayed
     QGLDisplay *v1;
     QGLDisplay *v2;
+    QGLDisplay *v3;
+    QGLDisplay *v4;
 
 	int width, height;
 

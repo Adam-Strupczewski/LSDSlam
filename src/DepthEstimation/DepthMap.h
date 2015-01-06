@@ -25,7 +25,7 @@
 #include "util/IndexThreadReduce.h"
 #include "util/SophusUtil.h"
 
-
+#include "IOWrapper/ROS/ROSOutput3DWrapper.h"
 
 namespace lsd_slam
 {
@@ -55,7 +55,7 @@ public:
 	/**
 	 * does obervation and regularization only.
 	 **/
-	void updateKeyframe(std::deque< std::shared_ptr<Frame> > referenceFrames);
+    void updateKeyframe(std::deque< std::shared_ptr<Frame> > referenceFrames, lsd_slam::Output3DWrapper* outputWrapper=NULL);
 
 	/**
 	 * does propagation and whole-filling-regularization (no observation, for that need to call updateKeyframe()!)

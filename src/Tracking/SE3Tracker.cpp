@@ -280,7 +280,8 @@ SE3 SE3Tracker::trackFrameOnPermaref(
 SE3 SE3Tracker::trackFrame(
 		TrackingReference* reference,
 		Frame* frame,
-		const SE3& frameToReference_initialEstimate)
+        const SE3& frameToReference_initialEstimate,
+        lsd_slam::Output3DWrapper* outputWrapper)
 {
 
 	boost::shared_lock<boost::shared_mutex> lock = frame->getActiveLock();
@@ -456,7 +457,8 @@ SE3 SE3Tracker::trackFrame(
 
 
 	if(plotTracking)
-		Util::displayImage("TrackingResidual", debugImageResiduals, false);
+        //Util::displayImage("TrackingResidual", debugImageResiduals, false);
+        outputWrapper->showTrackingResidual(debugImageResiduals);
 
 
 	if(enablePrintDebugInfo && printTrackingIterationInfo)
