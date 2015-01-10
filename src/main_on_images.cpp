@@ -46,7 +46,24 @@
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 
-#define USE_CAMERA false
+#include <QCamera>
+#include <QCameraInfo>
+#include <QCameraImageCapture>
+#include <QCameraViewfinder>
+#include <QImageEncoderSettings>
+
+#define USE_CAMERA true
+
+/* Keep the webcam from locking up when you interrupt a frame capture */
+volatile int quit_signal=0;
+#ifdef __unix__
+#include <signal.h>
+extern "C" void quit_signal_handler(int signum) {
+ if (quit_signal!=0) exit(0); // just exit already
+ quit_signal=1;
+ printf("Will quit at next camera frame (repeat to kill now)\n");
+}
+#endif
 
 // Viewer for 3D reconstructed scene, uses qglviewer
 PointCloudViewer *viewer;
@@ -149,6 +166,10 @@ using namespace lsd_slam;
 int main( int argc, char** argv )
 {
 
+#ifdef __unix__
+   signal(SIGINT,quit_signal_handler); // listen for ctrl-C
+#endif
+
     QApplication application(argc, argv);
     setlocale(LC_NUMERIC,"C");
 
@@ -188,6 +209,49 @@ int main( int argc, char** argv )
     display2->show();
     display3->show();
     display4->show();
+
+//    // Camera related stuff
+//    QCamera *camera;
+//    QCameraImageCapture *imageCapture;
+//    QCameraViewfinder *viewfinder;
+
+//    if (QCameraInfo::availableCameras().count()==0){
+//        printf("No cameras available\n");
+//    }
+
+//    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
+//    foreach (const QCameraInfo &cameraInfo, cameras) {
+//        printf("%s\n", cameraInfo.deviceName().toStdString().c_str());
+//        if (cameraInfo.deviceName() == "/dev/video1"){
+//            camera = new QCamera(cameraInfo);
+//        }
+//    }
+
+//    imageCapture = new QCameraImageCapture(camera);
+//    camera->setCaptureMode(QCamera::CaptureStillImage);
+
+//    QImageEncoderSettings settings;
+//    settings.setCodec("image/jpeg");
+//    settings.setResolution(640,480);
+//    imageCapture->setEncodingSettings(settings);
+
+//    //connect(imageCapture, SIGNAL(imageCaptured(int,QImage)),this, SLOT(processCapturedImage(int,QImage)));
+
+//    viewfinder = new QCameraViewfinder;
+//    viewfinder->setFixedSize(640,480);
+//    camera->setViewfinder(viewfinder);
+//    viewfinder->show();
+
+//    camera->start(); // Viewfinder frames start flowing
+
+//    //on half pressed shutter button
+//    camera->searchAndLock();
+
+//    //on shutter button pressed
+//    imageCapture->capture();
+
+//    //on shutter button released
+//    camera->unlock();
 
     QtConcurrent::run(mainLoopCodeForQtThread);
     //QFuture<void> future = QtConcurrent::run(mainLoopCodeForQtThread);
@@ -240,23 +304,19 @@ int mainLoopCodeForQtThread()
     std::string source;
     std::vector<std::string> files;
 
+    cv::VideoCapture webcam(1);
+
     // Use camera
     if (USE_CAMERA){
-        cv::VideoCapture webcam(0);
+
         if(!webcam.isOpened())
         {
             printf("Error: cannot open stream from webcam\n");
-            cv::waitKey(0);
             return -1;
         }
         webcam.set(CV_CAP_PROP_FRAME_WIDTH,w_inp);
         webcam.set(CV_CAP_PROP_FRAME_HEIGHT,h_inp);
 
-        cv::Mat frame;
-        while (webcam.read(frame))
-        {
-            outputWrapper->showKeyframeDepth(frame);
-        }
     }else{
         source = "/home/adam/dokt_ws/LSD_machine/images";
 
@@ -278,47 +338,96 @@ int mainLoopCodeForQtThread()
     int runningIDX=0;
     float fakeTimeStamp = 0;
 
-    for(unsigned int i=0;i<files.size();i++)
-    {
-        printf("Processing image %s!\n", files[i].c_str());
+    if (!USE_CAMERA){
 
-        cv::Mat imageDist = cv::imread(files[i], CV_LOAD_IMAGE_GRAYSCALE);
-
-        if(imageDist.rows != h_inp || imageDist.cols != w_inp)
+        for(unsigned int i=0;i<files.size();i++)
         {
-            if(imageDist.rows * imageDist.cols == 0)
-                printf("failed to load image %s! skipping.\n", files[i].c_str());
+            printf("Processing image %s!\n", files[i].c_str());
+
+            cv::Mat imageDist = cv::imread(files[i], CV_LOAD_IMAGE_GRAYSCALE);
+
+            if(imageDist.rows != h_inp || imageDist.cols != w_inp)
+            {
+                if(imageDist.rows * imageDist.cols == 0)
+                    printf("failed to load image %s! skipping.\n", files[i].c_str());
+                else
+                    printf("image %s has wrong dimensions - expecting %d x %d, found %d x %d. Skipping.\n",
+                            files[i].c_str(),
+                            w,h,imageDist.cols, imageDist.rows);
+                continue;
+            }
+            assert(imageDist.type() == CV_8U);
+
+            undistorter->undistort(imageDist, image);
+            assert(image.type() == CV_8U);
+
+            if(runningIDX == 0)
+                system->randomInit(image.data, fakeTimeStamp, runningIDX);
             else
-                printf("image %s has wrong dimensions - expecting %d x %d, found %d x %d. Skipping.\n",
-                        files[i].c_str(),
-                        w,h,imageDist.cols, imageDist.rows);
-            continue;
+                system->trackFrame(image.data, runningIDX ,true,fakeTimeStamp);
+            runningIDX++;
+            fakeTimeStamp+=0.03;
+
+            if(fullResetRequested)
+            {
+
+                printf("FULL RESET!\n");
+                delete system;
+
+                system = new SlamSystem(w, h, K, doSlam);
+                system->setVisualization(outputWrapper);
+
+                fullResetRequested = false;
+                runningIDX = 0;
+            }
+
         }
-        assert(imageDist.type() == CV_8U);
-
-        undistorter->undistort(imageDist, image);
-        assert(image.type() == CV_8U);
-
-        if(runningIDX == 0)
-            system->randomInit(image.data, fakeTimeStamp, runningIDX);
-        else
-            system->trackFrame(image.data, runningIDX ,true,fakeTimeStamp);
-        runningIDX++;
-        fakeTimeStamp+=0.03;
-
-        if(fullResetRequested)
+    }else{
+        while(true)
         {
 
-            printf("FULL RESET!\n");
-            delete system;
+            cv::Mat frame;
+            webcam.read(frame);
+            if (quit_signal) break; // exit cleanly on interrupt
 
-            system = new SlamSystem(w, h, K, doSlam);
-            system->setVisualization(outputWrapper);
+            printf("Processing webcam image!\n");
 
-            fullResetRequested = false;
-            runningIDX = 0;
+            cv::Mat imageDist;
+            cv::cvtColor(frame, imageDist, CV_BGR2GRAY);
+            //outputWrapper->showKeyframeDepth(frame);
+
+            if(imageDist.rows != h_inp || imageDist.cols != w_inp)
+            {
+                    printf("image has wrong dimensions - expecting %d x %d, found %d x %d. Skipping.\n",
+                            w,h,imageDist.cols, imageDist.rows);
+                continue;
+            }
+            assert(imageDist.type() == CV_8U);
+
+            undistorter->undistort(imageDist, image);
+            assert(image.type() == CV_8U);
+
+            if(runningIDX == 0)
+                system->randomInit(image.data, fakeTimeStamp, runningIDX);
+            else
+                system->trackFrame(image.data, runningIDX ,true,fakeTimeStamp);
+            runningIDX++;
+            fakeTimeStamp+=0.03;
+
+            if(fullResetRequested)
+            {
+
+                printf("FULL RESET!\n");
+                delete system;
+
+                system = new SlamSystem(w, h, K, doSlam);
+                system->setVisualization(outputWrapper);
+
+                fullResetRequested = false;
+                runningIDX = 0;
+            }
+
         }
-
     }
 
     system->finalize();
