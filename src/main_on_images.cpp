@@ -41,12 +41,18 @@
 #include <thread>         // std::thread
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
+#include <QThread>
+
+#include "keypresshandler.h"
+
+#define USE_CAMERA true
 
 //#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg"
-//#define IMAGES_PATH "/home/adam/dokt_ws/LSD_machine_small/images"
+#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/camera_logitech/logitech640.cfg"
+#define IMAGES_PATH "/home/adam/dokt_ws/LSD_machine_small/images"
 
-#define CAMERA_CALIB_PATH "/home/blazej/datasets/droneCalib.cfg"
-#define IMAGES_PATH "/home/blazej/datasets/drone_1"
+//#define CAMERA_CALIB_PATH "/home/blazej/datasets/droneCalib.cfg"
+//#define IMAGES_PATH "/home/blazej/datasets/drone_1"
 
 /* CAMERA INCLUDES */
 #include <QCamera>
@@ -86,6 +92,11 @@ QGLDisplay *display4;
 //...
 
 MainWindow *droneWindow;
+
+class KeyPressHandler;
+KeyPressHandler *kph;
+
+bool startLSDSlam;
 
 int mainLoopCodeForQtThread();
 
@@ -182,12 +193,19 @@ int main( int argc, char** argv )
    signal(SIGINT,quit_signal_handler); // listen for ctrl-C
 #endif
 
+    startLSDSlam = false;
+
     QApplication application(argc, argv);
     setlocale(LC_NUMERIC,"C");
 
     // Instantiate the viewer of the scene reconstruction.
+    kph = new KeyPressHandler();
+    kph->setStartVar(&startLSDSlam);
+    kph->setResetVar(&fullResetRequested);
+
     viewer = new PointCloudViewer();
     viewer->setWindowTitle("PointCloud Viewer");
+    viewer->installEventFilter(kph);
 
     display1 = new QGLDisplay();
     display2 = new QGLDisplay();
@@ -319,7 +337,7 @@ int mainLoopCodeForQtThread()
     std::string source;
     std::vector<std::string> files;
 
-    cv::VideoCapture webcam(1);
+    cv::VideoCapture webcam(2);
 
     //Initialize video source
     // Use camera
@@ -401,6 +419,11 @@ int mainLoopCodeForQtThread()
     }else{
         while(true)
         {
+
+            if (!startLSDSlam){
+                QThread::msleep(100);
+                continue;
+            }
 
             cv::Mat frame;
             webcam.read(frame);

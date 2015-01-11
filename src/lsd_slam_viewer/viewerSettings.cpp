@@ -33,8 +33,10 @@ bool showConstraints = true;
 bool showCurrentCamera = true;
 bool showCurrentPointcloud = true;
 
-float scaledDepthVarTH = 1;
-float absDepthVarTH = 1;
+// These vars denote how sure the drawn points need to be
+float scaledDepthVarTH = 0.003;//1;
+float absDepthVarTH = 0.003;//1;
+
 int minNearSupport = 5;
 int cutFirstNKf = 5;
 int sparsifyFactor = 1;
