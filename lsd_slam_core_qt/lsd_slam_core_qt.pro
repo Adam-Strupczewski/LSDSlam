@@ -24,6 +24,8 @@ INCLUDEPATH += \
     ../cfg/cpp \
     ../thirdparty/Sophus
 
+INCLUDEPATH += ../QDroneControl
+
 LIBS += \
     -lpthread \
     -lboost_system \
@@ -55,6 +57,15 @@ LIBS += \
     #-L/usr/lib \
     -L../thirdparty/QGLViewerQT5 \
     -lQGLViewerQT5
+
+#drone control libs
+LIBS += -L../build-QDroneControl-Release -lQDroneControl \
+                -lm                     \
+                -lpthread               \
+                -lavutil                \
+                -lavformat              \
+                -lavcodec               \
+                -lswscale               \
 
 SOURCES += \
     ../src/DataStructures/Frame.cpp \

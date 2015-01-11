@@ -30,11 +30,7 @@
 #include <dirent.h>
 #include <algorithm>
 
-#include "IOWrapper/ROS/ROSOutput3DWrapper.h"
-#include "IOWrapper/ROS/rosReconfigure.h"
-
 #include "util/Undistorter.h"
-//#include <ros/package.h>
 
 #include "opencv2/opencv.hpp"
 
@@ -52,6 +48,7 @@
 #define CAMERA_CALIB_PATH "/home/blazej/datasets/droneCalib.cfg"
 #define IMAGES_PATH "/home/blazej/datasets/drone_1"
 
+/* CAMERA INCLUDES */
 #include <QCamera>
 #include <QCameraInfo>
 #include <QCameraImageCapture>
@@ -59,6 +56,13 @@
 #include <QImageEncoderSettings>
 
 #define USE_CAMERA true
+
+/* DRONE INCLUDES*/
+#include <mainwindow.h>
+
+enum class VideoSource { Images, Camera, Drone };
+
+static const VideoSource videoSource = VideoSource::Drone;
 
 /* Keep the webcam from locking up when you interrupt a frame capture */
 volatile int quit_signal=0;
@@ -80,6 +84,8 @@ QGLDisplay *display2;
 QGLDisplay *display3;
 QGLDisplay *display4;
 //...
+
+MainWindow *droneWindow;
 
 int mainLoopCodeForQtThread();
 
@@ -259,6 +265,9 @@ int main( int argc, char** argv )
 //    //on shutter button released
 //    camera->unlock();
 
+    droneWindow = new MainWindow();
+    droneWindow->show();
+
     QtConcurrent::run(mainLoopCodeForQtThread);
     //QFuture<void> future = QtConcurrent::run(mainLoopCodeForQtThread);
     //future.waitForFinished();
@@ -312,8 +321,9 @@ int mainLoopCodeForQtThread()
 
     cv::VideoCapture webcam(1);
 
+    //Initialize video source
     // Use camera
-    if (USE_CAMERA){
+    if (videoSource == VideoSource::Camera){
 
         if(!webcam.isOpened())
         {
@@ -323,7 +333,7 @@ int mainLoopCodeForQtThread()
         webcam.set(CV_CAP_PROP_FRAME_WIDTH,w_inp);
         webcam.set(CV_CAP_PROP_FRAME_HEIGHT,h_inp);
 
-    }else{
+    }else if(videoSource == VideoSource::Images){
         source = IMAGES_PATH;
 
         if(getdir(source, files) >= 0)
