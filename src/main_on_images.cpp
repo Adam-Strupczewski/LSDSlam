@@ -46,6 +46,12 @@
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 
+//#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg"
+//#define IMAGES_PATH "/home/adam/dokt_ws/LSD_machine_small/images"
+
+#define CAMERA_CALIB_PATH "/home/blazej/datasets/droneCalib.cfg"
+#define IMAGES_PATH "/home/blazej/datasets/drone_1"
+
 // Viewer for 3D reconstructed scene, uses qglviewer
 PointCloudViewer *viewer;
 
@@ -366,7 +372,7 @@ int mainLoopCodeForQtThread()
     // if no undistortion is required, the undistorter will just pass images through.
     Undistorter* undistorter = 0;
 
-    undistorter = Undistorter::getUndistorterForFile("/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg");
+    undistorter = Undistorter::getUndistorterForFile(CAMERA_CALIB_PATH);
 
     if(undistorter == 0)
     {
@@ -403,7 +409,7 @@ int mainLoopCodeForQtThread()
     std::string source;
     std::vector<std::string> files;
 
-    source = "/home/adam/dokt_ws/LSD_machine/images";
+    source = IMAGES_PATH;
 
     if(getdir(source, files) >= 0)
     {
