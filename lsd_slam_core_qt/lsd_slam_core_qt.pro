@@ -87,7 +87,8 @@ SOURCES += \
     ../src/lsd_slam_viewer/KeyFrameGraphDisplay.cpp \
     ../src/lsd_slam_viewer/PointCloudViewer.cpp \
     ../src/lsd_slam_viewer/viewerSettings.cpp \
-    ../src/lsd_slam_viewer/QGLDisplay.cpp
+    ../src/lsd_slam_viewer/QGLDisplay.cpp \
+    ../src/keypresshandler.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
@@ -130,5 +131,6 @@ HEADERS += \
     ../src/lsd_slam_viewer/KeyFrameGraphDisplay.h \
     ../src/lsd_slam_viewer/PointCloudViewer.h \
     ../src/lsd_slam_viewer/viewerSettings.h \
-    ../src/lsd_slam_viewer/QGLDisplay.h
+    ../src/lsd_slam_viewer/QGLDisplay.h \
+    ../src/keypresshandler.h
 
