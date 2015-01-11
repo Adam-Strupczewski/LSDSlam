@@ -13,9 +13,9 @@ bool KeyPressHandler::eventFilter(QObject *obj, QEvent *event)
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
         qDebug("Handled key press %d", keyEvent->key());
-        if (keyEvent->key()==32){
+        if (keyEvent->key()==Qt::Key_B){
             *start = true;
-        }else if (keyEvent->key()==82){
+        }else if (keyEvent->key()==Qt::Key_R){
             *reset = true;
         }
         return true;

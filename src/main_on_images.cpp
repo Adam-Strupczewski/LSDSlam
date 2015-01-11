@@ -45,23 +45,12 @@
 
 #include "keypresshandler.h"
 
-#define USE_CAMERA true
-
 //#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg"
-#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/camera_logitech/logitech640.cfg"
+//#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/camera_logitech/logitech640.cfg"
 #define IMAGES_PATH "/home/adam/dokt_ws/LSD_machine_small/images"
 
-//#define CAMERA_CALIB_PATH "/home/blazej/datasets/droneCalib.cfg"
+#define CAMERA_CALIB_PATH "/home/blazej/datasets/droneCalib.cfg"
 //#define IMAGES_PATH "/home/blazej/datasets/drone_1"
-
-/* CAMERA INCLUDES */
-#include <QCamera>
-#include <QCameraInfo>
-#include <QCameraImageCapture>
-#include <QCameraViewfinder>
-#include <QImageEncoderSettings>
-
-#define USE_CAMERA true
 
 /* DRONE INCLUDES*/
 #include <mainwindow.h>
@@ -337,19 +326,79 @@ int mainLoopCodeForQtThread()
     std::string source;
     std::vector<std::string> files;
 
+    cv::Mat image = cv::Mat(h,w,CV_8U);
+    int runningIDX=0;
+    float fakeTimeStamp = 0;
+
     cv::VideoCapture webcam(2);
 
     //Initialize video source
     // Use camera
-    if (videoSource == VideoSource::Camera){
-
-        if(!webcam.isOpened())
-        {
-            printf("Error: cannot open stream from webcam\n");
-            return -1;
+    if (videoSource == VideoSource::Camera || videoSource == VideoSource::Drone){
+        if(videoSource==VideoSource::Camera) {
+            if(!webcam.isOpened())
+            {
+                printf("Error: cannot open stream from webcam\n");
+                return -1;
+            }
+            webcam.set(CV_CAP_PROP_FRAME_WIDTH,w_inp);
+            webcam.set(CV_CAP_PROP_FRAME_HEIGHT,h_inp);
         }
-        webcam.set(CV_CAP_PROP_FRAME_WIDTH,w_inp);
-        webcam.set(CV_CAP_PROP_FRAME_HEIGHT,h_inp);
+        while(true)
+        {
+
+            if (!startLSDSlam){
+                QThread::msleep(100);
+                continue;
+            }
+
+            cv::Mat frame;
+            if(videoSource == VideoSource::Camera){
+                webcam.read(frame);
+            } else {
+                //@TODO add sleep or change method
+                frame = droneWindow->getImage(); //non-blocking call
+            }
+            if (quit_signal) break; // exit cleanly on interrupt
+
+            printf("Processing webcam/drone image!\n");
+
+            cv::Mat imageDist;
+            cv::cvtColor(frame, imageDist, CV_BGR2GRAY);
+            //outputWrapper->showKeyframeDepth(frame);
+
+//            if(imageDist.rows != h_inp || imageDist.cols != w_inp)
+//            {
+//                    printf("image has wrong dimensions - expecting %d x %d, found %d x %d. Skipping.\n",
+//                            w,h,imageDist.cols, imageDist.rows);
+//                continue;
+//            }
+            assert(imageDist.type() == CV_8U);
+
+            undistorter->undistort(imageDist, image);
+            assert(image.type() == CV_8U);
+
+            if(runningIDX == 0)
+                system->randomInit(image.data, fakeTimeStamp, runningIDX);
+            else
+                system->trackFrame(image.data, runningIDX ,true,fakeTimeStamp);
+            runningIDX++;
+            fakeTimeStamp+=0.03;
+
+            if(fullResetRequested)
+            {
+
+                printf("FULL RESET!\n");
+                delete system;
+
+                system = new SlamSystem(w, h, K, doSlam);
+                system->setVisualization(outputWrapper);
+
+                fullResetRequested = false;
+                runningIDX = 0;
+            }
+
+        }
 
     }else if(videoSource == VideoSource::Images){
         source = IMAGES_PATH;
@@ -366,13 +415,6 @@ int mainLoopCodeForQtThread()
         {
             printf("could not load file list! wrong path / file?\n");
         }
-    }
-
-    cv::Mat image = cv::Mat(h,w,CV_8U);
-    int runningIDX=0;
-    float fakeTimeStamp = 0;
-
-    if (!USE_CAMERA){
 
         for(unsigned int i=0;i<files.size();i++)
         {
@@ -416,58 +458,8 @@ int mainLoopCodeForQtThread()
             }
 
         }
-    }else{
-        while(true)
-        {
-
-            if (!startLSDSlam){
-                QThread::msleep(100);
-                continue;
-            }
-
-            cv::Mat frame;
-            webcam.read(frame);
-            if (quit_signal) break; // exit cleanly on interrupt
-
-            printf("Processing webcam image!\n");
-
-            cv::Mat imageDist;
-            cv::cvtColor(frame, imageDist, CV_BGR2GRAY);
-            //outputWrapper->showKeyframeDepth(frame);
-
-            if(imageDist.rows != h_inp || imageDist.cols != w_inp)
-            {
-                    printf("image has wrong dimensions - expecting %d x %d, found %d x %d. Skipping.\n",
-                            w,h,imageDist.cols, imageDist.rows);
-                continue;
-            }
-            assert(imageDist.type() == CV_8U);
-
-            undistorter->undistort(imageDist, image);
-            assert(image.type() == CV_8U);
-
-            if(runningIDX == 0)
-                system->randomInit(image.data, fakeTimeStamp, runningIDX);
-            else
-                system->trackFrame(image.data, runningIDX ,true,fakeTimeStamp);
-            runningIDX++;
-            fakeTimeStamp+=0.03;
-
-            if(fullResetRequested)
-            {
-
-                printf("FULL RESET!\n");
-                delete system;
-
-                system = new SlamSystem(w, h, K, doSlam);
-                system->setVisualization(outputWrapper);
-
-                fullResetRequested = false;
-                runningIDX = 0;
-            }
-
-        }
     }
+
 
     system->finalize();
 
