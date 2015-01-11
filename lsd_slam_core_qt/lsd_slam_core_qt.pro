@@ -7,6 +7,8 @@ CONFIG += c++11
 
 QT       += core
 QT       += gui
+QT       += multimedia
+QT       += multimediawidgets
 QT       += opengl
 QT       += xml
 
