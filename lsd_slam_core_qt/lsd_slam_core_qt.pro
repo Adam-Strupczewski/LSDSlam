@@ -59,7 +59,7 @@ LIBS += \
     -lQGLViewerQT5
 
 #drone control libs
-LIBS += -L../build-QDroneControl-Release -lQDroneControl \
+LIBS += \#-L../build-QDroneControl-Release -lQDroneControl \
                 -lm                     \
                 -lpthread               \
                 -lavutil                \

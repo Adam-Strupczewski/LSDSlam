@@ -874,8 +874,10 @@ bool SlamSystem::doMappingIteration()
 		}
 
 		// start relocalizer if it isnt running already
-		if(!relocalizer.isRunning)
+        if(!relocalizer.isRunning){
+            printf("Starting Relocalizer thread\n");
 			relocalizer.start(keyFrameGraph->keyframesAll);
+        }
 
 		// did we find a frame to relocalize with?
 		if(relocalizer.waitResult(50))

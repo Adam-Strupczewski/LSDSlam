@@ -46,18 +46,22 @@
 #include "keypresshandler.h"
 
 //#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg"
-//#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/camera_logitech/logitech640.cfg"
+#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/camera_logitech/logitech640.cfg"
 #define IMAGES_PATH "/home/adam/dokt_ws/LSD_machine_small/images"
 
-#define CAMERA_CALIB_PATH "/home/blazej/datasets/droneCalib.cfg"
+//#define CAMERA_CALIB_PATH "/home/blazej/datasets/droneCalib.cfg"
 //#define IMAGES_PATH "/home/blazej/datasets/drone_1"
 
+//#define USE_DRONE
+
 /* DRONE INCLUDES*/
-#include <mainwindow.h>
+#ifdef USE_DRONE
+    #include <mainwindow.h>
+#endif
 
 enum class VideoSource { Images, Camera, Drone };
 
-static const VideoSource videoSource = VideoSource::Drone;
+static const VideoSource videoSource = VideoSource::Camera;
 
 /* Keep the webcam from locking up when you interrupt a frame capture */
 volatile int quit_signal=0;
@@ -80,7 +84,9 @@ QGLDisplay *display3;
 QGLDisplay *display4;
 //...
 
+#ifdef USE_DRONE
 MainWindow *droneWindow;
+#endif
 
 class KeyPressHandler;
 KeyPressHandler *kph;
@@ -272,8 +278,10 @@ int main( int argc, char** argv )
 //    //on shutter button released
 //    camera->unlock();
 
+#ifdef USE_DRONE
     droneWindow = new MainWindow();
     droneWindow->show();
+#endif
 
     QtConcurrent::run(mainLoopCodeForQtThread);
     //QFuture<void> future = QtConcurrent::run(mainLoopCodeForQtThread);
@@ -330,7 +338,7 @@ int mainLoopCodeForQtThread()
     int runningIDX=0;
     float fakeTimeStamp = 0;
 
-    cv::VideoCapture webcam(2);
+    cv::VideoCapture webcam(0);
 
     //Initialize video source
     // Use camera
@@ -357,14 +365,22 @@ int mainLoopCodeForQtThread()
                 webcam.read(frame);
             } else {
                 //@TODO add sleep or change method
+#ifdef USE_DRONE
                 frame = droneWindow->getImage(); //non-blocking call
+#endif
             }
             if (quit_signal) break; // exit cleanly on interrupt
 
             printf("Processing webcam/drone image!\n");
 
+            if (frame.empty() || frame.data==NULL || (frame.channels()!=3 && frame.channels()!=4) ){
+                printf("Image empty\n");
+                continue;
+            }
+
             cv::Mat imageDist;
             cv::cvtColor(frame, imageDist, CV_BGR2GRAY);
+            printf ("After cvtColor...\n");
             //outputWrapper->showKeyframeDepth(frame);
 
 //            if(imageDist.rows != h_inp || imageDist.cols != w_inp)
@@ -456,10 +472,8 @@ int mainLoopCodeForQtThread()
                 fullResetRequested = false;
                 runningIDX = 0;
             }
-
         }
     }
-
 
     system->finalize();
 

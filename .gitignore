@@ -1,4 +1,7 @@
-*.user
 build-Release/
 build-Debug/
+*.user
 *.autosave
+
+*.o
+*.a
