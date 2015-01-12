@@ -91,8 +91,8 @@ void Relocalizer::updateCurrentFrame(std::shared_ptr<Frame> currentFrame, lsd_sl
         if (outputWrapper != NULL)
             outputWrapper->showKeyframeDepth(cv::Mat(currentFrame->height(), currentFrame->width(), CV_32F, currentFrame->image())*(1/255.0f));
 
-    int pressedKey = Util::waitKey(1);
-	handleKey(pressedKey);
+    //int pressedKey = Util::waitKey(1);
+    //handleKey(pressedKey);
 }
 void Relocalizer::start(std::vector<Frame*, Eigen::aligned_allocator<lsd_slam::Frame*> > &allKeyframesList)
 {
@@ -163,13 +163,18 @@ void Relocalizer::threadLoop(int idx)
         printf("Relocalizer - Next iteration\n");
 
 		// if got something: do it (unlock in the meantime)
-		if(nextRelocIDX < maxRelocIDX && CurrentRelocFrame)
+        if(nextRelocIDX < maxRelocIDX && CurrentRelocFrame)
 		{
             printf("Relocalizer - relocalizing for %d\n", nextRelocIDX);
 
 			Frame* todo = KFForReloc[nextRelocIDX%KFForReloc.size()];
 			nextRelocIDX++;
-			if(todo->neighbors.size() <= 2) continue;
+            if(todo->neighbors.size() <= 2){
+                printf("Not enough neighbours: %d\n", todo->neighbors.size());
+                printf("nextRelocIDX: %d\n", nextRelocIDX);
+                printf("KFForReloc.size(): %d\n", KFForReloc.size());
+                continue;
+            }
 
 			std::shared_ptr<Frame> myRelocFrame = CurrentRelocFrame;
 

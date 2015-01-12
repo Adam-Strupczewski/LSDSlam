@@ -74,6 +74,12 @@ ROSOutput3DWrapper::~ROSOutput3DWrapper()
 
 QImage Mat2QImage(cv::Mat const& src)
 {
+    if (src.empty()||src.data==NULL||(src.channels()!=3&&src.channels()!=4)){
+        printf("Null image passed to drawing...\n");
+        return QImage();
+    }
+
+     printf("Mat2QIm start\n");
      cv::Mat temp; // make the same cv::Mat
      cvtColor(src, temp,CV_BGR2RGB); // cvtColor Makes a copt, that what i need
      QImage dest((const uchar *) temp.data, temp.cols, temp.rows, temp.step, QImage::Format_RGB888);

@@ -957,7 +957,9 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 	if(!trackingIsGood)
 	{
         // Set current frame  for relocalizer and run Relocalizer::threadLoop()
+        printf("SlamSystem - Relocalizer will update frame\n");
         relocalizer.updateCurrentFrame(trackingNewFrame, outputWrapper);
+        printf("SlamSystem - Relocalizer has finished updating frame\n");
 
 		unmappedTrackedFramesMutex.lock();
         unmappedTrackedFramesSignal.notify_one();
