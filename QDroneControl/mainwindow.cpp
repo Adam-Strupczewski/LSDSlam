@@ -103,6 +103,8 @@ void MainWindow::keyReleaseEvent( QKeyEvent * key)
             drone.setVelocity(c);
             qDebug() << "R: " << c.roll << " " << c.pitch << " " << c.yaw << " " << c.gaz;
         }
+    } else {
+        key->ignore();
     }
 
 }
@@ -123,9 +125,7 @@ void MainWindow::keyPressEvent( QKeyEvent * key)
             drone.setVelocity(c);
             qDebug() << "P: " << c.roll << " " << c.pitch << " " << c.yaw << " " << c.gaz;
         }
-    }
-
-    else if(key->key() == Qt::Key_Space){
+    } else if(key->key() == Qt::Key_Space){
         if(drone.onGround()){
             drone.takeoff();
         } else {
@@ -133,13 +133,15 @@ void MainWindow::keyPressEvent( QKeyEvent * key)
         }
     } else if(key->key() == Qt::Key_T){ // BE CAREFUL
         drone.emergency();
+    } else {
+        key->ignore();
     }
 
-    if(key->key() == 16777216)	// ESC
-    {
-        setFocus();
-        //setControlSource(CONTROL_KB);
-    }
+//    if(key->key() == 16777216)	// ESC
+//    {
+//        setFocus();
+//        //setControlSource(CONTROL_KB);
+//    }
 }
 
 ControlCommand MainWindow::calcKBControl()

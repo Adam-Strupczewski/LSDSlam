@@ -18,11 +18,13 @@ bool KeyPressHandler::eventFilter(QObject *obj, QEvent *event)
         }else if (keyEvent->key()==Qt::Key_R){
             *reset = true;
         }
-        return true;
+        return false;
     } else {
         // standard event processing
-        return QObject::eventFilter(obj, event);
+        //return QObject::eventFilter(obj, event);
+        return false;
     }
+    //event->ignore();
 }
 
 void KeyPressHandler::setStartVar(bool *b){

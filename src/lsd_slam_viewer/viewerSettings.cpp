@@ -34,8 +34,8 @@ bool showCurrentCamera = true;
 bool showCurrentPointcloud = true;
 
 // These vars denote how sure the drawn points need to be
-float scaledDepthVarTH = 0.003;//1;
-float absDepthVarTH = 0.003;//1;
+float scaledDepthVarTH = 0.5;//1;
+float absDepthVarTH = 0.5;//1;
 
 int minNearSupport = 5;
 int cutFirstNKf = 5;

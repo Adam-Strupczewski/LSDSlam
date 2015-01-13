@@ -90,8 +90,8 @@ void Relocalizer::updateCurrentFrame(std::shared_ptr<Frame> currentFrame, lsd_sl
         if (outputWrapper != NULL)
             outputWrapper->showKeyframeDepth(cv::Mat(currentFrame->height(), currentFrame->width(), CV_32F, currentFrame->image())*(1/255.0f));
 
-    int pressedKey = Util::waitKey(1);
-	handleKey(pressedKey);
+    //int pressedKey = Util::waitKey(1);
+    //handleKey(pressedKey);
 }
 void Relocalizer::start(std::vector<Frame*, Eigen::aligned_allocator<lsd_slam::Frame*> > &allKeyframesList)
 {

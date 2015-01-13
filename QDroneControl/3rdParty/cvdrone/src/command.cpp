@@ -34,6 +34,11 @@
 #define DEFAULT_MISC3_VALUE 2000
 #define DEFAULT_MISC4_VALUE 3000
 
+static const float maxEulerAngle = 9.0f * DEG_TO_RAD; //12
+static const float maxYaw = 30.0f * DEG_TO_RAD; //99
+static const int maxAltitude = 1500;
+static const int maxVerticalSpeed = 500;
+
 //typedef union _float_or_int_t {
 //  float32_t f;
 //  int32_t   i;
@@ -81,24 +86,22 @@ int ARDrone::initCommand(void)
 
         // Set maximum velocity in Z-axis [mm/s]
         sockCommand.sendf("AT*CONFIG_IDS=%d,\"%s\",\"%s\",\"%s\"\r", ++seq, ARDRONE_SESSION_ID, ARDRONE_PROFILE_ID, ARDRONE_APPLOCATION_ID);
-        sockCommand.sendf("AT*CONFIG=%d,\"control:control_vz_max\",\"%d\"\r", ++seq, 500);
+        sockCommand.sendf("AT*CONFIG=%d,\"control:control_vz_max\",\"%d\"\r", ++seq, maxVerticalSpeed);
         msleep(30);
 
         // Set maximum yaw [rad/s]
-        float maxYaw = 99.0f * DEG_TO_RAD;
         sockCommand.sendf("AT*CONFIG_IDS=%d,\"%s\",\"%s\",\"%s\"\r", ++seq, ARDRONE_SESSION_ID, ARDRONE_PROFILE_ID, ARDRONE_APPLOCATION_ID);
         sockCommand.sendf("AT*CONFIG=%d,\"control:control_yaw\",\"%f\"\r", ++seq, maxYaw);
         msleep(30);
 
         // Set maximum euler angle [rad]
-        float maxEulerAngle = 12.0f * DEG_TO_RAD;
         sockCommand.sendf("AT*CONFIG_IDS=%d,\"%s\",\"%s\",\"%s\"\r", ++seq, ARDRONE_SESSION_ID, ARDRONE_PROFILE_ID, ARDRONE_APPLOCATION_ID);
         sockCommand.sendf("AT*CONFIG=%d,\"control:euler_angle_max\",\"%f\"\r", ++seq, maxEulerAngle);
         msleep(50);
 
         // Set maximum altitude [mm]
         sockCommand.sendf("AT*CONFIG_IDS=%d,\"%s\",\"%s\",\"%s\"\r", ++seq, ARDRONE_SESSION_ID, ARDRONE_PROFILE_ID, ARDRONE_APPLOCATION_ID);
-        sockCommand.sendf("AT*CONFIG=%d,\"control:altitude_max\",\"%d\"\r", ++seq, 1500);
+        sockCommand.sendf("AT*CONFIG=%d,\"control:altitude_max\",\"%d\"\r", ++seq, maxAltitude);
         msleep(30);
 
         // Bitrate control mode

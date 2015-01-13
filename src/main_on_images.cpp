@@ -86,6 +86,7 @@ class KeyPressHandler;
 KeyPressHandler *kph;
 
 bool startLSDSlam;
+bool reset2;
 
 int mainLoopCodeForQtThread();
 
@@ -183,6 +184,7 @@ int main( int argc, char** argv )
 #endif
 
     startLSDSlam = false;
+    reset2 = false;
 
     QApplication application(argc, argv);
     setlocale(LC_NUMERIC,"C");
@@ -190,7 +192,7 @@ int main( int argc, char** argv )
     // Instantiate the viewer of the scene reconstruction.
     kph = new KeyPressHandler();
     kph->setStartVar(&startLSDSlam);
-    kph->setResetVar(&fullResetRequested);
+    kph->setResetVar(&reset2);
 
     viewer = new PointCloudViewer();
     viewer->setWindowTitle("PointCloud Viewer");
@@ -272,8 +274,13 @@ int main( int argc, char** argv )
 //    //on shutter button released
 //    camera->unlock();
 
-    droneWindow = new MainWindow();
-    droneWindow->show();
+    if(videoSource == VideoSource::Drone) {
+        droneWindow = new MainWindow();
+        droneWindow->installEventFilter(kph);
+        droneWindow->show();
+    } else {
+        droneWindow = NULL;
+    }
 
     QtConcurrent::run(mainLoopCodeForQtThread);
     //QFuture<void> future = QtConcurrent::run(mainLoopCodeForQtThread);
@@ -385,7 +392,7 @@ int mainLoopCodeForQtThread()
             runningIDX++;
             fakeTimeStamp+=0.03;
 
-            if(fullResetRequested)
+            if(reset2)
             {
 
                 printf("FULL RESET!\n");
@@ -394,7 +401,7 @@ int mainLoopCodeForQtThread()
                 system = new SlamSystem(w, h, K, doSlam);
                 system->setVisualization(outputWrapper);
 
-                fullResetRequested = false;
+                reset2 = false;
                 runningIDX = 0;
             }
 
