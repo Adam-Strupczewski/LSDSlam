@@ -39,27 +39,17 @@
 
 #include <qapplication.h>
 #include <thread>         // std::thread
-#include <QFuture>
 #include <QtConcurrent/QtConcurrent>
 #include <QThread>
+#include <QSettings>
 
 #include "keypresshandler.h"
-
-//#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg"
-//#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/camera_logitech/logitech640.cfg"
-//#define IMAGES_PATH "/home/adam/dokt_ws/LSD_machine_small/images"
-
-#define CAMERA_CALIB_PATH "/home/blazej/datasets/droneCalib.cfg"
-#define IMAGES_PATH "/home/blazej/datasets/drone_1"
+#include "consts.h"
 
 /* DRONE INCLUDES*/
 #ifdef USE_DRONE
     #include <mainwindow.h>
 #endif
-
-enum class VideoSource { Images, Camera, Drone };
-
-static const VideoSource videoSource = VideoSource::Images;
 
 /* Keep the webcam from locking up when you interrupt a frame capture */
 volatile int quit_signal=0;
@@ -85,6 +75,11 @@ QGLDisplay *display4;
 #ifdef USE_DRONE
 MainWindow *droneWindow;
 #endif
+
+QSettings *settings;
+
+enum class VideoSource { Images, Camera, Drone };
+static VideoSource videoSource;
 
 class KeyPressHandler;
 KeyPressHandler *kph;
@@ -192,6 +187,16 @@ int main( int argc, char** argv )
 
     QApplication application(argc, argv);
     setlocale(LC_NUMERIC,"C");
+
+    settings = new QSettings("settings.ini", QSettings::IniFormat);
+
+    QString val = settings->value(VIDEO_SOURCE_KEY, VIDEO_SOURCE_DEFAULT).toString();
+    if(val == SOURCE_NAME_CAMERA)
+        videoSource = VideoSource::Camera;
+    else if(val == SOURCE_NAME_DRONE)
+        videoSource = VideoSource::Drone;
+    else
+        videoSource = VideoSource::Images;
 
     // Instantiate the viewer of the scene reconstruction.
     kph = new KeyPressHandler();
@@ -301,7 +306,7 @@ int mainLoopCodeForQtThread()
     // if no undistortion is required, the undistorter will just pass images through.
     Undistorter* undistorter = 0;
 
-    undistorter = Undistorter::getUndistorterForFile(CAMERA_CALIB_PATH);
+    undistorter = Undistorter::getUndistorterForFile(settings->value(CALIB_PATH_KEY, CAMERA_CALIB_PATH_DEFAULT).toString().toLatin1());
 
     if(undistorter == 0)
     {
@@ -342,11 +347,10 @@ int mainLoopCodeForQtThread()
     int runningIDX=0;
     float fakeTimeStamp = 0;
 
-    cv::VideoCapture webcam(0);
-
     //Initialize video source
     // Use camera
     if (videoSource == VideoSource::Camera || videoSource == VideoSource::Drone){
+        cv::VideoCapture webcam(settings->value(CAMERA_NUMBER_KEY, CAMERA_NUMBER_DEFAULT).toInt());
         if(videoSource==VideoSource::Camera) {
             if(!webcam.isOpened())
             {
@@ -387,10 +391,8 @@ int mainLoopCodeForQtThread()
             printf ("After cvtColor...\n");
             //outputWrapper->showKeyframeDepth(frame);
 
-//            if(imageDist.rows != h_inp || imageDist.cols != w_inp)
-//            {
-//                    printf("image has wrong dimensions - expecting %d x %d, found %d x %d. Skipping.\n",
-//                            w,h,imageDist.cols, imageDist.rows);
+//            if(imageDist.rows != h_inp || imageDist.cols != w_inp)   {
+//                    printf("image has wrong dimensions - expecting %d x %d, found %d x %d. Skipping.\n",w,h,imageDist.cols, imageDist.rows);
 //                continue;
 //            }
             assert(imageDist.type() == CV_8U);
@@ -407,8 +409,7 @@ int mainLoopCodeForQtThread()
 
             if(reset2)
             {
-
-                printf("FULL RESET!\n");
+                qDebug() << "FULL RESET!";
                 delete system;
 
                 system = new SlamSystem(w, h, K, doSlam);
@@ -421,7 +422,7 @@ int mainLoopCodeForQtThread()
         }
 
     }else if(videoSource == VideoSource::Images){
-        source = IMAGES_PATH;
+        source = settings->value(IMAGES_PATH_KEY, IMAGES_PATH_DEFAULT).toString().toStdString();
 
         if(getdir(source, files) >= 0)
         {
@@ -488,7 +489,8 @@ int mainLoopCodeForQtThread()
     if(videoSource == VideoSource::Drone){
         delete droneWindow;
     }
-	#endif
+    #endif
+    delete settings;
 
     return 0;
 }

@@ -146,5 +146,6 @@ HEADERS += \
     ../src/lsd_slam_viewer/PointCloudViewer.h \
     ../src/lsd_slam_viewer/viewerSettings.h \
     ../src/lsd_slam_viewer/QGLDisplay.h \
-    ../src/keypresshandler.h
+    ../src/keypresshandler.h \
+    ../src/consts.h
 
