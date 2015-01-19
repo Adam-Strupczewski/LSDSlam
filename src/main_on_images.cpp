@@ -53,7 +53,9 @@
 #define IMAGES_PATH "/home/blazej/datasets/drone_1"
 
 /* DRONE INCLUDES*/
-#include <mainwindow.h>
+#ifdef USE_DRONE
+    #include <mainwindow.h>
+#endif
 
 enum class VideoSource { Images, Camera, Drone };
 
@@ -80,7 +82,9 @@ QGLDisplay *display3;
 QGLDisplay *display4;
 //...
 
+#ifdef USE_DRONE
 MainWindow *droneWindow;
+#endif
 
 class KeyPressHandler;
 KeyPressHandler *kph;
@@ -273,7 +277,7 @@ int main( int argc, char** argv )
 
 //    //on shutter button released
 //    camera->unlock();
-
+#ifdef USE_DRONE
     if(videoSource == VideoSource::Drone) {
         droneWindow = new MainWindow();
         droneWindow->installEventFilter(kph);
@@ -281,6 +285,7 @@ int main( int argc, char** argv )
     } else {
         droneWindow = NULL;
     }
+#endif
 
     QtConcurrent::run(mainLoopCodeForQtThread);
     //QFuture<void> future = QtConcurrent::run(mainLoopCodeForQtThread);
@@ -337,7 +342,7 @@ int mainLoopCodeForQtThread()
     int runningIDX=0;
     float fakeTimeStamp = 0;
 
-    cv::VideoCapture webcam(2);
+    cv::VideoCapture webcam(0);
 
     //Initialize video source
     // Use camera
@@ -364,14 +369,22 @@ int mainLoopCodeForQtThread()
                 webcam.read(frame);
             } else {
                 //@TODO add sleep or change method
-                frame = droneWindow->getImage(); //copy of current frame, non-blocking call
+#ifdef USE_DRONE
+                frame = droneWindow->getImage(); //non-blocking call
+#endif
             }
             if (quit_signal) break; // exit cleanly on interrupt
 
             printf("Processing webcam/drone image!\n");
 
+            if (frame.empty() || frame.data==NULL || (frame.channels()!=3 && frame.channels()!=4) ){
+                printf("Image empty\n");
+                continue;
+            }
+
             cv::Mat imageDist;
             cv::cvtColor(frame, imageDist, CV_BGR2GRAY);
+            printf ("After cvtColor...\n");
             //outputWrapper->showKeyframeDepth(frame);
 
 //            if(imageDist.rows != h_inp || imageDist.cols != w_inp)
@@ -463,19 +476,19 @@ int mainLoopCodeForQtThread()
                 fullResetRequested = false;
                 runningIDX = 0;
             }
-
         }
     }
-
 
     system->finalize();
 
     delete system;
     delete undistorter;
     delete outputWrapper;
+	#ifdef USE_DRONE
     if(videoSource == VideoSource::Drone){
         delete droneWindow;
     }
+	#endif
 
     return 0;
 }

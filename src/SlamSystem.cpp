@@ -874,8 +874,10 @@ bool SlamSystem::doMappingIteration()
 		}
 
 		// start relocalizer if it isnt running already
-		if(!relocalizer.isRunning)
+        if(!relocalizer.isRunning){
+            printf("Starting Relocalizer thread\n");
 			relocalizer.start(keyFrameGraph->keyframesAll);
+        }
 
 		// did we find a frame to relocalize with?
 		if(relocalizer.waitResult(50))
@@ -955,7 +957,9 @@ void SlamSystem::trackFrame(uchar* image, unsigned int frameID, bool blockUntilM
 	if(!trackingIsGood)
 	{
         // Set current frame  for relocalizer and run Relocalizer::threadLoop()
+        printf("SlamSystem - Relocalizer will update frame\n");
         relocalizer.updateCurrentFrame(trackingNewFrame, outputWrapper);
+        printf("SlamSystem - Relocalizer has finished updating frame\n");
 
 		unmappedTrackedFramesMutex.lock();
         unmappedTrackedFramesSignal.notify_one();

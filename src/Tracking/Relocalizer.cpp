@@ -78,6 +78,7 @@ void Relocalizer::updateCurrentFrame(std::shared_ptr<Frame> currentFrame, lsd_sl
 	this->CurrentRelocFrame = currentFrame;
 //	int doneLast = KFForReloc.size() - (maxRelocIDX-nextRelocIDX);
 	maxRelocIDX = nextRelocIDX + KFForReloc.size();
+    printf("Relocalizer - Updating current frame\n");
 	newCurrentFrameSignal.notify_all();
 	lock.unlock();
 
@@ -159,12 +160,21 @@ void Relocalizer::threadLoop(int idx)
 	boost::unique_lock<boost::mutex> lock(exMutex);
 	while(continueRunning)
 	{
+        printf("Relocalizer - Next iteration\n");
+
 		// if got something: do it (unlock in the meantime)
-		if(nextRelocIDX < maxRelocIDX && CurrentRelocFrame)
+        if(nextRelocIDX < maxRelocIDX && CurrentRelocFrame)
 		{
+            printf("Relocalizer - relocalizing for %d\n", nextRelocIDX);
+
 			Frame* todo = KFForReloc[nextRelocIDX%KFForReloc.size()];
 			nextRelocIDX++;
-			if(todo->neighbors.size() <= 2) continue;
+            if(todo->neighbors.size() <= 2){
+                printf("Not enough neighbours: %d\n", todo->neighbors.size());
+                printf("nextRelocIDX: %d\n", nextRelocIDX);
+                printf("KFForReloc.size(): %d\n", KFForReloc.size());
+                continue;
+            }
 
 			std::shared_ptr<Frame> myRelocFrame = CurrentRelocFrame;
 
@@ -237,6 +247,8 @@ void Relocalizer::threadLoop(int idx)
 		}
 		else
 		{
+            //usleep(2000000);
+            printf("Relocalizer - waiting for new image\n");
 			newCurrentFrameSignal.wait(lock);
 		}
 	}
