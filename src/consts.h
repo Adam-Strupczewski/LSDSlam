@@ -8,6 +8,9 @@
 #define VIDEO_SOURCE_KEY    "Video/Source"
 #define CAMERA_NUMBER_KEY   "Video/CameraNumber"
 
+#define CONFIDENCE_THR_KEY  "Slam/DepthConfidenceThr"
+#define CONFIDENCE_THR_DEFAULT "0.5"
+
 
 //#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg"
 //#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/camera_logitech/logitech640.cfg"

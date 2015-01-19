@@ -26,7 +26,6 @@
 // -------------------------------------------------------------------------
 
 #include "ardrone.h"
-#include <QDebug>
 
 // From Parrot SDK, undocumented
 #define DEFAULT_MISC1_VALUE 2
@@ -34,10 +33,10 @@
 #define DEFAULT_MISC3_VALUE 2000
 #define DEFAULT_MISC4_VALUE 3000
 
-static const float maxEulerAngle = 9.0f * DEG_TO_RAD; //12
-static const float maxYaw = 30.0f * DEG_TO_RAD; //99
-static const int maxAltitude = 1500;
-static const int maxVerticalSpeed = 500;
+float maxEulerAngle = 9.0f * DEG_TO_RAD; //12
+float maxYaw = 30.0f * DEG_TO_RAD; //99
+int maxAltitude = 1500;
+int maxVerticalSpeed = 500;
 
 //typedef union _float_or_int_t {
 //  float32_t f;

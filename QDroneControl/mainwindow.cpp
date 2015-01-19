@@ -4,6 +4,11 @@
 #include <QKeyEvent>
 #include <QTimer>
 
+extern float maxEulerAngle; //degrees
+extern float maxYaw; //degrees
+extern int maxAltitude; //mm
+extern int maxVerticalSpeed; // mm/s
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -19,13 +24,18 @@ MainWindow::MainWindow(QWidget *parent) :
     qDebug() << "Battery = " << drone.getBatteryPercentage() << "[%]";
 
 
-    for(int i=0;i<8;i++)
-    {
+    for(int i=0;i<8;i++) {
         isPressed[i] = false;
         lastRepeat[i] = 0;
     }
 
     settings = new QSettings("settings.ini", QSettings::IniFormat);
+    maxEulerAngle = settings->value("Drone/MaxEulerAngle", 9.0f).toFloat();
+    maxEulerAngle *= DEG_TO_RAD;
+    maxYaw        = settings->value("Drone/MaxYaw", 30.0f).toFloat();
+    maxYaw        *= DEG_TO_RAD;
+    maxAltitude   = settings->value("Drone/MaxAltitude", 1500).toInt();
+    maxVerticalSpeed = settings->value("Drone/MaxVerticalSpeed", 500).toInt();
 
     ui->videoImageLabel->setBackgroundRole(QPalette::Base);
     ui->videoImageLabel->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
@@ -33,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     videoTimer = new QTimer(this);
     connect(videoTimer, SIGNAL(timeout()), this, SLOT(updateVideo()));
-    videoTimer->start(50);
+    videoTimer->start(35); //35 msec ~ 30fps
 }
 
 MainWindow::~MainWindow()
@@ -101,7 +111,7 @@ void MainWindow::keyReleaseEvent( QKeyEvent * key)
         {
             ControlCommand c = calcKBControl();
             drone.setVelocity(c);
-            qDebug() << "R: " << c.roll << " " << c.pitch << " " << c.yaw << " " << c.gaz;
+            //qDebug() << "R: " << c.roll << " " << c.pitch << " " << c.yaw << " " << c.gaz;
         }
     } else {
         key->ignore();
@@ -117,7 +127,6 @@ void MainWindow::keyPressEvent( QKeyEvent * key)
         bool changed = !isPressed[idx];
 
         isPressed[idx] = true;
-        //lastRepeat[idx] = getMS();
 
         if(changed)
         {
@@ -136,20 +145,10 @@ void MainWindow::keyPressEvent( QKeyEvent * key)
     } else {
         key->ignore();
     }
-
-//    if(key->key() == 16777216)	// ESC
-//    {
-//        setFocus();
-//        //setControlSource(CONTROL_KB);
-//    }
 }
 
 ControlCommand MainWindow::calcKBControl()
 {
-    // clear keys that have not been refreshed for 1s, it is set to "not pressed"
-    //for(int i=0;i<8;i++)
-    //    isPressed[i] = isPressed[i] && ((lastRepeat[i] + 1000) > getMS());
-
     ControlCommand c;
 
     if(isPressed[0]) c.roll = -1; // j

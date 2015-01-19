@@ -36,6 +36,7 @@
 
 #include "lsd_slam_viewer/PointCloudViewer.h"
 #include "lsd_slam_viewer/QGLDisplay.h"
+#include "lsd_slam_viewer/viewerSettings.h" //externs with viewer parameters
 
 #include <qapplication.h>
 #include <thread>         // std::thread
@@ -189,7 +190,7 @@ int main( int argc, char** argv )
     setlocale(LC_NUMERIC,"C");
 
     settings = new QSettings("settings.ini", QSettings::IniFormat);
-
+    //set video source
     QString val = settings->value(VIDEO_SOURCE_KEY, VIDEO_SOURCE_DEFAULT).toString();
     if(val == SOURCE_NAME_CAMERA)
         videoSource = VideoSource::Camera;
@@ -197,6 +198,11 @@ int main( int argc, char** argv )
         videoSource = VideoSource::Drone;
     else
         videoSource = VideoSource::Images;
+
+    //set thresholds
+    scaledDepthVarTH = settings->value(CONFIDENCE_THR_KEY, CONFIDENCE_THR_DEFAULT).toFloat();
+    absDepthVarTH = scaledDepthVarTH;
+    qDebug() << scaledDepthVarTH;
 
     // Instantiate the viewer of the scene reconstruction.
     kph = new KeyPressHandler();
