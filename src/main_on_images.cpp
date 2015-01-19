@@ -47,17 +47,17 @@
 
 //#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/LSD_machine_small/cameraCalibration.cfg"
 //#define CAMERA_CALIB_PATH "/home/adam/dokt_ws/camera_logitech/logitech640.cfg"
-#define IMAGES_PATH "/home/adam/dokt_ws/LSD_machine_small/images"
+//#define IMAGES_PATH "/home/adam/dokt_ws/LSD_machine_small/images"
 
 #define CAMERA_CALIB_PATH "/home/blazej/datasets/droneCalib.cfg"
-//#define IMAGES_PATH "/home/blazej/datasets/drone_1"
+#define IMAGES_PATH "/home/blazej/datasets/drone_1"
 
 /* DRONE INCLUDES*/
 #include <mainwindow.h>
 
 enum class VideoSource { Images, Camera, Drone };
 
-static const VideoSource videoSource = VideoSource::Drone;
+static const VideoSource videoSource = VideoSource::Images;
 
 /* Keep the webcam from locking up when you interrupt a frame capture */
 volatile int quit_signal=0;
@@ -364,7 +364,7 @@ int mainLoopCodeForQtThread()
                 webcam.read(frame);
             } else {
                 //@TODO add sleep or change method
-                frame = droneWindow->getImage(); //non-blocking call
+                frame = droneWindow->getImage(); //copy of current frame, non-blocking call
             }
             if (quit_signal) break; // exit cleanly on interrupt
 
@@ -473,6 +473,9 @@ int mainLoopCodeForQtThread()
     delete system;
     delete undistorter;
     delete outputWrapper;
+    if(videoSource == VideoSource::Drone){
+        delete droneWindow;
+    }
 
     return 0;
 }
