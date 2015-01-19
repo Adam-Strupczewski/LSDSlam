@@ -3,6 +3,8 @@ CONFIG += console
 CONFIG -= app_bundle
 #CONFIG -= qt
 
+DEFINES += USE_DRONE
+
 CONFIG += c++11
 
 QT       += core
@@ -16,7 +18,6 @@ INCLUDEPATH += \
     /usr/include/eigen3/ \
     /usr/include/suitesparse \
     /usr/include/boost \
-    #/usr/include/QGLViewer \
     ../thirdparty/QGLViewerQT5 \
     /usr/local/include/opencv \
     /opt/ros/indigo/include/ \
@@ -58,14 +59,16 @@ LIBS += \
     -L../thirdparty/QGLViewerQT5 \
     -lQGLViewerQT5
 
-#drone control libs
-LIBS += \#-L../build-QDroneControl-Release -lQDroneControl \
+contains(DEFINES, USE_DRONE) {
+    #drone control libs
+    LIBS += \-L../build-QDroneControl-Release -lQDroneControl \
                 -lm                     \
                 -lpthread               \
                 -lavutil                \
                 -lavformat              \
                 -lavcodec               \
                 -lswscale               \
+}
 
 SOURCES += \
     ../src/DataStructures/Frame.cpp \
